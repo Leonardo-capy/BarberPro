@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel Administrativo - BarberPro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo">✂ BarberPro Admin</div>
+  </header>
+
+  <section class="dashboard">
+    <div class="stat-card">
+      <h3>Total de Agendamentos</h3>
+      <p id="total">0</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>Hoje</h3>
+      <p id="hoje">0</p>
+    </div>
+  </section>
+
+  <section class="table-container">
+    <h2>Lista de Agendamentos</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Telefone</th>
+          <th>Serviço</th>
+          <th>Data</th>
+          <th>Horário</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="lista"></tbody>
+    </table>
+  </section>
+  <script src="script-dashboard.js"></script>
+</body>
+</html>
