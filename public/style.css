@@ -452,3 +452,37 @@ tr:hover {
   font-weight: bold;
   color: #ff4d4d;
 }
+
+/* ==========================
+   Navegação Admin
+========================== */
+
+.admin-nav {
+  display: flex;
+  gap: 15px;
+}
+
+.admin-nav a {
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.05);
+  color: white;
+  font-weight: 500;
+  transition: 0.3s;
+  border: 1px solid transparent;
+}
+
+.admin-nav a:hover {
+  background: rgba(0,255,213,0.1);
+  border: 1px solid #00ffd5;
+  color: #00ffd5;
+  box-shadow: 0 0 10px rgba(0,255,213,0.4);
+}
+
+.admin-nav a.active {
+  background: linear-gradient(45deg, #00ffd5, #00aaff);
+  color: black;
+  font-weight: bold;
+  box-shadow: 0 0 15px #00ffd5;
+}
