@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Admin - BarberPro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="login-container">
+    <h2>Área Administrativa</h2>
+
+    <form id="loginForm">
+      <input type="password" id="senha" placeholder="Digite a senha" required>
+      <button type="submit">Entrar</button>
+    </form>
+
+    <p id="erro" style="color:red;"></p>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const senha = document.getElementById("senha").value;
+
+      const resposta = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ senha })
+      });
+
+      if (resposta.ok) {
+        window.location.href = "/admin.html";
+      } else {
+        document.getElementById("erro").textContent = "Senha incorreta!";
+      }
+    });
+  </script>
+
+</body>
+</html>
