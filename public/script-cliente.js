@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const nome = document.getElementById("nome");
   const telefone = document.getElementById("telefone");
   const servico = document.getElementById("servico");
+  const barbeiroSelect = document.getElementById("barbeiroNome");
 
   let horarioSelecionado = null;
 
@@ -43,8 +44,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function buscarHorarios(data) {
 
-    const resposta = await fetch(`/api/agendamentos/disponiveis/${data}`);
+
+    if (!barbeiroSelect) {
+      console.log("Select de barbeiro nao encontrado");
+      return;
+    }
+    const barbeiroId = barbeiroSelect.value;
+
+    const resposta = await fetch(`/api/agendamentos/disponiveis/${data}?user_id=${barbeiroId}`);
     const horarios = await resposta.json();
+
+    console.log("Horarios recebidos: ", horarios);
 
     horariosContainer.innerHTML = "";
     horarioSelecionado = null;
@@ -61,32 +71,32 @@ document.addEventListener("DOMContentLoaded", function () {
       btn.textContent = horario;
       btn.classList.add("horario-btn");
 
-      
+
       const agora = new Date();
 
-// pega data local correta (evita bug UTC)
-const ano = agora.getFullYear();
-const mes = String(agora.getMonth() + 1).padStart(2, "0");
-const dia = String(agora.getDate()).padStart(2, "0");
-const hojeLocal = `${ano}-${mes}-${dia}`;
+      // pega data local correta (evita bug UTC)
+      const ano = agora.getFullYear();
+      const mes = String(agora.getMonth() + 1).padStart(2, "0");
+      const dia = String(agora.getDate()).padStart(2, "0");
+      const hojeLocal = `${ano}-${mes}-${dia}`;
 
-if (data === hojeLocal) {
+      if (data === hojeLocal) {
 
-  const [hora, minuto] = horario.split(":");
+        const [hora, minuto] = horario.split(":");
 
-  const dataHorario = new Date(
-    ano,
-    agora.getMonth(),
-    agora.getDate(),
-    parseInt(hora),
-    parseInt(minuto)
-  );
+        const dataHorario = new Date(
+          ano,
+          agora.getMonth(),
+          agora.getDate(),
+          parseInt(hora),
+          parseInt(minuto)
+        );
 
-  if (dataHorario <= agora) {
-    btn.disabled = true;
-    btn.classList.add("desativado");
-  }
-}
+        if (dataHorario <= agora) {
+          btn.disabled = true;
+          btn.classList.add("desativado");
+        }
+      }
 
       btn.onclick = () => {
         document.querySelectorAll(".horario-btn")
@@ -102,6 +112,11 @@ if (data === hojeLocal) {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    if (!barbeiroSelect.value) {
+      alert("Selecione o barbeiro");
+      return;
+    }
 
     if (!dataInput.value || !horarioSelecionado) {
       alert("Selecione data e horário.");
@@ -121,7 +136,8 @@ if (data === hojeLocal) {
         telefone: telefone.value,
         servico: servico.value,
         data: dataInput.value,
-        horario: horarioSelecionado
+        horario: horarioSelecionado,
+        user_id: barbeiroSelect.value
       })
     });
 
@@ -137,5 +153,26 @@ if (data === hojeLocal) {
     horariosContainer.innerHTML =
       "<p>Selecione uma data para ver horários disponíveis</p>";
   });
+
+  async function carregarBarbeiros() {
+    try {
+      const res = await fetch("/api/barbeiros");
+      const barbeiros = await res.json();
+
+      const select = document.getElementById("barbeiroNome");
+
+      barbeiros.forEach(barbeiro => {
+        const option = document.createElement("option");
+        option.value = barbeiro.id; // 🔥 MUITO IMPORTANTE
+        option.textContent = barbeiro.usuario;
+        select.appendChild(option);
+      });
+
+    } catch (err) {
+      console.error("Erro ao carregar barbeiros:", err);
+    }
+  }
+
+  carregarBarbeiros();
 
 });
