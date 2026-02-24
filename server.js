@@ -33,16 +33,27 @@ async function startServer() {
   app.use("/api/agendamentos", agendamentoRoutes(db));
 
   // 🔐 LOGIN ADMIN
-  app.post("/login", (req, res) => {
-    const { senha } = req.body;
+  app.post("/login", async (req, res) => {
+    const {usuario, senha } = req.body;
 
-    if (senha === "123456") { // 🔥 troque essa senha
+    try {
+      const admin = await db.get(
+        "SELECT * FROM senha WHERE usuario = ? AND senha = ?",
+        [usuario, senha]
+      );
+    
+
+    if (admin) { // 🔥 troque essa senha
       req.session.admin = true;
       res.sendStatus(200);
     } else {
       res.sendStatus(401);
     }
-  });
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
+});
 
   // 🔒 PROTEGER PÁGINAS ADMIN
 

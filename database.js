@@ -26,7 +26,24 @@ export async function initDB() {
     horario TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )
+  `);
+
+  await db.exec(`
+  CREATE TABLE IF NOT EXISTS senha (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    usuario TEXT NOT NULL,
+    senha TEXT NOT NULL
+  )
 `);
+
+const row = await db.get("SELECT * FROM senha LIMIT 1");
+if (!row) {
+  await db.run(
+    "INSERT INTO senha (usuario, senha) VALUES (?, ?)",
+    ["admin", "123456"] // TROCAR A SENHA DEPOIS
+  );
+}
+
 
   return db;
 }
