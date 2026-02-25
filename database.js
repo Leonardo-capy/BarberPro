@@ -7,7 +7,7 @@ export async function initDB() {
     driver: sqlite3.Database
   });
 
-  // 🔐 Tabela de usuários (substitui "senha")
+  //  Tabela de usuários (substitui "senha")
   await db.exec(`
     CREATE TABLE IF NOT EXISTS usuarios (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,7 +19,7 @@ export async function initDB() {
     )
   `);
 
-  // 📅 Agendamentos vinculados ao usuário
+  //  Agendamentos vinculados ao usuário
   await db.exec(`
     CREATE TABLE IF NOT EXISTS agendamentos (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,7 +34,7 @@ export async function initDB() {
     )
   `);
 
-  // 🚫 Bloqueios vinculados ao usuário
+  //  Bloqueios vinculados ao usuário
   await db.exec(`
     CREATE TABLE IF NOT EXISTS bloqueios (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,7 +46,7 @@ export async function initDB() {
     )
   `);
 
-  // 👤 Criar admin padrão se não existir nenhum usuário
+  //  Criar admin padrão se não existir nenhum usuário
   const row = await db.get("SELECT id FROM usuarios LIMIT 1");
 
   if (!row) {

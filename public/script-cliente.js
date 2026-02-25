@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       barbeiros.forEach(barbeiro => {
         const option = document.createElement("option");
-        option.value = barbeiro.id; // 🔥 MUITO IMPORTANTE
+        option.value = barbeiro.id; 
         option.textContent = barbeiro.usuario;
         select.appendChild(option);
       });

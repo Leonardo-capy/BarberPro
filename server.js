@@ -21,7 +21,7 @@ app.use(session({
   }
 }));
 
-// 🔒 Middleware para proteger rotas admin
+//  Middleware para proteger rotas admin
 function verificarAdmin(req, res, next) {
   if (req.session.userId) {
     next();
@@ -34,13 +34,13 @@ async function startServer() {
 
   const db = await initDB();
 
-  // 🔥 Agora passamos o req para filtrar depois por userId
+  //  Agora passamos o req para filtrar depois por userId
   app.use("/api/agendamentos", (req, res, next) => {
     req.db = db;
     next();
   }, agendamentoRoutes(db));
 
-  // 🔐 LOGIN
+  //  LOGIN
   app.post("/login", async (req, res) => {
     const { usuario, senha } = req.body;
 
@@ -51,7 +51,7 @@ async function startServer() {
       );
 
       if (admin) {
-        req.session.userId = admin.id; // 🔥 AQUI É O ERRO
+        req.session.userId = admin.id; 
         res.sendStatus(200);
       } else {
         res.sendStatus(401);
@@ -65,7 +65,7 @@ async function startServer() {
 
   const __dirname = process.cwd();
 
-  // 🔒 Páginas protegidas
+  //  Páginas protegidas
   app.get("/admin.html", verificarAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, "admin/admin.html"));
   });
@@ -74,7 +74,7 @@ async function startServer() {
     res.sendFile(path.join(__dirname, "admin/admin-bloqueios.html"));
   });
 
-  // 🚪 Logout
+  // Logout
   app.get("/logout", (req, res) => {
     req.session.destroy(() => {
       res.redirect("/login.html");

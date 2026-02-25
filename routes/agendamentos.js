@@ -9,7 +9,7 @@ export function agendamentoRoutes(db) {
     "16:00", "17:00"
   ];
 
-  // 🔒 Middleware interno de proteção
+  // Middleware interno de proteção
   function verificarLogin(req, res, next) {
     if (!req.session.userId) {
       return res.status(401).json({ error: "Não autorizado" });
