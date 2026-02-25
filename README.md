@@ -1,6 +1,6 @@
 # 💈 BarberPro(Sujeito a mudança de nome) - Sistema de Agendamento para Barbearia
 
-Sistema web de agendamento online para barbearias, desenvolvido com Node.js, Express e SQLite no backend, e HTML, CSS e JavaScript puro no frontend.
+Sistema web de agendamento online para barbearias, desenvolvido com Node.js, Express e SQLite no backend, e HTML, CSS(css feito com Inteligencia Artificial-IA) e JavaScript puro no frontend.
 
 Projeto focado em prática real de desenvolvimento full stack, com separação entre área pública (cliente) e área administrativa (barbeiro).
 
