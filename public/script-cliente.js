@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const nome = document.getElementById("nome");
   const telefone = document.getElementById("telefone");
-  const servico = document.getElementById("servico");
+  const servico = document.getElementById("servicoSelect");
   const barbeiroSelect = document.getElementById("barbeiroNome");
 
   let horarioSelecionado = null;
@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
       body: JSON.stringify({
         nome: nome.value,
         telefone: telefone.value,
-        servico: servico.value,
+        servico_id: document.getElementById("servicoSelect").value,
         data: dataInput.value,
         horario: horarioSelecionado,
         user_id: barbeiroSelect.value
@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       barbeiros.forEach(barbeiro => {
         const option = document.createElement("option");
-        option.value = barbeiro.id; 
+        option.value = barbeiro.id;
         option.textContent = barbeiro.usuario;
         select.appendChild(option);
       });
@@ -175,4 +175,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
   carregarBarbeiros();
 
+  document.getElementById("barbeiroNome")
+  .addEventListener("change", carregarServicos);
+
+
+  async function carregarServicos() {
+
+    const barbeiroId = document.getElementById("barbeiroNome").value;
+
+    if (!barbeiroId) return;
+
+    const resposta = await fetch(
+      `/api/agendamentos/servicos?user_id=${barbeiroId}`
+    );
+
+    const servicos = await resposta.json();
+
+    const select = document.getElementById("servicoSelect");
+    select.innerHTML = '<option value="">Selecione o serviço</option>';
+
+    servicos.forEach(servico => {
+      const option = document.createElement("option");
+      option.value = servico.id;
+      option.textContent = `${servico.nome} — R$ ${Number(servico.preco).toFixed(2)}`;
+      select.appendChild(option);
+    });
+  }
+  carregarServicos();
+
+
 });
+

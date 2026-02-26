@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <title>BarberPro - Agendamento</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 </head>
+
 <body>
 
   <header class="navbar">
@@ -36,39 +38,37 @@
         <label>Telefone</label>
       </div>
 
-      <select id="servico" required>
-        <option value="">Selecione o serviço</option>
-        <option>Corte</option>
-        <option>Barba</option>
-        <option>Corte + Barba</option>
+      <select name="barbeiro" id="barbeiroNome" style="margin-bottom: 20px;">
+        <option value="">Escolha quem cortara seu cabelo</option>
       </select>
 
-      <select name="barbeiro" id="barbeiroNome" style="margin-top: 20px;">
-        <option value="">Escolha quem cortara seu cabelo</option>
+      <select id="servicoSelect" required>
+        <option value="">Selecione o serviço</option>
       </select>
 
       <input type="hidden" id="data" required>
 
-<div class="agenda-area">
-  <div id="calendar"></div>
+      <div class="agenda-area">
+        <div id="calendar"></div>
 
-  <p class="info-domingo">
-    ❌ Não atendemos aos domingos
-  </p>
+        <p class="info-domingo">
+          ❌ Não atendemos aos domingos
+        </p>
 
-  <div id="horariosContainer">
-    <p>Selecione uma data para ver horários disponíveis</p>
-  </div>
-</div>
+        <div id="horariosContainer">
+          <p>Selecione uma data para ver horários disponíveis</p>
+        </div>
+      </div>
 
       <button type="submit">Agendar Horário</button>
     </form>
   </section>
-  
+
   <footer>
     © 2026 BarberPro - Sistema Profissional de Agendamento
   </footer>
 
-<script src="script-cliente.js" defer></script>
+  <script src="script-cliente.js" defer></script>
 </body>
+
 </html>

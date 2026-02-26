@@ -9,7 +9,6 @@ export function agendamentoRoutes(db) {
     "16:00", "17:00"
   ];
 
-  // Middleware interno de proteção
   function verificarLogin(req, res, next) {
     if (!req.session.userId) {
       return res.status(401).json({ error: "Não autorizado" });
@@ -22,10 +21,10 @@ export function agendamentoRoutes(db) {
   // ===============================
   router.post("/", async (req, res) => {
     try {
-      const { nome, telefone, servico, data, horario, user_id } = req.body;
+      const { nome, telefone, servico_id, data, horario, user_id } = req.body;
       const userId = Number(user_id);
 
-      if (!nome || !telefone || !servico || !data || !horario) {
+      if (!nome || !telefone || !servico_id || !data || !horario) {
         return res.status(400).json({ error: "Todos os campos são obrigatórios." });
       }
 
@@ -47,11 +46,29 @@ export function agendamentoRoutes(db) {
         return res.status(409).json({ error: "Horário já está reservado." });
       }
 
+      const servicoDB = await db.get(
+        "SELECT nome, preco FROM servicos WHERE id = ? AND user_id = ?",
+        [servico_id, userId]
+      );
+
+      if (!servicoDB) {
+        return res.status(400).json({ error: "Serviço inválido."})
+      }
+
       await db.run(
         `INSERT INTO agendamentos 
-        (user_id, nome, telefone, servico, data, horario)
-        VALUES (?, ?, ?, ?, ?, ?)`,
-        [userId, nome, telefone, servico, data, horario]
+        (user_id, nome, telefone, servico, preco, servico_id, data, horario)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          userId, 
+          nome, 
+          telefone,
+          servicoDB.nome,
+          servicoDB.preco,
+          servico_id, 
+          data, 
+          horario
+        ]
       );
 
       res.status(201).json({ message: "Agendamento realizado com sucesso!" });
@@ -63,10 +80,58 @@ export function agendamentoRoutes(db) {
   });
 
   // ===============================
+  // Criar serviço
+  // ===============================
+
+  router.post("/servicos", verificarLogin, async (req, res) => {
+    const { nome, preco } = req.body;
+    const userId = req.session.userId;
+    await db.run(
+      "INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)",
+      [userId, nome, preco]
+    );
+
+    res.json({ message: "Serviço criado"});
+  });
+
+  // ===============================
+  // Criar serviço
+  // ===============================
+
+  router.get("/servicos", async (req, res) => {
+    const userId = req.query.user_id;
+
+    const servicos = await db.all(
+      "SELECT * FROM servicos WHERE user_id = ?",
+      [userId]
+    );
+
+    res.json(servicos);
+  });
+
+  // ===============================
+  // Finalizar atendimento (VALIDA PAGAMENTO)
+  // ===============================
+  router.put("/finalizar/:id", verificarLogin, async (req, res) => {
+    try {
+      const userId = req.session.userId;
+
+      await db.run(
+        "UPDATE agendamentos SET finalizado = 1 WHERE id = ? AND user_id = ?",
+        [req.params.id, userId]
+      );
+
+      res.json({ message: "Atendimento finalizado com sucesso." });
+
+    } catch {
+      res.status(500).json({ error: "Erro ao finalizar." });
+    }
+  });
+
+  // ===============================
   // Buscar horários disponíveis
   // ===============================
   router.get("/disponiveis/:data", async (req, res) => {
-
     try {
       const { data } = req.params;
       const userId = req.query.user_id;
@@ -83,7 +148,6 @@ export function agendamentoRoutes(db) {
 
       const ocupados = agendados.map(a => a.horario);
       const indisponiveis = bloqueados.map(b => b.horario);
-
       const todosIndisponiveis = [...ocupados, ...indisponiveis];
 
       const disponiveis = horariosFixos.filter(
@@ -130,26 +194,6 @@ export function agendamentoRoutes(db) {
   });
 
   // ===============================
-  // Buscar bloqueios
-  // ===============================
-  router.get("/bloqueios/:data", verificarLogin, async (req, res) => {
-    try {
-      const { data } = req.params;
-      const userId = req.session.userId;
-
-      const bloqueados = await db.all(
-        "SELECT horario FROM bloqueios WHERE data = ? AND user_id = ?",
-        [data, userId]
-      );
-
-      res.json(bloqueados.map(b => b.horario));
-
-    } catch {
-      res.status(500).json({ error: "Erro ao buscar bloqueios." });
-    }
-  });
-
-  // ===============================
   // Excluir agendamento
   // ===============================
   router.delete("/:id", verificarLogin, async (req, res) => {
@@ -184,6 +228,25 @@ export function agendamentoRoutes(db) {
 
     } catch {
       res.status(500).json({ error: "Erro ao buscar agendamentos." });
+    }
+  });
+
+  // ===============================
+  // Faturamento total (somente finalizados)
+  // ===============================
+  router.get("/faturamento", verificarLogin, async (req, res) => {
+    try {
+      const userId = req.session.userId;
+
+      const total = await db.get(
+        "SELECT SUM(preco) as total FROM agendamentos WHERE user_id = ? AND finalizado = 1",
+        [userId]
+      );
+
+      res.json({ total: total.total || 0 });
+
+    } catch {
+      res.status(500).json({ error: "Erro ao calcular faturamento." });
     }
   });
 
