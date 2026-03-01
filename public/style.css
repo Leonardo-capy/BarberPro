@@ -616,3 +616,14 @@ tr:hover {
   max-height: 85vh;
   overflow-y: auto;
 }
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  width: 100%;
+}
+
+.calendar-wrapper {
+  overflow-x: auto;
+}
