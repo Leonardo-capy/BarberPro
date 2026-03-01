@@ -4,6 +4,9 @@
   box-sizing: border-box;
   font-family: 'Segoe UI', sans-serif;
 }
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   background: linear-gradient(135deg, #111, #1f1f1f);
@@ -11,35 +14,70 @@ body {
   min-height: 100vh;
 }
 
-/* NAVBAR */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
 
+.servicos,
+.contato {
+  padding: 80px 0;
+  text-align: center;
+}
+.servicos h2,
+.contato h2{
+  margin-bottom: 20px;
+  font-size: 32px
+}
+.servicos ul {
+  list-style: none;
+  padding: 0;
+}
+.servicos li {
+  margin-bottom: 10px;
+}
+
+/* NAVBAR */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 40px;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(10px);
+  padding: 15px 40px;
+  background: #0f0f0f;
 }
 
-.logo {
-  font-size: 22px;
-  font-weight: bold;
-  color: #00ffd5;
-}
-
-nav a {
-  margin-left: 20px;
+.logo a {
   text-decoration: none;
-  color: white;
-  transition: 0.3s;
+  font-size: 24px;
+  font-weight: 700;
+  color: #00ffd5;
+  letter-spacing: 0.5px;
+  transition: 0.3s ease;
 }
 
-nav a:hover {
+.logo a:hover {
+  color: #00d5b1;
+}
+
+.navbar nav {
+  display: flex;
+  gap: 30px;
+}
+
+.navbar nav a {
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 16px;
+  transition: 0.3s ease;
+}
+
+.navbar nav a:hover {
   color: #00ffd5;
 }
 
 /* HERO */
+
 
 .hero {
   text-align: center;
@@ -187,7 +225,8 @@ footer {
   display: flex;
   justify-content: center;
   gap: 30px;
-  margin: 40px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
 }
 
 .stat-card {
@@ -217,6 +256,7 @@ footer {
   max-width: 1000px;
   margin: auto;
   padding: 30px;
+  width: 100%;
 }
 
 table {
@@ -485,4 +525,94 @@ tr:hover {
   color: black;
   font-weight: bold;
   box-shadow: 0 0 15px #00ffd5;
+}
+
+/* ==========================
+   Layout Admin Bloqueios
+========================== */
+
+.admin-container {
+  max-width: 1100px;
+  margin: 60px auto;
+  padding: 0 20px;
+
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 30px;
+}
+
+/* Seções viram cards */
+.calendar-section,
+.bloqueios-section {
+  background: linear-gradient(145deg, #1a1a1a, #222);
+  padding: 30px;
+  border-radius: 25px;
+  box-shadow: 
+    0 0 40px rgba(0, 255, 200, 0.1),
+    inset 0 0 20px rgba(255, 255, 255, 0.02);
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.calendar-section h2,
+.bloqueios-section h2 {
+  margin-bottom: 20px;
+  color: #00ffd5;
+  font-size: 20px;
+}
+
+/* Botão Dia Inteiro */
+.btn-dia-inteiro {
+  width: 100%;
+  margin-top: 15px;
+  background: linear-gradient(45deg, gold, orange);
+  color: black;
+}
+
+.btn-dia-inteiro:hover {
+  box-shadow: 0 0 20px gold;
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+  .admin-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.servicos-admin {
+  margin-bottom: 40px;
+}
+
+.form-servico {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.form-servico input {
+  padding: 8px;
+}
+
+.form-servico button {
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+#listaServicos li {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 40px;
+  align-items: start;
+  padding: 40px;
+}
+
+.lado-direito {
+  max-height: 85vh;
+  overflow-y: auto;
 }

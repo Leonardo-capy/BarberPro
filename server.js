@@ -4,6 +4,8 @@ import session from "express-session";
 import { initDB } from "./database.js";
 import { agendamentoRoutes } from "./routes/agendamentos.js";
 import path from "path";
+import { verificarLogin } from "./middleware/auth.js";
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -97,6 +99,41 @@ async function startServer() {
 
     res.json(usuario);
   });
+
+  app.get("/api/servicos", verificarLogin, async (req, res)=>  {
+    const userId = req.session.userId;
+
+    const servicos = await db.all(
+      "SELECT * FROM servicos WHERE user_id = ?",
+      [userId]
+    );
+
+    res.json(servicos)
+  });
+
+  app.post("/api/servicos", verificarLogin, async (req, res) =>{
+    const userId = req.session.userId;
+    const { nome, preco } = req.body;
+
+    await db.run(
+      "INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)",
+      [userId, nome, preco]
+    );
+
+    res.json({ success: true})
+  });
+
+app.delete("/api/servicos/:id", verificarLogin, async (req, res) =>{
+  const userId = req.session.userId;
+  const servicoId = req.params.id;
+
+  await db.run(
+    "DELETE FROM servicos WHERE id = ? AND user_id = ?",
+    [servicoId, userId]
+  );
+
+  res.json({ success: true })
+});
 
   app.get("/api/barbeiros", async (req, res) => {
     try {

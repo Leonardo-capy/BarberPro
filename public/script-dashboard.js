@@ -34,13 +34,12 @@ async function carregarAgendamentos() {
       <td>${item.data}</td>
       <td>${item.horario}</td>
       <td>
-        ${
-          item.finalizado === 0
-            ? `<button class="finalizar-btn" onclick="finalizar(${item.id})">
+        ${item.finalizado === 0
+        ? `<button class="finalizar-btn" onclick="finalizar(${item.id})">
                 Finalizar
               </button>`
-            : `<span style="color:green;font-weight:bold;">✔ Pago</span>`
-        }
+        : `<span style="color:green;font-weight:bold;">✔ Pago</span>`
+      }
 
         <button class="delete-btn" onclick="excluir(${item.id})">
           Excluir
@@ -53,6 +52,54 @@ async function carregarAgendamentos() {
 
   hoje.textContent = countHoje;
 }
+
+async function carregarServicos() {
+  const res = await fetch("/api/servicos");
+  const servicos = await res.json();
+
+  const lista = document.getElementById("listaServicos");
+  lista.innerHTML = "";
+
+  servicos.forEach(servico => {
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      ${servico.nome} - R$ ${servico.preco}
+      <button onclick="excluirServico(${servico.id})">Excluir</button>
+    `;
+
+    lista.appendChild(li);
+  });
+}
+
+document.getElementById("formServico")
+.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const nome = document.getElementById("nomeServico").value;
+  const preco = document.getElementById("precoServico").value;
+
+  await fetch("/api/servicos", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ nome, preco })
+  });
+
+  e.target.reset();
+  carregarServicos();
+});
+
+async function excluirServico(id) {
+  await fetch(`/api/servicos/${id}`, {
+    method: "DELETE"
+  });
+
+  carregarServicos();
+}
+
+carregarServicos();
 
 async function excluir(id) {
   if (!confirm("Deseja realmente excluir?")) return;

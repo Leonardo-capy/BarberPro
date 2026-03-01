@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <title>BarberPro - Agendamento</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="stylesheet" href="style.css">
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
@@ -11,64 +13,110 @@
 
 <body>
 
+  <!-- Navbar -->
   <header class="navbar">
-    <div class="logo"><a href="login.html">✂ BarberPro</a></div>
-    <nav>
-      <a href="#">Início</a>
-      <a href="#">Serviços</a>
-      <a href="#">Contato</a>
-    </nav>
+    <div class="container">
+      <div class="logo">
+        <a href="login.html">✂ BarberPro</a>
+      </div>
+      <nav>
+        <a href="#inicio">Início</a>
+        <a href="#servicos">Serviços</a>
+        <a href="#contato">Contato</a>
+      </nav>
+    </div>
   </header>
 
-  <section class="hero">
-    <h1>Agende seu horário online</h1>
-    <p>Rápido, simples e sem espera.</p>
-  </section>
+  <main>
 
-  <section class="card">
-    <h2>Agendamento</h2>
-    <form id="formAgendamento">
-      <div class="input-group">
-        <input type="text" id="nome" required>
-        <label>Nome</label>
+    <!-- Hero -->
+    <section class="hero" id="inicio">
+      <div class="container">
+        <h1>Agende seu horário online</h1>
+        <p>Rápido, simples e sem espera.</p>
       </div>
-
-      <div class="input-group">
-        <input type="text" id="telefone" required>
-        <label>Telefone</label>
+    </section>
+    <section class="servicos" id="servicos">
+      <div class="container">
+        <h2>Nossos Serviços</h2>
+        <ul>
+          <li>Corte Masculino</li>
+          <li>Barba</li>
+          <li>Corte + Barba</li>
+        </ul>
       </div>
+    </section>
 
-      <select name="barbeiro" id="barbeiroNome" style="margin-bottom: 20px;">
-        <option value="">Escolha quem cortara seu cabelo</option>
-      </select>
+    <!-- Card de Agendamento -->
+    <section class="agendamento-section">
+      <div class="container">
+        <div class="card">
+          <h2>Agendamento</h2>
 
-      <select id="servicoSelect" required>
-        <option value="">Selecione o serviço</option>
-      </select>
+          <form id="formAgendamento">
 
-      <input type="hidden" id="data" required>
+            <div class="input-group">
+              <input type="text" id="nome" required>
+              <label>Nome</label>
+            </div>
 
-      <div class="agenda-area">
-        <div id="calendar"></div>
+            <div class="input-group">
+              <input type="text" id="telefone" required>
+              <label>Telefone</label>
+            </div>
 
-        <p class="info-domingo">
-          ❌ Não atendemos aos domingos
-        </p>
+            <div class="input-group">
+              <select name="barbeiro" id="barbeiroNome" required>
+                <option value="">Escolha quem cortará seu cabelo</option>
+              </select>
+            </div>
 
-        <div id="horariosContainer">
-          <p>Selecione uma data para ver horários disponíveis</p>
+            <div class="input-group">
+              <select id="servicoSelect" required>
+                <option value="">Selecione o serviço</option>
+              </select>
+            </div>
+
+            <input type="hidden" id="data" required>
+
+            <div class="agenda-area">
+
+              <div class="calendar-wrapper">
+                <div id="calendar"></div>
+                <p class="info-domingo">❌ Não atendemos aos domingos</p>
+              </div>
+
+              <div class="horarios-wrapper" id="horariosContainer">
+                <p>Selecione uma data para ver horários disponíveis</p>
+              </div>
+
+            </div>
+
+            <button type="submit">Agendar Horário</button>
+
+          </form>
         </div>
       </div>
+    </section>
 
-      <button type="submit">Agendar Horário</button>
-    </form>
+  </main>
+  <section class="contato" id="contato">
+    <div class="container">
+      <h2>Contato</h2>
+      <p>Telefone: (00) 00000-0000</p>
+      <p>Endereço: Sua cidade</p>
+    </div>
   </section>
 
+  <!-- Footer -->
   <footer>
-    © 2026 BarberPro - Sistema Profissional de Agendamento
+    <div class="container">
+      © 2026 BarberPro - Sistema Profissional de Agendamento
+    </div>
   </footer>
 
   <script src="script-cliente.js" defer></script>
+
 </body>
 
 </html>

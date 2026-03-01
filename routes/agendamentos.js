@@ -1,4 +1,6 @@
 import express from "express";
+import { verificarLogin } from "../middleware/auth.js";
+
 
 export function agendamentoRoutes(db) {
   const router = express.Router();
@@ -9,12 +11,6 @@ export function agendamentoRoutes(db) {
     "16:00", "17:00"
   ];
 
-  function verificarLogin(req, res, next) {
-    if (!req.session.userId) {
-      return res.status(401).json({ error: "Não autorizado" });
-    }
-    next();
-  }
 
   // ===============================
   // Bloquear dia inteiro
