@@ -352,7 +352,9 @@ tr:hover {
 }
 
 #calendar {
-  width: 100%;
+  width: 100% !important;
+  max-width: 100%;
+  min-width: 350px;
   margin: 30px 0;
   background: #181818;
   padding: 25px;
@@ -361,6 +363,7 @@ tr:hover {
 }
 
 .fc {
+  font-size: 14px;
   color: white;
 }
 
@@ -626,4 +629,10 @@ tr:hover {
 
 .calendar-wrapper {
   overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+  .agenda-area {
+    flex-direction: column;
+  }
 }

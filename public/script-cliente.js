@@ -42,6 +42,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   calendar.render();
 
+  window.addEventListener("resize", () => {
+    calendar.updateSize();
+  });
+
   async function buscarHorarios(data) {
 
 
