@@ -17,6 +17,73 @@ export function agendamentoRoutes(db) {
   }
 
   // ===============================
+  // Bloquear dia inteiro
+  // ===============================
+
+  router.post("/bloquear-dia", verificarLogin, async (req, res) => {
+    try {
+      const { data } = req.body;
+      const userId = req.session.userId
+
+      if (!data) {
+        return res.status(400).json({ error: "Data é obrigatoria." });
+      }
+
+      if (!userId) {
+        return res.status(401).json({ error: "Usuário não autenticado."})
+      }
+
+      const jaBloqueado = await db.get(
+        "SELECT id FROM bloqueios WHERE user_id = ? AND data = ? AND horario =?",
+        [userId, data, "DIA_INTEIRO"]
+      );
+      if (jaBloqueado) {
+        await db.run(
+          "DELETE FROM bloqueios WHERE user_id = ? AND data = ? AND horario = ?",
+          [userId, data, "DIA_INTEIRO"]
+        );
+        return res.json({ status: "desbloqueado", message: "Dia desbloqueado com sucesso!"});
+      }
+      await db.run(
+        "DELETE FROM bloqueios WHERE user_id = ? AND data = ?",
+        [userId, data]
+      );
+
+      await db.run(
+        "INSERT INTO bloqueios (user_id, data, horario) VALUES (?, ?, ?)",
+        [userId, data, "DIA_INTEIRO"]
+      );
+
+      res.json({ message: "Dia bloqueado com sucesso!" });
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Erro ao bloquear/desbloquear dia."});
+      alert("erro ao bloquear/desbloquear dia", error);
+    }
+  });
+
+router.get("/bloqueios/:data", verificarLogin, async (req, res) =>{
+  try {
+    const { data } = req.params;
+    const userId = req.session.userId;
+
+    const bloqueios = await db.all(
+      "SELECT horario FROM bloqueios WHERE data = ? AND user_id = ?",
+      [data, userId]
+    );
+
+    const horarios = bloqueios.map(b => b.horario);
+
+    res.json(horarios);
+  } catch (error){
+    console.error(error);
+    res.status(500).json({ error: "Erro ao buscar bloqueios."});
+  }
+});
+
+
+  // ===============================
   // Criar agendamento
   // ===============================
   router.post("/", async (req, res) => {
@@ -35,6 +102,13 @@ export function agendamentoRoutes(db) {
 
       if (bloqueado) {
         return res.status(403).json({ error: "Horário bloqueado pelo barbeiro." });
+      }
+      const bloqueioDia = await db.get(
+        "SELECT * FROM bloqueios WHERE data = ? AND user_id = ? AND horario = ?",
+        [data, userId, "DIA_INTEIRO"]
+      );
+      if (bloqueioDia) {
+        return res.status(403).json({ error: "Este dia está bloqueado"});
       }
 
       const conflito = await db.get(
@@ -135,6 +209,14 @@ export function agendamentoRoutes(db) {
     try {
       const { data } = req.params;
       const userId = req.query.user_id;
+      const bloqueioTotal = await db.get(
+        "SELECT * FROM bloqueios WHERE data = ? AND user_id = ? AND horario = ?",
+        [data, userId, "DIA_INTEIRO"]
+      );
+
+      if (bloqueioTotal) {
+        return res.json([]);
+      }
 
       const agendados = await db.all(
         "SELECT horario FROM agendamentos WHERE data = ? AND user_id = ?",

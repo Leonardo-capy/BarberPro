@@ -1,25 +1,43 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <title>Painel Administrativo - BarberPro</title>
   <link rel="stylesheet" href="style.css">
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 </head>
+
 <body>
 
   <header class="navbar">
-  <div class="logo">✂ BarberPro Admin</div>
-  <nav class="admin-nav">
-    <a href="admin.html">Agendamentos</a>
-    <a href="admin-bloqueios.html" class="active">Bloqueios</a>
-  </nav>
-</header>
-  <div id="calendar"></div>
-<div id="horariosContainer"></div>
+    <div class="logo">✂ BarberPro Admin</div>
+    <nav class="admin-nav">
+      <a href="admin.html">Agendamentos</a>
+      <a href="admin-bloqueios.html" class="active">Bloqueios</a>
+    </nav>
+  </header>
 
-<script src="script-admin.js"></script>
+  <main class="admin-container">
+
+    <section class="calendar-section">
+      <h2>Selecionar Data</h2>
+      <div id="calendar"></div>
+    </section>
+
+    <section class="bloqueios-section">
+      <h2>Gerenciar Horários</h2>
+      <div id="horariosContainer"></div>
+      <button id="bloquearDiaBtn" class="btn-dia-inteiro">
+        Bloquear / Desbloquear Dia Inteiro
+      </button>
+    </section>
+
+  </main>
+
+  <script src="script-admin.js"></script>
 
 </body>
+
 </html>

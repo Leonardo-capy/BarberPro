@@ -1,5 +1,38 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+  let dataSelecionada = null;
+
+  document.getElementById("bloquearDiaBtn")
+    .addEventListener("click", async () => {
+
+      if (!dataSelecionada) {
+        alert("Selecione uma data no calendário primeiro.");
+        return;
+      }
+      try {
+        const resposta = await fetch("/api/agendamentos/bloquear-dia", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            data: dataSelecionada
+          })
+        });
+
+        if (!resposta.ok) {
+          throw new Error("Erro ao bloquear dia");
+        }
+
+        const resultado = await resposta.json();
+        alert(resultado.message);
+
+        buscarHorariosAdmin(dataSelecionada);
+
+      } catch (error) {
+        console.error("Erro: ", erro);
+        alert("O servidor retornou erro 500. Verifique o backend.")
+      }
+    });
+
   const horariosContainer = document.getElementById("horariosContainer");
 
   const calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
@@ -15,6 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
     buttonText: { today: "Hoje" },
 
     dateClick: function (info) {
+      dataSelecionada = info.dateStr;
       buscarHorariosAdmin(info.dateStr);
     }
   });
