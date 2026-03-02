@@ -25,16 +25,19 @@ app.use(session({
 
 //  Middleware para proteger rotas admin
 function verificarAdmin(req, res, next) {
-  if (req.session.userId) {
-    next();
-  } else {
-    res.redirect("/login.html");
+  if (!req.session.usuario || req.session.role !== "admin") {
+    return res.redirect("/")
   }
+  next();
 }
 
 async function startServer() {
 
   const db = await initDB();
+
+  app.get("/painel.html", verificarLogin, (req, res) => {
+    res.sendFile(path.join(__dirname, "public/painel.html"))
+  });
 
   //  Agora passamos o req para filtrar depois por userId
   app.use("/api/agendamentos", (req, res, next) => {
@@ -47,14 +50,21 @@ async function startServer() {
     const { usuario, senha } = req.body;
 
     try {
-      const admin = await db.get(
+      const user = await db.get(
         "SELECT * FROM usuarios WHERE usuario = ? AND senha = ?",
         [usuario, senha]
       );
 
-      if (admin) {
-        req.session.userId = admin.id; 
-        res.sendStatus(200);
+      if (user) {
+        req.session.userId = user.id;
+        req.session.usuario = user.usuario;
+        req.session.role = user.role;
+
+        return res.json({
+          success: true,
+          role: user.role
+        });
+
       } else {
         res.sendStatus(401);
       }
@@ -100,7 +110,7 @@ async function startServer() {
     res.json(usuario);
   });
 
-  app.get("/api/servicos", verificarLogin, async (req, res)=>  {
+  app.get("/api/servicos", verificarLogin, async (req, res) => {
     const userId = req.session.userId;
 
     const servicos = await db.all(
@@ -111,7 +121,7 @@ async function startServer() {
     res.json(servicos)
   });
 
-  app.post("/api/servicos", verificarLogin, async (req, res) =>{
+  app.post("/api/servicos", verificarLogin, async (req, res) => {
     const userId = req.session.userId;
     const { nome, preco } = req.body;
 
@@ -120,20 +130,20 @@ async function startServer() {
       [userId, nome, preco]
     );
 
-    res.json({ success: true})
+    res.json({ success: true })
   });
 
-app.delete("/api/servicos/:id", verificarLogin, async (req, res) =>{
-  const userId = req.session.userId;
-  const servicoId = req.params.id;
+  app.delete("/api/servicos/:id", verificarLogin, async (req, res) => {
+    const userId = req.session.userId;
+    const servicoId = req.params.id;
 
-  await db.run(
-    "DELETE FROM servicos WHERE id = ? AND user_id = ?",
-    [servicoId, userId]
-  );
+    await db.run(
+      "DELETE FROM servicos WHERE id = ? AND user_id = ?",
+      [servicoId, userId]
+    );
 
-  res.json({ success: true })
-});
+    res.json({ success: true })
+  });
 
   app.get("/api/barbeiros", async (req, res) => {
     try {
@@ -144,6 +154,57 @@ app.delete("/api/servicos/:id", verificarLogin, async (req, res) =>{
       res.json(barbeiros);
     } catch (err) {
       res.status(500).json({ error: "Erro ao buscar barbeiros." });
+    }
+  });
+
+  app.get("/api/admin/dashboard", verificarAdmin, async (req, res) => {
+    try {
+      const totalAgendamentos = await db.get(`
+        SELECT COUNT(*) as total
+        FROM agendamentos
+        WHERE finalizado = 1
+        `);
+      const faturamentoTotal = await db.get(`
+        SELECT SUM(preco) as total
+        FROM agendamentos
+        WHERE finalizado = 1
+        `);
+      
+      const totalClientes = await db.get(`
+        SELECT COUNT(DISTINCT telefone) as total
+        FROM agendamentos
+        WHERE finalizado = 1
+        `);
+
+      const barbeiroTop = await db.get(`
+        SELECT u.usuario, SUM(a.preco) as total
+        FROM agendamentos a
+        JOIN usuarios u ON u.id = a.user_id
+        WHERE a.finalizado = 1
+        GROUP BY a.user_id
+        ORDER BY total DESC
+        LIMIT 1
+        `);
+
+        const servicoTop = await db.get(`
+          SELECT servico, COUNT(*) as total
+          FROM agendamentos
+          WHERE finalizado = 1
+          GROUP BY servico
+          ORDER BY total DESC
+          LIMIT 1
+          `);
+
+          res.json({
+            totalAgendamentos: totalAgendamentos?.total || 0,
+            faturamentoTotal: faturamentoTotal?.total || 0,
+            totalClientes: totalClientes?.total || 0,
+            barbeiroTop: barbeiroTop || null,
+            servicoTop: servicoTop || null
+          });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Erro ao carregar dashboard"})
     }
   });
 }

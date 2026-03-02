@@ -57,20 +57,27 @@ export async function initDB() {
     )
   `);
 
+
+  await db.exec(`
+  ALTER TABLE usuarios ADD COLUMN role TEXT DEFAULT 'barbeiro'
+  `).catch(() => { });
+
   //  Criar admin padrão se não existir nenhum usuário
   const row = await db.get("SELECT id FROM usuarios LIMIT 1");
 
   if (!row) {
     await db.run(
-      "INSERT INTO usuarios (usuario, senha, plano) VALUES (?, ?, ?)",
-      ["admin", "123456", "ativo"]
+      "INSERT INTO usuarios (usuario, senha, plano, role) VALUES (?, ?, ?, ?)",
+      ["admin", "123456", "ativo", "admin"]
     );
 
     await db.run(
-      "INSERT INTO usuarios (usuario, senha, plano) VALUES (?, ?, ?)",
-      ["lucas", "654321", "ativo"]
+      "INSERT INTO usuarios (usuario, senha, plano, role) VALUES (?, ?, ?, ?)",
+      ["lucas", "654321", "ativo", "barbeiro"]
     );
   }
+
+
 
   await db.exec(`
   CREATE TABLE IF NOT EXISTS servicos (
@@ -88,48 +95,48 @@ export async function initDB() {
 `).catch(() => { });
 
   // USER 1
-const servicoUser1 = await db.get(
-  "SELECT id FROM servicos WHERE user_id = 1 LIMIT 1"
-);
-
-if (!servicoUser1) {
-  await db.run(
-    "INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)",
-    [1, "Corte", 35.0]
+  const servicoUser1 = await db.get(
+    "SELECT id FROM servicos WHERE user_id = 1 LIMIT 1"
   );
 
-  await db.run(
-    "INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)",
-    [1, "Barba", 25.0]
+  if (!servicoUser1) {
+    await db.run(
+      "INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)",
+      [1, "Corte", 35.0]
+    );
+
+    await db.run(
+      "INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)",
+      [1, "Barba", 25.0]
+    );
+
+    await db.run(
+      "INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)",
+      [1, "Corte + Barba", 55.0]
+    );
+  }
+
+  // USER 2
+  const servicoUser2 = await db.get(
+    "SELECT id FROM servicos WHERE user_id = 2 LIMIT 1"
   );
 
-  await db.run(
-    "INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)",
-    [1, "Corte + Barba", 55.0]
-  );
-}
+  if (!servicoUser2) {
+    await db.run(
+      "INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)",
+      [2, "Corte", 25.0]
+    );
 
-// USER 2
-const servicoUser2 = await db.get(
-  "SELECT id FROM servicos WHERE user_id = 2 LIMIT 1"
-);
+    await db.run(
+      "INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)",
+      [2, "Barba", 15.0]
+    );
 
-if (!servicoUser2) {
-  await db.run(
-    "INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)",
-    [2, "Corte", 25.0]
-  );
-
-  await db.run(
-    "INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)",
-    [2, "Barba", 15.0]
-  );
-
-  await db.run(
-    "INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)",
-    [2, "Corte + Barba", 40.0]
-  );
-}
+    await db.run(
+      "INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)",
+      [2, "Corte + Barba", 40.0]
+    );
+  }
 
   return db;
 }

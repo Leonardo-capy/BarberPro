@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <title>Login Admin - BarberPro</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
   <div class="login-container">
     <h2>Área Administrativa</h2>
 
     <form id="loginForm">
-    <input type="text" id="usuario" placeholder="Digite o usuario" required>
+      <input type="text" id="usuario" placeholder="Digite o usuario" required>
       <input type="password" id="senha" placeholder="Digite a senha" required>
       <button type="submit">Entrar</button>
     </form>
@@ -22,23 +24,33 @@
   <script>
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      
+
       const usuario = document.getElementById("usuario").value;
       const senha = document.getElementById("senha").value;
 
       const resposta = await fetch("/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({usuario, senha })
+        body: JSON.stringify({ usuario, senha })
       });
 
-      if (resposta.ok) {
+      const data = await resposta.json();
+
+      if (!resposta.ok || !data.success) {
+        document.getElementById("erro").textContent = "Usuário ou senha incorreta!";
+        return;
+      }
+
+      if (data.role === "admin") {
         window.location.href = "/admin.html";
+      } else if (data.role === "barbeiro") {
+        window.location.href = "/painel.html";
       } else {
-        document.getElementById("erro").textContent = "Usuario ou Senha incorreta!";
+        document.getElementById("erro").textContent = "Acesso não autorizado.";
       }
     });
   </script>
 
 </body>
+
 </html>
