@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
     initialView: "dayGridMonth",
+    height: 'auto',
+    contentHeight: 'auto',
     locale: "pt-br",
     validRange: { start: hoje },
 

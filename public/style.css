@@ -354,17 +354,18 @@ tr:hover {
 #calendar {
   width: 100% !important;
   max-width: 100%;
-  min-width: 350px;
   margin: 30px 0;
   background: #181818;
   padding: 25px;
   border-radius: 20px;
   box-shadow: 0 0 60px rgba(255, 215, 0, 0.15);
 }
-
+@media (max-width : 768px) {
 .fc {
+  height: auto !important;
   font-size: 14px;
   color: white;
+}
 }
 
 .fc-toolbar-title {
@@ -380,7 +381,7 @@ tr:hover {
   border-radius: 10px !important;
 }
 .fc-scroller {
-  overflow: hidden !important;
+  overflow: vissible !important;
 }
 .fc-daygrid-body {
   width: 100% !important;
@@ -628,6 +629,7 @@ tr:hover {
 }
 
 .calendar-wrapper {
+  width: 100%;
   overflow-x: auto;
 }
 
@@ -635,4 +637,14 @@ tr:hover {
   .agenda-area {
     flex-direction: column;
   }
+}
+
+.servicos-info {
+  text-align: center;
+  margin: 40px 0;
+}
+
+.servicos-info p {
+  opacity: 0.8;
+  font-size: 15px;
 }
