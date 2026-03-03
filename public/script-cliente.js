@@ -181,34 +181,49 @@ document.addEventListener("DOMContentLoaded", function () {
 
   carregarBarbeiros();
 
-  document.getElementById("barbeiroNome")
-  .addEventListener("change", carregarServicos);
-
+  // Quando o barbeiro muda, atualiza os serviços disponíveis
+  document.getElementById("barbeiroNome").addEventListener("change", carregarServicos);
 
   async function carregarServicos() {
-
     const barbeiroId = document.getElementById("barbeiroNome").value;
 
-    if (!barbeiroId) return;
+    if (!barbeiroId) return; // nenhum barbeiro selecionado
 
-    const resposta = await fetch(
-      `/api/agendamentos/servicos?user_id=${barbeiroId}`
-    );
+    try {
+      // Busca serviços do barbeiro
+      const resposta = await fetch(`/api/agendamentos/servicos?user_id=${barbeiroId}`);
 
-    const servicos = await resposta.json();
+      if (!resposta.ok) {
+        console.error("Falha ao buscar serviços:", resposta.status, await resposta.text());
+        return;
+      }
 
-    const select = document.getElementById("servicoSelect");
-    select.innerHTML = '<option value="">Selecione o serviço</option>';
+      const servicos = await resposta.json();
 
-    servicos.forEach(servico => {
-      const option = document.createElement("option");
-      option.value = servico.id;
-      option.textContent = `${servico.nome} — R$ ${Number(servico.preco).toFixed(2)}`;
-      select.appendChild(option);
-    });
+      // Certifica que é um array
+      if (!Array.isArray(servicos)) {
+        console.error("Serviços inválidos:", servicos);
+        return;
+      }
+
+      // Preenche select
+      const select = document.getElementById("servicoSelect");
+      select.innerHTML = '<option value="">Selecione o serviço</option>';
+
+      servicos.forEach(servico => {
+        const option = document.createElement("option");
+        option.value = servico.id;
+        option.textContent = `${servico.nome} — R$ ${Number(servico.preco).toFixed(2)}`;
+        select.appendChild(option);
+      });
+
+    } catch (erro) {
+      console.error("Erro ao carregar serviços:", erro);
+    }
   }
-  carregarServicos();
 
+  // Carrega serviços se já tiver algum barbeiro selecionado
+  carregarServicos();
 
 });
 

@@ -27,24 +27,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 🚀 CARREGA FUNÇÕES CONFORME A PÁGINA
   // =========================
 
-  if (document.getElementById("lista")) {
-    carregarAgendamentos();
-  }
-
-  if (document.getElementById("faturamento")) {
-    carregarFaturamento();
-  }
-
-  if (document.getElementById("listaServicos")) {
-    carregarServicos();
-  }
-
-  if (document.getElementById("tabelaUsuarios")) {
-    carregarUsuarios();
-  }
+  if (document.getElementById("lista")) carregarAgendamentos();
+  if (document.getElementById("faturamento")) carregarFaturamento();
+  if (document.getElementById("listaServicos")) carregarServicos();
+  if (document.getElementById("tabelaUsuarios")) carregarUsuarios();
 
 });
-
 
 // =========================
 // 📅 AGENDAMENTOS
@@ -55,7 +43,6 @@ async function carregarAgendamentos() {
   const lista = document.getElementById("lista");
   const total = document.getElementById("total");
   const hoje = document.getElementById("hoje");
-
   if (!lista || !total || !hoje) return;
 
   const resposta = await fetch("/api/agendamentos");
@@ -68,14 +55,11 @@ async function carregarAgendamentos() {
   let countHoje = 0;
 
   dados.forEach(item => {
-
     if (item.data === hojeData) countHoje++;
 
     const tr = document.createElement("tr");
 
-    if (item.finalizado === 1) {
-      tr.style.backgroundColor = "#d4edda";
-    }
+    if (item.finalizado === 1) tr.style.backgroundColor = "#d4edda";
 
     tr.innerHTML = `
       <td>${item.nome}</td>
@@ -85,8 +69,8 @@ async function carregarAgendamentos() {
       <td>${item.horario}</td>
       <td>
         ${item.finalizado === 0
-        ? `<button onclick="finalizar(${item.id})">Finalizar</button>`
-        : `<span style="color:green;font-weight:bold;">✔ Pago</span>`}
+          ? `<button onclick="finalizar(${item.id})">Finalizar</button>`
+          : `<span style="color:green;font-weight:bold;">✔ Pago</span>`}
         <button onclick="excluir(${item.id})">Excluir</button>
       </td>
     `;
@@ -100,14 +84,16 @@ async function carregarAgendamentos() {
 async function excluir(id) {
   if (!confirm("Deseja realmente excluir?")) return;
 
-  await fetch("/api/agendamentos/" + id, { method: "DELETE" });
+  const res = await fetch("/api/agendamentos/" + id, { method: "DELETE" });
+  if (!res.ok) return alert("Erro ao excluir agendamento");
 
   carregarAgendamentos();
   carregarFaturamento();
 }
 
 async function finalizar(id) {
-  await fetch("/api/agendamentos/finalizar/" + id, { method: "PUT" });
+  const res = await fetch("/api/agendamentos/finalizar/" + id, { method: "PUT" });
+  if (!res.ok) return alert("Erro ao finalizar agendamento");
 
   carregarAgendamentos();
   carregarFaturamento();
@@ -116,13 +102,11 @@ async function finalizar(id) {
 window.excluir = excluir;
 window.finalizar = finalizar;
 
-
 // =========================
 // 💰 FATURAMENTO
 // =========================
 
 async function carregarFaturamento() {
-
   const elemento = document.getElementById("faturamento");
   if (!elemento) return;
 
@@ -132,13 +116,11 @@ async function carregarFaturamento() {
   elemento.textContent = "R$ " + Number(dados.total).toFixed(2);
 }
 
-
 // =========================
 // ✂️ SERVIÇOS
 // =========================
 
 async function carregarServicos() {
-
   const lista = document.getElementById("listaServicos");
   if (!lista) return;
 
@@ -149,30 +131,28 @@ async function carregarServicos() {
 
   servicos.forEach(servico => {
     const li = document.createElement("li");
-
     li.innerHTML = `
-      ${servico.nome} - R$ ${servico.preco}
+      ${servico.nome} - R$ ${Number(servico.preco).toFixed(2)}
       <button onclick="excluirServico(${servico.id})">Excluir</button>
     `;
-
     lista.appendChild(li);
   });
 }
 
 async function excluirServico(id) {
-  await fetch(`/api/servicos/${id}`, { method: "DELETE" });
+  const res = await fetch(`/api/servicos/${id}`, { method: "DELETE" });
+  if (!res.ok) return alert("Erro ao excluir serviço");
+
   carregarServicos();
 }
 
 window.excluirServico = excluirServico;
-
 
 // =========================
 // 👑 USUÁRIOS (ADMIN TOTAL)
 // =========================
 
 async function carregarUsuarios() {
-
   const tabela = document.getElementById("tabelaUsuarios");
   if (!tabela) return;
 
@@ -183,7 +163,6 @@ async function carregarUsuarios() {
     tabela.innerHTML = "";
 
     usuarios.forEach(user => {
-
       const linha = document.createElement("tr");
 
       linha.innerHTML = `
@@ -191,9 +170,7 @@ async function carregarUsuarios() {
         <td>${user.usuario}</td>
         <td>${user.role}</td>
         <td>
-          <button onclick="excluirUsuario(${user.id})">
-            Excluir
-          </button>
+          ${user.id !== 1 ? `<button onclick="excluirUsuario(${user.id})">Excluir</button>` : `<span>—</span>`}
         </td>
       `;
 
@@ -206,9 +183,11 @@ async function carregarUsuarios() {
 }
 
 async function excluirUsuario(id) {
+  if (id === 1) return alert("Não é permitido excluir o admin principal");
   if (!confirm("Tem certeza que deseja excluir?")) return;
 
-  await fetch(`/api/admin/usuarios/${id}`, { method: "DELETE" });
+  const res = await fetch(`/api/admin/usuarios/${id}`, { method: "DELETE" });
+  if (!res.ok) return alert("Erro ao excluir usuário");
 
   carregarUsuarios();
 }
@@ -219,22 +198,23 @@ const formNovoUsuario = document.getElementById("formNovoUsuario");
 
 if (formNovoUsuario) {
   formNovoUsuario.addEventListener("submit", async (e) => {
-    e. preventDefault();
+    e.preventDefault();
 
-    const usuario = document.getElementById("novoUsuario").value;
-    const senha = document.getElementById("novaSenha").value;
+    const usuario = document.getElementById("novoUsuario").value.trim();
+    const senha = document.getElementById("novaSenha").value.trim();
     const role = document.getElementById("novaRole").value;
 
-    await fetch("/api/admin/usuarios", {
+    if (!usuario || !senha || !role) return alert("Preencha todos os campos");
+
+    const res = await fetch("/api/admin/usuarios", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ usuario, senha, role })
     });
 
-    e.target.reset();
+    if (!res.ok) return alert("Erro ao criar usuário");
 
+    e.target.reset();
     carregarUsuarios();
   });
 }
@@ -249,19 +229,20 @@ if (formServico) {
   formServico.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const nome = document.getElementById("nomeServico").value;
-    const preco = document.getElementById("precoServico").value;
+    const nome = document.getElementById("nomeServico").value.trim();
+    const preco = document.getElementById("precoServico").value.trim();
 
-    await fetch("/api/servicos", {
+    if (!nome || !preco) return alert("Preencha todos os campos");
+
+    const res = await fetch("/api/servicos", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nome, preco })
     });
 
-    e.target.reset();
+    if (!res.ok) return alert("Erro ao adicionar serviço");
 
+    e.target.reset();
     carregarServicos();
   });
 }

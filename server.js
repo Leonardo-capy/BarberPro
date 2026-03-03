@@ -5,7 +5,7 @@ import { initDB } from "./database.js";
 import { agendamentoRoutes } from "./routes/agendamentos.js";
 import path from "path";
 import { verificarLogin, verificarBarbeiroOuAdmin, verificarAdminTotal } from "./middleware/auth.js";
-import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,235 +18,148 @@ app.use(session({
   secret: "barberpro-secret",
   resave: false,
   saveUninitialized: false,
-  cookie: {
-    httpOnly: true
-  }
+  cookie: { httpOnly: true }
 }));
 
-
 async function startServer() {
-
   const db = await initDB();
 
-
-
-  //  Agora passamos o req para filtrar depois por userId
-  app.use("/api/agendamentos", (req, res, next) => {
-    req.db = db;
-    next();
-  }, agendamentoRoutes(db));
-
-  //  LOGIN
-  app.post("/login", async (req, res) => {
-    const { usuario, senha } = req.body;
-
-    try {
-      const user = await db.get(
-        "SELECT * FROM usuarios WHERE usuario = ? AND senha = ?",
-        [usuario, senha]
-      );
-
-      if (user) {
-        req.session.userId = user.id;
-        req.session.usuario = {
-          id: user.id,
-          nome: user.nome,
-          role: user.role
-        };
-        req.session.role = user.role;
-
-        return res.json({
-          success: true,
-          role: user.role
-        });
-
-      } else {
-        res.sendStatus(401);
-      }
-
-    } catch (err) {
-      console.error(err);
-      res.sendStatus(500);
-    }
-  });
+  // Rota de agendamentos com verificação de login
+  app.use("/api/agendamentos", agendamentoRoutes(db));
 
   const __dirname = process.cwd();
 
+  // Retorna dados do usuário logado da sessão
   app.get("/api/usuario-logado", (req, res) => {
-    if (!req.session.usuario) {
-      return res.status(401).json({ error: "Não autenticado" });
-    }
-
+    if (!req.session.usuario) return res.status(401).json({ error: "Não autenticado" });
     res.json(req.session.usuario);
   });
-
-  //  Páginas protegidas
+  app.use("/admin", express.static(path.join(__dirname, "admin")));
+  // Páginas protegidas
   app.get("/admin.html", verificarBarbeiroOuAdmin, (req, res) => {
-    res.sendFile(path.join(__dirname, "/admin/admin.html"));
+    res.sendFile(path.join(__dirname, "admin/admin.html"));
   });
 
   app.get("/admin-bloqueios.html", verificarBarbeiroOuAdmin, (req, res) => {
-    res.sendFile(path.join(__dirname, "/admin/admin-bloqueios.html"));
-  });
-  app.get("/admin-total.html", verificarAdminTotal, (req, res) => {
-    res.sendFile(path.join(process.cwd(), "admin", "admin-total.html"));
+    res.sendFile(path.join(__dirname, "admin/admin-bloqueios.html"));
   });
 
+  app.get("/admin-total.html", verificarAdminTotal, (req, res) => {
+    res.sendFile(path.join(__dirname, "admin/admin-total.html"));
+  });
+  // Lista usuários (apenas admin)
   app.get("/api/admin/usuarios", verificarAdminTotal, async (req, res) => {
     try {
-      const usuarios = await db.all(
-        "SELECT id, usuario, role FROM usuarios"
-      );
+      const usuarios = await db.all("SELECT id, usuario, role FROM usuarios");
       res.json(usuarios);
-    } catch (error) {
-      res.status(500).json({ erro: "Erro ao buscar usuarios" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Erro ao carregar usuários" });
     }
   });
 
-  app.delete("/api/admin/usuarios/:id", verificarAdminTotal, async (req, res) => {
-    try {
-      const { id } = req.params;
 
-      await db.run("DELETE FROM usuarios WHERE id = ?", [id]);
 
-      res.json({ mensagem: "Usuario removido com sucesso" });
-    } catch (error) {
-      res.status(500).json({ erro: "Erro ao excluir usuario" })
-    }
-  });
 
+
+  // Criação de usuário (admin)
   app.post("/api/admin/usuarios", async (req, res) => {
-    try {
-      const { usuario, senha, role } = req.body;
-
-      if (!usuario || !senha || !role) {
-        return res.status(400).json({ erro: "Dados incompletos" });
-      }
-      await db.run(
-        "INSERT INTO usuarios (usuario, senha, role) VALUES (?, ?, ?)",
-        [usuario, senha, role]
-      );
-
-      res.json({ mensagem: "Usuario criado com sucesso" });
-    } catch (erro) {
-      console.error("Erro ao criar usuario:", erro);
-      res.status(500).json({ erro: "Erro interno" });
-    }
+    const { usuario, senha, role } = req.body;
+    const senhaHash = await bcrypt.hash(senha, 10);
+    await db.run("INSERT INTO usuarios (usuario, senha, role) VALUES (?, ?, ?)", [usuario, senhaHash, role]);
+    res.json({ mensagem: "Usuário criado com sucesso" });
   });
 
+  // Excluir usuário (apenas admin)
+app.delete("/api/admin/usuarios/:id", verificarAdminTotal, async (req, res) => {
+  try {
+    const usuarioId = req.params.id;
+    const result = await db.run("DELETE FROM usuarios WHERE id = ?", [usuarioId]);
+    
+    if (result.changes === 0) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
 
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erro ao excluir usuário" });
+  }
+});
 
-  app.post("/api/login", async (req, res) => {
+  // Login
+  app.post("/login", async (req, res) => {
     const { usuario, senha } = req.body;
+    const user = await db.get("SELECT * FROM usuarios WHERE usuario = ?", [usuario]);
+    if (!user) return res.status(401).json({ erro: "Credenciais inválidas" });
 
-    const user = await db.get(
-      "SELECT * FROM usuarios WHERE usuario = ? AND senha = ?",
-      [usuario, senha]
-    );
+    const senhaValida = await bcrypt.compare(senha, user.senha);
+    if (!senhaValida) return res.status(401).json({ erro: "Credenciais inválidas" });
 
-    if (!user) {
-      return res.status(401).json({ erro: "Credenciais invalidas" });
-    };
+    req.session.userId = user.id;
+    req.session.usuario = { id: user.id, usuario: user.usuario, role: user.role };
 
-    const token = jwt.sign(
-      { id: user.id, role: user.role },
-      "segredoSuperMegaSeguro",
-      { expiresIn: "8h" }
-    );
-
-    res.json({ token });
+    res.json({ success: true, role: user.role });
   });
 
   // Logout
   app.get("/logout", (req, res) => {
     req.session.destroy(() => {
+      res.clearCookie('connect.sid');
       res.redirect("/login.html");
     });
   });
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`🚀 Servidor rodando na porta ${PORT}`);
-  });
-
+  // Dados do usuário via DB
   app.get("/api/me", async (req, res) => {
-    if (!req.session.userId) {
-      return res.status(401).json({ error: "Não autenticado" });
-    }
+    if (!req.session.userId) return res.status(401).json({ error: "Não autenticado" });
 
     const usuario = await db.get(
-      "SELECT id, usuario, plano FROM usuarios WHERE id = ?",
+      "SELECT id, usuario, plano, role FROM usuarios WHERE id = ?",
       [req.session.userId]
     );
 
     res.json(usuario);
   });
 
+  // CRUD de serviços
   app.get("/api/servicos", verificarLogin, async (req, res) => {
     const userId = req.session.userId;
-
-    const servicos = await db.all(
-      "SELECT * FROM servicos WHERE user_id = ?",
-      [userId]
-    );
-
-    res.json(servicos)
+    const servicos = await db.all("SELECT * FROM servicos WHERE user_id = ?", [userId]);
+    res.json(servicos);
   });
 
   app.post("/api/servicos", verificarLogin, async (req, res) => {
     const userId = req.session.userId;
     const { nome, preco } = req.body;
-
-    await db.run(
-      "INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)",
-      [userId, nome, preco]
-    );
-
-    res.json({ success: true })
+    await db.run("INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)", [userId, nome, preco]);
+    res.json({ success: true });
   });
 
   app.delete("/api/servicos/:id", verificarLogin, async (req, res) => {
     const userId = req.session.userId;
     const servicoId = req.params.id;
-
-    await db.run(
-      "DELETE FROM servicos WHERE id = ? AND user_id = ?",
-      [servicoId, userId]
-    );
-
-    res.json({ success: true })
+    await db.run("DELETE FROM servicos WHERE id = ? AND user_id = ?", [servicoId, userId]);
+    res.json({ success: true });
   });
 
+  // Lista barbeiros
   app.get("/api/barbeiros", async (req, res) => {
     try {
-      const barbeiros = await db.all(
-        "SELECT id, usuario FROM usuarios WHERE plano = 'ativo'"
-      );
-
+      const barbeiros = await db.all("SELECT id, usuario FROM usuarios WHERE plano = 'ativo'");
       res.json(barbeiros);
     } catch (err) {
+      console.error(err);
       res.status(500).json({ error: "Erro ao buscar barbeiros." });
     }
   });
 
+  // Dashboard admin
   app.get("/api/admin/dashboard", verificarBarbeiroOuAdmin, async (req, res) => {
     try {
-      const totalAgendamentos = await db.get(`
-        SELECT COUNT(*) as total
-        FROM agendamentos
-        WHERE finalizado = 1
-        `);
-      const faturamentoTotal = await db.get(`
-        SELECT SUM(preco) as total
-        FROM agendamentos
-        WHERE finalizado = 1
-        `);
-
-      const totalClientes = await db.get(`
-        SELECT COUNT(DISTINCT telefone) as total
-        FROM agendamentos
-        WHERE finalizado = 1
-        `);
-
+      const totalAgendamentos = await db.get("SELECT COUNT(*) as total FROM agendamentos WHERE finalizado = 1");
+      const faturamentoTotal = await db.get("SELECT SUM(preco) as total FROM agendamentos WHERE finalizado = 1");
+      const totalClientes = await db.get("SELECT COUNT(DISTINCT telefone) as total FROM agendamentos WHERE finalizado = 1");
       const barbeiroTop = await db.get(`
         SELECT u.usuario, SUM(a.preco) as total
         FROM agendamentos a
@@ -255,16 +168,15 @@ async function startServer() {
         GROUP BY a.user_id
         ORDER BY total DESC
         LIMIT 1
-        `);
-
+      `);
       const servicoTop = await db.get(`
-          SELECT servico, COUNT(*) as total
-          FROM agendamentos
-          WHERE finalizado = 1
-          GROUP BY servico
-          ORDER BY total DESC
-          LIMIT 1
-          `);
+        SELECT servico, COUNT(*) as total
+        FROM agendamentos
+        WHERE finalizado = 1
+        GROUP BY servico
+        ORDER BY total DESC
+        LIMIT 1
+      `);
 
       res.json({
         totalAgendamentos: totalAgendamentos?.total || 0,
@@ -275,9 +187,11 @@ async function startServer() {
       });
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: "Erro ao carregar dashboard" })
+      res.status(500).json({ error: "Erro ao carregar dashboard" });
     }
   });
+
+  app.listen(PORT, "0.0.0.0", () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
 }
 
 startServer();
