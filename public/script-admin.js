@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+
   let dataSelecionada = null;
 
   document.getElementById("bloquearDiaBtn")

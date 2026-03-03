@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Geral - BarberPro</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">👑 Painel Supremo</div>
+        <nav>
+            <a href="/admin.html">Voltar ao Painel</a>
+            <a href="/logout">Sair</a>
+        </nav>
+    </header>
+
+    <main style="padding: 30px;">
+
+        <h1>Visão Geral do Sistema</h1>
+
+        <section class="dashboard">
+
+            <div class="stat-card">
+                <h3>Total de Agendamentos</h3>
+                <p id="totalAgendamentos">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Faturamento Total</h3>
+                <p id="faturamentoTotal">R$ 0,00</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Total de Clientes</h3>
+                <p id="totalClientes">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Barbeiro Top</h3>
+                <p id="barbeiroTop">-</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Serviço Mais Vendido</h3>
+                <p id="servicoTop">-</p>
+            </div>
+
+        </section>
+
+    </main>
+
+    <h1>Gerenciar Usuários</h1>
+
+    <table border="1" width="100%">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuário</th>
+                <th>Role</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaUsuarios"></tbody>
+    </table>
+
+    <script src="/script-dashboard.js"></script>
+
+    <script>
+        async function carregarDashboard() {
+            const res = await fetch("/api/admin/dashboard");
+
+            if (!res.ok) {
+                alert("Acesso negado.");
+                window.location.href = "/admin.html";
+                return;
+            }
+
+            const data = await res.json();
+
+            document.getElementById("totalAgendamentos").textContent =
+                data.totalAgendamentos;
+
+            document.getElementById("faturamentoTotal").textContent =
+                "R$ " + Number(data.faturamentoTotal).toFixed(2);
+
+            document.getElementById("totalClientes").textContent =
+                data.totalClientes;
+
+            document.getElementById("barbeiroTop").textContent =
+                data.barbeiroTop
+                    ? data.barbeiroTop.usuario + " (R$ " + Number(data.barbeiroTop.total).toFixed(2) + ")"
+                    : "Nenhum";
+
+            document.getElementById("servicoTop").textContent =
+                data.servicoTop
+                    ? data.servicoTop.servico + " (" + data.servicoTop.total + " vendas)"
+                    : "Nenhum";
+        }
+
+        carregarDashboard();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        console.log("admin-total carregado")
+    </script>
+
+</body>
+
+</html>

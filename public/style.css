@@ -113,6 +113,11 @@ body {
   text-align: center;
 }
 
+
+main h1 {
+  display: flex;
+  text-align: center;
+}
 form {
   display: flex;
   flex-direction: column;

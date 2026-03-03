@@ -4,8 +4,8 @@ import session from "express-session";
 import { initDB } from "./database.js";
 import { agendamentoRoutes } from "./routes/agendamentos.js";
 import path from "path";
-import { verificarLogin } from "./middleware/auth.js";
-
+import { verificarLogin, verificarBarbeiroOuAdmin, verificarAdminTotal } from "./middleware/auth.js";
+import jwt from "jsonwebtoken";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,21 +23,12 @@ app.use(session({
   }
 }));
 
-//  Middleware para proteger rotas admin
-function verificarAdmin(req, res, next) {
-  if (!req.session.usuario || req.session.role !== "admin") {
-    return res.redirect("/")
-  }
-  next();
-}
 
 async function startServer() {
 
   const db = await initDB();
 
-  app.get("/painel.html", verificarLogin, (req, res) => {
-    res.sendFile(path.join(__dirname, "public/painel.html"))
-  });
+
 
   //  Agora passamos o req para filtrar depois por userId
   app.use("/api/agendamentos", (req, res, next) => {
@@ -57,7 +48,11 @@ async function startServer() {
 
       if (user) {
         req.session.userId = user.id;
-        req.session.usuario = user.usuario;
+        req.session.usuario = {
+          id: user.id,
+          nome: user.nome,
+          role: user.role
+        };
         req.session.role = user.role;
 
         return res.json({
@@ -77,13 +72,70 @@ async function startServer() {
 
   const __dirname = process.cwd();
 
+  app.get("/api/usuario-logado", (req, res) => {
+  if (!req.session.usuario) {
+    return res.status(401).json({ error: "Não autenticado" });
+  }
+
+  res.json(req.session.usuario);
+});
+
   //  Páginas protegidas
-  app.get("/admin.html", verificarAdmin, (req, res) => {
-    res.sendFile(path.join(__dirname, "admin/admin.html"));
+  app.get("/admin.html", verificarBarbeiroOuAdmin, (req, res) => {
+    res.sendFile(path.join(__dirname, "/admin/admin.html"));
   });
 
-  app.get("/admin-bloqueios.html", verificarAdmin, (req, res) => {
-    res.sendFile(path.join(__dirname, "admin/admin-bloqueios.html"));
+  app.get("/admin-bloqueios.html", verificarBarbeiroOuAdmin, (req, res) => {
+    res.sendFile(path.join(__dirname, "/admin/admin-bloqueios.html"));
+  });
+  app.get("/admin-total.html", verificarAdminTotal, (req, res) => {
+    res.sendFile(path.join(process.cwd(), "admin", "admin-total.html"));
+  });
+
+  app.get("/api/admin/usuarios", verificarAdminTotal, async (req, res) => {
+    try {
+      const usuarios = await db.all (
+        "SELECT id, usuario, role FROM usuarios"
+      );
+      res.json(usuarios);
+    }catch (error) {
+      res.status(500).json({ erro: "Erro ao buscar usuarios" });
+    }
+  });
+
+  app.delete("/api/admin/usuarios/:id", verificarAdminTotal, async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      await db.run("DELETE FROM usuarios WHERE id = ?", [id]);
+
+      res.json({ mensagem: "Usuario removido com sucesso"});
+    } catch (error){
+      res.status(500).json({ erro: "Erro ao excluir usuario"})
+    }
+  });
+
+
+
+  app.post("/api/login", async (req, res) => {
+    const { usuario, senha } = req.body;
+
+    const user = await db.get(
+      "SELECT * FROM usuarios WHERE usuario = ? AND senha = ?",
+      [usuario, senha]
+    );
+
+    if (!user) {
+      return res.status(401).json({ erro: "Credenciais invalidas" });
+    };
+
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      "segredoSuperMegaSeguro",
+      { expiresIn: "8h" }
+    );
+
+    res.json({ token });
   });
 
   // Logout
@@ -157,7 +209,7 @@ async function startServer() {
     }
   });
 
-  app.get("/api/admin/dashboard", verificarAdmin, async (req, res) => {
+  app.get("/api/admin/dashboard", verificarBarbeiroOuAdmin, async (req, res) => {
     try {
       const totalAgendamentos = await db.get(`
         SELECT COUNT(*) as total

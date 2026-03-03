@@ -44,11 +44,15 @@
       if (data.role === "admin") {
         window.location.href = "/admin.html";
       } else if (data.role === "barbeiro") {
-        window.location.href = "/painel.html";
+        window.location.href = "/admin.html";
       } else {
         document.getElementById("erro").textContent = "Acesso não autorizado.";
       }
+      
+      
     });
+
+    
   </script>
 
 </body>
