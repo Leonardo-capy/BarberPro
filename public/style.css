@@ -80,7 +80,9 @@ body {
 
 
 .hero {
+  display: flex;
   text-align: center;
+  justify-content: center;
   padding: 60px 20px;
 }
 

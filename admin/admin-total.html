@@ -11,61 +11,88 @@
 <body>
 
     <header class="navbar">
-        <div class="logo">👑 Painel Supremo</div>
-        <nav>
-            <a href="/admin.html">Voltar ao Painel</a>
+        <div class="logo">👑 BarberPro Admin</div>
+        <nav class="admin-nav">
+            <a href="/admin.html">Agendamentos</a>
+            <a href="/admin-total.html" class="active">Painel Total</a>
             <a href="/logout">Sair</a>
         </nav>
     </header>
 
-    <main style="padding: 30px;">
+    <main class="admin-layout">
 
-        <h1>Visão Geral do Sistema</h1>
+        <!-- LADO ESQUERDO -->
+        <div class="lado-esquerdo">
 
-        <section class="dashboard">
+            <section class="dashboard">
 
-            <div class="stat-card">
-                <h3>Total de Agendamentos</h3>
-                <p id="totalAgendamentos">0</p>
-            </div>
+                <div class="stat-card">
+                    <h3>Total de Agendamentos</h3>
+                    <p id="totalAgendamentos">0</p>
+                </div>
 
-            <div class="stat-card">
-                <h3>Faturamento Total</h3>
-                <p id="faturamentoTotal">R$ 0,00</p>
-            </div>
+                <div class="stat-card">
+                    <h3>Faturamento Total</h3>
+                    <p id="faturamentoTotal">R$ 0,00</p>
+                </div>
 
-            <div class="stat-card">
-                <h3>Total de Clientes</h3>
-                <p id="totalClientes">0</p>
-            </div>
+                <div class="stat-card">
+                    <h3>Total de Clientes</h3>
+                    <p id="totalClientes">0</p>
+                </div>
 
-            <div class="stat-card">
-                <h3>Barbeiro Top</h3>
-                <p id="barbeiroTop">-</p>
-            </div>
+                <div class="stat-card">
+                    <h3>Barbeiro Top</h3>
+                    <p id="barbeiroTop">-</p>
+                </div>
 
-            <div class="stat-card">
-                <h3>Serviço Mais Vendido</h3>
-                <p id="servicoTop">-</p>
-            </div>
+                <div class="stat-card">
+                    <h3>Serviço Mais Vendido</h3>
+                    <p id="servicoTop">-</p>
+                </div>
 
-        </section>
+            </section>
+
+            <section class="table-container">
+                <h2>Gerenciar Usuários</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuário</th>
+                            <th>Role</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaUsuarios"></tbody>
+                </table>
+            </section>
+
+        </div>
+
+        <!-- LADO DIREITO -->
+        <div class="lado-direito">
+
+            <section class="servicos-admin">
+                <h2>Adicionar Novo Usuário</h2>
+
+                <form id="formNovoUsuario" class="form-servico">
+                    <input type="text" id="novoUsuario" placeholder="Usuário" required>
+                    <input type="password" id="novaSenha" placeholder="Senha" required>
+
+                    <select id="novaRole">
+                        <option value="barbeiro">Barbeiro</option>
+                        <option value="admin">Admin</option>
+                    </select>
+
+                    <button type="submit">Adicionar</button>
+                </form>
+            </section>
+
+        </div>
 
     </main>
-
-    <h1>Gerenciar Usuários</h1>
-
-    <table border="1" width="100%">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Usuário</th>
-                <th>Role</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody id="tabelaUsuarios"></tbody>
-    </table>
 
     <script src="/script-dashboard.js"></script>
 
@@ -102,11 +129,6 @@
         }
 
         carregarDashboard();
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script>
-        console.log("admin-total carregado")
     </script>
 
 </body>

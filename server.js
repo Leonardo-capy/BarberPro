@@ -73,12 +73,12 @@ async function startServer() {
   const __dirname = process.cwd();
 
   app.get("/api/usuario-logado", (req, res) => {
-  if (!req.session.usuario) {
-    return res.status(401).json({ error: "Não autenticado" });
-  }
+    if (!req.session.usuario) {
+      return res.status(401).json({ error: "Não autenticado" });
+    }
 
-  res.json(req.session.usuario);
-});
+    res.json(req.session.usuario);
+  });
 
   //  Páginas protegidas
   app.get("/admin.html", verificarBarbeiroOuAdmin, (req, res) => {
@@ -94,11 +94,11 @@ async function startServer() {
 
   app.get("/api/admin/usuarios", verificarAdminTotal, async (req, res) => {
     try {
-      const usuarios = await db.all (
+      const usuarios = await db.all(
         "SELECT id, usuario, role FROM usuarios"
       );
       res.json(usuarios);
-    }catch (error) {
+    } catch (error) {
       res.status(500).json({ erro: "Erro ao buscar usuarios" });
     }
   });
@@ -109,9 +109,28 @@ async function startServer() {
 
       await db.run("DELETE FROM usuarios WHERE id = ?", [id]);
 
-      res.json({ mensagem: "Usuario removido com sucesso"});
-    } catch (error){
-      res.status(500).json({ erro: "Erro ao excluir usuario"})
+      res.json({ mensagem: "Usuario removido com sucesso" });
+    } catch (error) {
+      res.status(500).json({ erro: "Erro ao excluir usuario" })
+    }
+  });
+
+  app.post("/api/admin/usuarios", async (req, res) => {
+    try {
+      const { usuario, senha, role } = req.body;
+
+      if (!usuario || !senha || !role) {
+        return res.status(400).json({ erro: "Dados incompletos" });
+      }
+      await db.run(
+        "INSERT INTO usuarios (usuario, senha, role) VALUES (?, ?, ?)",
+        [usuario, senha, role]
+      );
+
+      res.json({ mensagem: "Usuario criado com sucesso" });
+    } catch (erro) {
+      console.error("Erro ao criar usuario:", erro);
+      res.status(500).json({ erro: "Erro interno" });
     }
   });
 
@@ -221,7 +240,7 @@ async function startServer() {
         FROM agendamentos
         WHERE finalizado = 1
         `);
-      
+
       const totalClientes = await db.get(`
         SELECT COUNT(DISTINCT telefone) as total
         FROM agendamentos
@@ -238,7 +257,7 @@ async function startServer() {
         LIMIT 1
         `);
 
-        const servicoTop = await db.get(`
+      const servicoTop = await db.get(`
           SELECT servico, COUNT(*) as total
           FROM agendamentos
           WHERE finalizado = 1
@@ -247,16 +266,16 @@ async function startServer() {
           LIMIT 1
           `);
 
-          res.json({
-            totalAgendamentos: totalAgendamentos?.total || 0,
-            faturamentoTotal: faturamentoTotal?.total || 0,
-            totalClientes: totalClientes?.total || 0,
-            barbeiroTop: barbeiroTop || null,
-            servicoTop: servicoTop || null
-          });
+      res.json({
+        totalAgendamentos: totalAgendamentos?.total || 0,
+        faturamentoTotal: faturamentoTotal?.total || 0,
+        totalClientes: totalClientes?.total || 0,
+        barbeiroTop: barbeiroTop || null,
+        servicoTop: servicoTop || null
+      });
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: "Erro ao carregar dashboard"})
+      res.status(500).json({ error: "Erro ao carregar dashboard" })
     }
   });
 }

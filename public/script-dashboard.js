@@ -214,3 +214,54 @@ async function excluirUsuario(id) {
 }
 
 window.excluirUsuario = excluirUsuario;
+
+const formNovoUsuario = document.getElementById("formNovoUsuario");
+
+if (formNovoUsuario) {
+  formNovoUsuario.addEventListener("submit", async (e) => {
+    e. preventDefault();
+
+    const usuario = document.getElementById("novoUsuario").value;
+    const senha = document.getElementById("novaSenha").value;
+    const role = document.getElementById("novaRole").value;
+
+    await fetch("/api/admin/usuarios", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ usuario, senha, role })
+    });
+
+    e.target.reset();
+
+    carregarUsuarios();
+  });
+}
+
+// =========================
+//   ADICIONAR SERVICO
+// =========================
+
+const formServico = document.getElementById("formServico");
+
+if (formServico) {
+  formServico.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const nome = document.getElementById("nomeServico").value;
+    const preco = document.getElementById("precoServico").value;
+
+    await fetch("/api/servicos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ nome, preco })
+    });
+
+    e.target.reset();
+
+    carregarServicos();
+  });
+}
