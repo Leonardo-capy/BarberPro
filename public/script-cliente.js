@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
       body: JSON.stringify({
         nome: nome.value,
         telefone: telefone.value,
-        servico_id: document.getElementById("servicoSelect").value,
+        servico: document.getElementById("servicoSelect").value,
         data: dataInput.value,
         horario: horarioSelecionado,
         user_id: barbeiroSelect.value

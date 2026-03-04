@@ -66,9 +66,9 @@ export function agendamentoRoutes(db) {
   // ===============================
   router.post("/", async (req, res) => {
     try {
-      const { nome, telefone, servico_id, data, horario, user_id } = req.body;
+      const { nome, telefone, servico, data, horario, user_id } = req.body;
       const userId = Number(user_id);
-      if (!nome || !telefone || !servico_id || !data || !horario)
+      if (!nome || !telefone || !servico || !data || !horario)
         return res.status(400).json({ error: "Todos os campos são obrigatórios." });
 
       if (await isHorarioBloqueado(userId, data, horario))
@@ -77,13 +77,13 @@ export function agendamentoRoutes(db) {
       const conflito = await db.get("SELECT * FROM agendamentos WHERE data = ? AND horario = ? AND user_id = ?", [data, horario, userId]);
       if (conflito) return res.status(409).json({ error: "Horário já reservado." });
 
-      const servicoDB = await getServico(userId, servico_id);
+      const servicoDB = await getServico(userId, servico);
       if (!servicoDB) return res.status(400).json({ error: "Serviço inválido." });
 
       await db.run(
-        `INSERT INTO agendamentos (user_id, nome, telefone, servico, preco, servico_id, data, horario)
+        `INSERT INTO agendamentos (user_id, nome, telefone, servico, preco, servico, data, horario)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [userId, nome, telefone, servicoDB.nome, servicoDB.preco, servico_id, data, horario]
+        [userId, nome, telefone, servicoDB.nome, servicoDB.preco, servico, data, horario]
       );
 
       res.status(201).json({ message: "Agendamento realizado com sucesso!" });
