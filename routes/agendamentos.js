@@ -1,5 +1,5 @@
 import express from "express";
-import { verificarLogin } from "../middleware/auth.js";
+import { verificarAdmin, verificarLogin } from "../middleware/auth.js";
 
 export function agendamentoRoutes(db) {
   const router = express.Router();
@@ -199,6 +199,60 @@ export function agendamentoRoutes(db) {
       res.json({ total: total.total || 0 });
     } catch {
       res.status(500).json({ error: "Erro ao calcular faturamento." });
+    }
+  });
+
+  // ===============================
+  // Rota pra  coisar o coiso
+  // ===============================
+
+  router.get("/usuarios", verificarAdmin, async (req, res) =>{
+    try {
+      const usuarios = await db.all(
+        "SELECT id, usuario, role, plano FROM usuarios ORDER BY id"
+      );
+      res.json(usuarios);
+    } catch (err) {
+      res.status(500).json({ error: "Erro ao buscar usuarios"})
+    }
+  });
+
+  router.put("/usuarios/:id", verificarAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { usuario, role } = req.body;
+
+      if(!usuario || !role) {
+        return res.status(400).json({ error: "Dados invalidos" });
+      }
+
+      await db.run(
+        "UPDATE usuarios SET usuario = ?, role = ? WHERE id = ?",
+        [usuario, role, id]
+      );
+
+      res.json({ message: "Usuario atualizado com sucesso." });
+    } catch (err) {
+      res.status(500).json({ error: "Erro ao atualizar usuario" });
+    }
+  });
+
+  router.delete("/usuarios/:id", verificarAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const result = await db.run(
+        "DELETE FROM usuarios WHERE id = ?",
+        [id]
+      );
+
+      if (result.changes === 0) {
+        return res.status(404).json({ error: "Usuario nao encontrado" });
+      }
+
+      res.json({ success: true })
+    } catch (err) {
+      res.status(500).json({ error: "Erro ao excluir usuario"})
     }
   });
 

@@ -10,6 +10,8 @@ import bcrypt from "bcrypt";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+console.log("SERVIDOR INICIADO");
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
@@ -59,6 +61,40 @@ async function startServer() {
   });
 
 
+  app.put("/api/admin/usuarios/:id", verificarAdminTotal, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { usuario, role } = req.body;
+
+      if (!usuario) {
+        return res.status(400).json({ error: "Nome invalido" });
+      }
+
+      if (Number(id) === 1) {
+        await db.run(
+          "UPDATE usuarios SET usuario = ? WHERE id = ?",
+          [usuario.trim(), id]
+        );
+        return res.json({ success: true });
+      }
+
+      if (!["admin", "barbeiro"]. includes(role)) {
+        return res.status(400).json({ error: "Role invalida" });
+      }
+
+      await db.run(
+        "UPDATE usuarios SET usuario = ?, role = ? WHERE id = ?",
+        [usuario.trim(), role, id]
+      );
+
+      res.json({ success: true });
+
+    } catch {
+      res.status(500).json({ error: "Erro ao atualizar usuario" });
+    }
+  });
+
+
 
 
 
@@ -74,19 +110,29 @@ async function startServer() {
 app.delete("/api/admin/usuarios/:id", verificarAdminTotal, async (req, res) => {
   try {
     const usuarioId = req.params.id;
-    const result = await db.run("DELETE FROM usuarios WHERE id = ?", [usuarioId]);
-    
+
+    const result = await db.run(
+      "DELETE FROM usuarios WHERE id = ?",
+      [usuarioId]
+    );
+
     if (result.changes === 0) {
       return res.status(404).json({ error: "Usuário não encontrado" });
     }
 
     res.json({ success: true });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Erro ao excluir usuário" });
   }
 });
 
+/*app.delete("/api/admin/usuarios/:id", async (req, res) => {
+  console.log("DELETE chamado para ID:", req.params.id);
+  return res.json({ teste: true });
+});
+*/
   // Login
   app.post("/login", async (req, res) => {
     const { usuario, senha } = req.body;

@@ -70,7 +70,7 @@ export async function initDB() {
 
     await db.run(
       "INSERT INTO usuarios (usuario, senha, plano, role) VALUES (?, ?, ?, ?)",
-      ["admin", senhaAdmin, "ativo", "admin"]
+      ["Chefe dos cabelo", senhaAdmin, "ativo", "admin"]
     );
 
     await db.run(

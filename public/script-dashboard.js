@@ -69,8 +69,8 @@ async function carregarAgendamentos() {
       <td>${item.horario}</td>
       <td>
         ${item.finalizado === 0
-          ? `<button onclick="finalizar(${item.id})">Finalizar</button>`
-          : `<span style="color:green;font-weight:bold;">✔ Pago</span>`}
+        ? `<button onclick="finalizar(${item.id})">Finalizar</button>`
+        : `<span style="color:green;font-weight:bold;">✔ Pago</span>`}
         <button onclick="excluir(${item.id})">Excluir</button>
       </td>
     `;
@@ -170,8 +170,11 @@ async function carregarUsuarios() {
         <td>${user.usuario}</td>
         <td>${user.role}</td>
         <td>
-          ${user.id !== 1 ? `<button onclick="excluirUsuario(${user.id})">Excluir</button>` : `<span>—</span>`}
-        </td>
+  <button onclick="editarUsuario(${user.id}, '${user.usuario}', '${user.role}')">Editar</button>
+  ${user.id !== 1
+          ? `<button onclick="excluirUsuario(${user.id})">Excluir</button>`
+          : `<span>Admin Principal</span>`}
+</td>
       `;
 
       tabela.appendChild(linha);
@@ -186,7 +189,7 @@ async function excluirUsuario(id) {
   if (id === 1) return alert("Não é permitido excluir o admin principal");
   if (!confirm("Tem certeza que deseja excluir?")) return;
 
-  const res = await fetch(`/api/admin/usuarios/${id}`, { method: "DELETE" });
+  const res = await fetch(`/api/agendamentos/usuarios/${id}`, { method: "DELETE" });
   if (!res.ok) return alert("Erro ao excluir usuário");
 
   carregarUsuarios();
@@ -218,6 +221,36 @@ if (formNovoUsuario) {
     carregarUsuarios();
   });
 }
+
+async function editarUsuario(id, nomeAtual, roleAtual) {
+
+  const novoNome = prompt("Novo nome:", nomeAtual);
+  if (!novoNome) return;
+
+  let novaRole = roleAtual;
+
+  if (id !== 1) {
+    const roleDigitada = prompt("Nova role (admin ou barbeiro):", roleAtual);
+    if (!["admin", "barbeiro"].includes(roleDigitada)) {
+      return alert("Role inválida");
+    }
+    novaRole = roleDigitada;
+  }
+
+  const res = await fetch(`/api/admin/usuarios/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      usuario: novoNome.trim(),
+      role: novaRole
+    })
+  });
+
+  if (!res.ok) return alert("Erro ao atualizar usuário");
+
+  carregarUsuarios();
+}
+window.editarUsuario = editarUsuario;
 
 // =========================
 //   ADICIONAR SERVICO
