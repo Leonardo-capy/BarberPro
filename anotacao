@@ -1,8 +1,3 @@
-
-variação tipos de cortes junto com valores,
-faturamento total por corte realizado ,
-lembrete automático uma hora antes do corte ,
-botao para bloquear o dia inteiro,
-confirmação obrigatória automática,
-cancelamento automático se não confirmar,
-personalização visual
+arrumar o dia bloqueado/desbloqueado para o dia ficar vermelho somente se o dia estiver bloqueado e normal/cinza quando estiver desbloqueado
+melhorar visualmente os inputs da area de admin
+adicionar os outros botoes de navegacao no resto do html
