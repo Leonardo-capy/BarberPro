@@ -40,11 +40,29 @@ body {
 
 /* NAVBAR */
 .navbar {
+  padding: 15px 40px;
+  background: #0f0f0f;
+
+}
+.navbar-cliente .container{
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 40px;
-  background: #0f0f0f;
+}
+
+.navbar-admin{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navp {
+  display: flex;
+  gap: 30px;
 }
 
 .logo a {
@@ -600,8 +618,20 @@ tr:hover {
   margin-bottom: 20px;
 }
 
-.form-servico input {
-  padding: 8px;
+
+.form-servico input[type="text"],
+.form-servico input[type="number"],
+.form-servico input[type="password"] {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 20px;
+  border: 1px solid #444;
+  border-radius: 12px;
+  background: #111;
+  color: #00ffd5;
+  font-size: 16px;
+  outline: none;
+  transition: 0.3s;
 }
 
 .form-servico button {
@@ -661,14 +691,20 @@ tr:hover {
 
 /* Navbar mobile */
 @media (max-width: 768px) {
-  .navbar {
+
+  .navp {
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .navbar .container{
     flex-direction: column;
     gap: 15px;
     padding: 15px 20px;
   }
 
   .navbar nav {
-    flex-direction: column;
+    flex-direction: row;
     gap: 10px;
   }
 

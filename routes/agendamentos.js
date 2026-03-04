@@ -28,7 +28,9 @@ export function agendamentoRoutes(db) {
     try {
       const { data } = req.body;
       const userId = req.session.userId;
-      if (!data) return res.status(400).json({ error: "Data é obrigatória." });
+
+      if (!data) 
+        return res.status(400).json({ error: "Data é obrigatória." });
 
       const jaBloqueado = await db.get(
         "SELECT id FROM bloqueios WHERE user_id = ? AND data = ? AND horario = 'DIA_INTEIRO'",
@@ -37,12 +39,22 @@ export function agendamentoRoutes(db) {
 
       if (jaBloqueado) {
         await db.run("DELETE FROM bloqueios WHERE user_id = ? AND data = ? AND horario = 'DIA_INTEIRO'", [userId, data]);
-        return res.json({ status: "desbloqueado", message: "Dia desbloqueado!" });
+        return res.json({ 
+          bloqueado: false, 
+          message: "Dia desbloqueado!" 
+        });
       }
 
-      await db.run("DELETE FROM bloqueios WHERE user_id = ? AND data = ?", [userId, data]);
-      await db.run("INSERT INTO bloqueios (user_id, data, horario) VALUES (?, ?, 'DIA_INTEIRO')", [userId, data]);
-      res.json({ status: "bloqueado", message: "Dia bloqueado!" });
+      await db.run("DELETE FROM bloqueios WHERE user_id = ? AND data = ?", 
+        [userId, data]);
+
+      await db.run("INSERT INTO bloqueios (user_id, data, horario) VALUES (?, ?, 'DIA_INTEIRO')", 
+        [userId, data]);
+
+      res.json({ 
+        bloqueado: true, 
+        message: "Dia bloqueado!" 
+      });
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Erro ao bloquear/desbloquear dia." });

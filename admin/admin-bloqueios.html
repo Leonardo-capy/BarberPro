@@ -11,29 +11,37 @@
 
 <body>
 
-  <header class="navbar">
+  <header class="navbar navbar-admin">
     <div class="logo">✂ BarberPro Admin</div>
     <nav class="admin-nav">
+      <a href="index.html">Painel Cliente</a>
       <a href="admin.html">Agendamentos</a>
       <a href="admin-bloqueios.html" class="active">Bloqueios</a>
       <a href="/logout">Sair</a>
+
     </nav>
   </header>
 
   <main class="admin-container">
+    <div class="lado-esquerdo">
 
-    <section class="calendar-section">
-      <h2>Selecionar Data</h2>
-      <div id="calendar"></div>
-    </section>
+      <section class="calendar-section">
+        <h2>Selecionar Data</h2>
+        <div id="calendar"></div>
+      </section>
 
-    <section class="bloqueios-section">
-      <h2>Gerenciar Horários</h2>
-      <div id="horariosContainer"></div>
-      <button id="bloquearDiaBtn" class="btn-dia-inteiro">
-        Bloquear / Desbloquear Dia Inteiro
-      </button>
-    </section>
+    </div>
+
+    <div class="lado-direito">
+
+      <section class="bloqueios-section">
+        <h2>Gerenciar Horários</h2>
+        <div id="horariosContainer"></div>
+        <button id="bloquearDiaBtn" class="btn-dia-inteiro">
+          Bloquear / Desbloquear Dia Inteiro
+        </button>
+      </section>
+    </div>
 
   </main>
 

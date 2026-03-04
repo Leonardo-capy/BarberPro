@@ -28,9 +28,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Marca a data no calendário como bloqueada (vermelho)
       const dayEl = document.querySelector(`.fc-day[data-date='${dataSelecionada}']`);
+
+
       if (dayEl) {
-        dayEl.style.backgroundColor = "#ff2e63";
-        dayEl.style.color = "white";
+        if (resultado.bloqueado) {
+          dayEl.style.backgroundColor = "#ff2e63";
+          dayEl.style.color = "white";
+        } else {
+          dayEl.style.backgroundColor = "";
+          dayEl.style.color = "";
+        }
+
       }
 
     } catch (error) {
