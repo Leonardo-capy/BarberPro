@@ -94,5 +94,9 @@ export async function initDB() {
     await db.run("INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)", [2, "Corte + Barba", 40.0]);
   }
 
+  await db.run(
+    "ALTER TABLE usuarios ADD COLUMN descricao TEXT;"
+  );
+
   return db;
 }

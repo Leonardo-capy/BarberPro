@@ -222,60 +222,104 @@ if (formNovoUsuario) {
   });
 }
 
+// =========================
+// 🔄 LOGICA DO MODAL DE EDIÇÃO
+// =========================
+
+const modal = document.getElementById("modalEditar");
+
+// 1. Função que abre o modal e preenche os campos
 async function editarUsuario(id, nomeAtual, roleAtual) {
+  document.getElementById("editId").value = id;
+  document.getElementById("editNome").value = nomeAtual;
+  document.getElementById("editRole").value = roleAtual;
+  document.getElementById("editSenha").value = "";
 
-  const novoNome = prompt("Novo nome:", nomeAtual);
-  if (!novoNome) return;
-
-  let novaRole = roleAtual;
-
-  if (id !== 1) {
-    const roleDigitada = prompt("Nova role (admin ou barbeiro):", roleAtual);
-    if (!["admin", "barbeiro"].includes(roleDigitada)) {
-      return alert("Role inválida");
-    }
-    novaRole = roleDigitada;
+  // Se for o Admin Principal (ID 1), esconde a opção de mudar Role
+  const groupRole = document.getElementById("groupRole");
+  if (id === 1) {
+    groupRole.style.display = "none";
+  } else {
+    groupRole.style.display = "block";
   }
 
-  const res = await fetch(`/api/admin/usuarios/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      usuario: novoNome.trim(),
-      role: novaRole
-    })
-  });
-
-  if (!res.ok) return alert("Erro ao atualizar usuário");
-
-  carregarUsuarios();
+  modal.style.display = "block";
 }
-window.editarUsuario = editarUsuario;
 
-// =========================
-//   ADICIONAR SERVICO
-// =========================
+// 2. Função para fechar
+function fecharModal() {
+  modal.style.display = "none";
+}
 
-const formServico = document.getElementById("formServico");
+// 3. Envio dos dados (Submit do Form dentro do Modal)
+document.getElementById("formEdicaoUsuario").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-if (formServico) {
-  formServico.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  if (formNovoUsuario) {
+    formNovoUsuario.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("editId").value;
+      const usuario = document.getElementById("editNome").value.trim();
+      const role = document.getElementById("editRole").value;
+      const novaSenha = document.getElementById("editSenha").value.trim();
 
-    const nome = document.getElementById("nomeServico").value.trim();
-    const preco = document.getElementById("precoServico").value.trim();
+      const dadosParaEnviar = { usuario, role };
+      if (novaSenha) {
+        dadosParaEnviar.senha = novaSenha;
+      }
 
-    if (!nome || !preco) return alert("Preencha todos os campos");
+      try {
+        const res = await fetch(`/api/admin/usuarios/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(dadosParaEnviar)
+        });
 
-    const res = await fetch("/api/servicos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nome, preco })
+        if (res.ok) {
+          fecharModal();
+          carregarUsuarios(); // Recarrega a tabela
+        } else {
+          alert("Erro ao atualizar usuário");
+        }
+      } catch {
+        console.error("Erro na requisicao:", err);
+        alert("Erro de conexao com o servidor")
+      }
     });
+  }
 
-    if (!res.ok) return alert("Erro ao adicionar serviço");
+  // Garante que as funções estão no escopo global para os botões da tabela
+  window.editarUsuario = editarUsuario;
+  window.fecharModal = fecharModal;
 
-    e.target.reset();
-    carregarServicos();
-  });
-}
+
+  // =========================
+  //   ADICIONAR SERVICO
+  // =========================
+
+  const formServico = document.getElementById("formServico");
+
+  if (formServico) {
+    formServico.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const nome = document.getElementById("nomeServico").value.trim();
+      const preco = document.getElementById("precoServico").value.trim();
+
+      if (!nome || !preco) return alert("Preencha todos os campos");
+
+      const res = await fetch("/api/servicos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome, preco })
+      });
+
+      if (!res.ok) return alert("Erro ao adicionar serviço");
+
+      e.target.reset();
+      carregarServicos();
+    });
+  }
+});

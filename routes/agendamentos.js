@@ -93,9 +93,9 @@ export function agendamentoRoutes(db) {
       if (!servicoDB) return res.status(400).json({ error: "Serviço inválido." });
 
       await db.run(
-        `INSERT INTO agendamentos (user_id, nome, telefone, servico, preco, servico, data, horario)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [userId, nome, telefone, servicoDB.nome, servicoDB.preco, servico, data, horario]
+        `INSERT INTO agendamentos (user_id, nome, telefone, servico, preco, data, horario)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [userId, nome, telefone, servicoDB.nome, servicoDB.preco, data, horario]
       );
 
       res.status(201).json({ message: "Agendamento realizado com sucesso!" });
@@ -202,59 +202,7 @@ export function agendamentoRoutes(db) {
     }
   });
 
-  // ===============================
-  // Rota pra  coisar o coiso
-  // ===============================
 
-  router.get("/usuarios", verificarAdmin, async (req, res) =>{
-    try {
-      const usuarios = await db.all(
-        "SELECT id, usuario, role, plano FROM usuarios ORDER BY id"
-      );
-      res.json(usuarios);
-    } catch (err) {
-      res.status(500).json({ error: "Erro ao buscar usuarios"})
-    }
-  });
-
-  router.put("/usuarios/:id", verificarAdmin, async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { usuario, role } = req.body;
-
-      if(!usuario || !role) {
-        return res.status(400).json({ error: "Dados invalidos" });
-      }
-
-      await db.run(
-        "UPDATE usuarios SET usuario = ?, role = ? WHERE id = ?",
-        [usuario, role, id]
-      );
-
-      res.json({ message: "Usuario atualizado com sucesso." });
-    } catch (err) {
-      res.status(500).json({ error: "Erro ao atualizar usuario" });
-    }
-  });
-
-  router.delete("/usuarios/:id", verificarAdmin, async (req, res) => {
-    try {
-      const { id } = req.params;
-
-      const result = await db.run(
-        "DELETE FROM usuarios WHERE id = ?",
-        [id]
-      );
-
-      if (result.changes === 0) {
-        return res.status(404).json({ error: "Usuario nao encontrado" });
-      }
-
-      res.json({ success: true })
-    } catch (err) {
-      res.status(500).json({ error: "Erro ao excluir usuario"})
-    }
-  });
 
   return router;
 }

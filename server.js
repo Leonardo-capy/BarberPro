@@ -3,6 +3,7 @@ import cors from "cors";
 import session from "express-session";
 import { initDB } from "./database.js";
 import { agendamentoRoutes } from "./routes/agendamentos.js";
+import { usuarioRoutes } from "./routes/usuarios.js";
 import path from "path";
 import { verificarLogin, verificarBarbeiroOuAdmin, verificarAdminTotal } from "./middleware/auth.js";
 import bcrypt from "bcrypt";
@@ -28,6 +29,7 @@ async function startServer() {
 
   // Rota de agendamentos com verificação de login
   app.use("/api/agendamentos", agendamentoRoutes(db));
+  app.use("/api/usuarios", usuarioRoutes(db));
 
   const __dirname = process.cwd();
 
@@ -78,7 +80,7 @@ async function startServer() {
         return res.json({ success: true });
       }
 
-      if (!["admin", "barbeiro"]. includes(role)) {
+      if (!["admin", "barbeiro"].includes(role)) {
         return res.status(400).json({ error: "Role invalida" });
       }
 
@@ -107,32 +109,68 @@ async function startServer() {
   });
 
   // Excluir usuário (apenas admin)
-app.delete("/api/admin/usuarios/:id", verificarAdminTotal, async (req, res) => {
-  try {
-    const usuarioId = req.params.id;
+  app.delete("/api/admin/usuarios/:id", verificarAdminTotal, async (req, res) => {
+    try {
+      const usuarioId = req.params.id;
 
-    const result = await db.run(
-      "DELETE FROM usuarios WHERE id = ?",
-      [usuarioId]
-    );
+      const result = await db.run(
+        "DELETE FROM usuarios WHERE id = ?",
+        [usuarioId]
+      );
 
-    if (result.changes === 0) {
-      return res.status(404).json({ error: "Usuário não encontrado" });
+      if (result.changes === 0) {
+        return res.status(404).json({ error: "Usuário não encontrado" });
+      }
+
+      res.json({ success: true });
+
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Erro ao excluir usuário" });
     }
+  });
 
-    res.json({ success: true });
+  // muda senha
+  app.put("/api/usuario/:id/senha", verificarLogin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { senhaAtual , novaSenha } = req.body;
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Erro ao excluir usuário" });
-  }
-});
+      if (Number(id) !== req.session.userId) {
+        return res.status(403).json({ error: "Nao autorizado" });
+      }
 
-/*app.delete("/api/admin/usuarios/:id", async (req, res) => {
-  console.log("DELETE chamado para ID:", req.params.id);
-  return res.json({ teste: true });
-});
-*/
+      const usuario = await db.get(
+        "SELECT senha FROM usuarios WHERE id = ?",
+        [id]
+      );
+
+      if (!usuario) {
+        return res.status(404).json({ error: "Usuario nao encontrado" });
+      }
+
+      const senhaValida = await bcrypt.compare(senhaAtual, usuario.senha);
+
+      if (!senhaValida) {
+        return res.status(400).json({ error: "Senha atual incorreta" });
+      }
+
+      const novaSenhaHash = await bcrypt.hash(novaSenha, 10);
+
+      await db.run(
+        "UPDATE usuario SET senha = ? WHERE id = ?",
+        [novaSenhaHash, id]
+      );
+
+      res.json({ success: true });
+
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Erro ao atualiza senha" });
+    }
+  });
+
+
   // Login
   app.post("/login", async (req, res) => {
     const { usuario, senha } = req.body;

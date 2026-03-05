@@ -95,6 +95,41 @@
         </div>
 
     </main>
+    <div id="modalEditar" class="modal"
+        style="display:none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);">
+        <div class="card" style="max-width: 400px; margin: 80px auto; padding: 30px;">
+            <h2 style="color: #00ffd5; margin-bottom: 20px; text-align: center;">Editar Colaborador</h2>
+
+            <form id="formEdicaoUsuario">
+                <input type="hidden" id="editId">
+
+                <div class="input-group">
+                    <input type="text" id="editNome" required>
+                    <label>Nome do Usuário</label>
+                </div>
+
+                <div class="input-group" style="margin-top: 25px;">
+                    <input type="password" id="editSenha" placeholder=" ">
+                    <label>Nova Senha (deixe vazio para não alterar)</label>
+                </div>
+
+                <div id="groupRole" style="margin-top: 20px;">
+                    <label style="font-size: 12px; color: #00ffd5; display: block; margin-bottom: 5px;">Cargo
+                        (Role)</label>
+                    <select id="editRole">
+                        <option value="barbeiro">Barbeiro</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 30px;">
+                    <button type="submit" style="flex: 2;">SALVAR ALTERAÇÕES</button>
+                    <button type="button" onclick="fecharModal()"
+                        style="flex: 1; background: #333; color: white; box-shadow: none;">VOLTAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="/script-dashboard.js"></script>
 

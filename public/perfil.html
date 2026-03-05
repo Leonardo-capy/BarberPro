@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil - BarberPro</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 10000;">
+        <div id="toast-msg"
+            style="display: none; padding: 15px 25px; border-radius: 10px; color: white; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.5s ease-in-out;">
+        </div>
+    </div>
+
+    <header class="navbar navbar-admin">
+        <div class="logo">👤 Perfil do Usuário</div>
+        <nav class="admin-nav">
+            <a href="perfil.html" class="active">Perfil</a>
+            <a href="/admin.html">Agendamentos</a>
+            <a href="admin-bloqueios.html">Bloqueios</a>
+            <a href="/admin-total.html" id="linkAdminTotal" style="display: none;">Painel Total</a>
+            <a href="/logout">Sair</a>
+        </nav>
+    </header>
+
+    <main class="admin-layout">
+
+        <div class="lado-esquerdo">
+            <section class="dashboard">
+                <div class="stat-card">
+                    <h3>Usuário</h3>
+                    <p id="info-usuario">Carregando...</p>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Cargo / Role</h3>
+                    <p id="info-role">---</p>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Status da Conta</h3>
+                    <p id="info-plano" style="color: #00ffd5;">Ativo</p>
+                </div>
+            </section>
+            <div class="stat-card" style="width: 100%; text-align: left; min-height: 100px;">
+                <h3>Minha Bio / Descrição</h3>
+                <p id="exibir-descricao"
+                    style="font-size: 16px; color: #bbb; font-style: italic; margin-top: 10px; line-height: 1.5;">
+                    Nenhuma descrição definida...
+                </p>
+            </div>
+        </div>
+
+        <div class="lado-direito">
+            <section class="servicos-admin">
+                <h2 id="tituloForm">Alterar Minha Senha</h2>
+
+                <form id="formAlterarSenha" class="form-servico">
+                    <div id="containerSenhaAtual">
+                        <input type="password" id="senhaAtual" placeholder="Senha Atual">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="color: #00ffd5; font-size: 14px; display: block; margin-bottom: 5px;">Minha
+                            Descrição / Bio:</label>
+                        <textarea id="editDescricao" placeholder="Escreva algo sobre você..."
+                            style="width: 100%; padding: 12px; background: #111; border: 1px solid #444; border-radius: 12px; color: white; font-size: 16px; outline: none; transition: 0.3s; resize: vertical; min-height: 80px;"></textarea>
+                    </div>
+
+                    <input type="password" id="novaSenha" placeholder="Nova Senha (deixe vazio para não alterar)"
+                        minlength="3">
+
+                    <button type="submit">Salvar Alterações</button>
+                </form>
+                <p id="msgErro" style="margin-top: 15px; font-weight: bold;"></p>
+            </section>
+        </div>
+
+    </main>
+
+    <script src="script-perfil.js"></script>
+</body>
+
+</html>

@@ -801,3 +801,8 @@ tr:hover {
     gap: 10px;
   }
 }
+
+#exibir-descricao {
+    white-space: pre-wrap; /* Isso faz com que as quebras de linha do textarea apareçam no <p> */
+    word-wrap: break-word;
+}
