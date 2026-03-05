@@ -17,6 +17,7 @@ export async function initDB() {
       plano TEXT DEFAULT 'ativo',
       role TEXT DEFAULT 'barbeiro',
       data_vencimento DATETIME,
+      descricao TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
@@ -94,9 +95,6 @@ export async function initDB() {
     await db.run("INSERT INTO servicos (user_id, nome, preco) VALUES (?, ?, ?)", [2, "Corte + Barba", 40.0]);
   }
 
-  await db.run(
-    "ALTER TABLE usuarios ADD COLUMN descricao TEXT;"
-  );
 
   return db;
 }
