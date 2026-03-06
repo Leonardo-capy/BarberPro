@@ -20,8 +20,8 @@ const app = express();
 app.disable('x-powered-by');
 
 app.use(helmet({
-  crossOriginEmbedderPolicy: false,
-  crossOriginResourcePolicy: { policy: "cross-origin" }
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
 const PORT = process.env.PORT || 3000;
@@ -309,20 +309,30 @@ async function startServer() {
         }
     });
 
+
+    if (process.env.NODE_ENV === 'production') {
+        const frontendPath = path.join(__dirname, '../frontend/build');
+
+        console.log('📁 Servindo frontend de:', frontendPath);
+
+        // Servir arquivos estáticos
+        app.use(express.static(frontendPath));
+
+        // ✅ CORREÇÃO: Usar middleware em vez de app.get('*')
+        app.use((req, res, next) => {
+            // Se a requisição NÃO é para a API, envia o index.html
+            if (!req.path.startsWith('/api')) {
+                return res.sendFile(path.join(frontendPath, 'index.html'));
+            }
+            // Se for para a API, continua para as rotas normais
+            next();
+        });
+    }
+
+    // 3. Iniciar servidor
     app.listen(PORT, "0.0.0.0", () =>
         console.log(`🚀 Servidor rodando na porta ${PORT}`)
     );
-}
-if (process.env.NODE_ENV === 'production') {
-  // Servir arquivos estáticos do frontend
-  app.use(express.static(path.join(__dirname, 'client/build')));
-  
-  // Redirecionar qualquer rota não-API para o React
-  app.get('*', (req, res) => {
-    if (!req.path.startsWith('/api')) {
-      res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-    }
-  });
 }
 
 startServer();
