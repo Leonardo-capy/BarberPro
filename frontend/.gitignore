@@ -1,0 +1,36 @@
+﻿# Dependências
+node_modules/
+package-lock.json
+
+# Build
+build/
+dist/
+frontend/build/
+backend/build/
+
+# Banco de dados
+*.sqlite
+*.sqlite3
+*.db
+
+# Ambiente
+.env
+.env.local
+.env.production
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '',
+  baseURL: process.env.NODE_ENV === 'production' 
+    ? process.env.REACT_APP_API_URL  // URL do backend no Render
+    : '',  // Vazio = mesma origem em desenvolvimento
   withCredentials: true,
   timeout: 10000
 });

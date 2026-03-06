@@ -39,21 +39,19 @@ export function usuarioRoutes(db) {
     router.put("/:id", verificarAdmin, async (req, res) => {
         try {
             const { id } = req.params;
-            const { usuario, role, senha } = req.body;
+            let { usuario, role, senha } = req.body;
 
-            if (!usuario || !role) {
-                return res.status(400).json({ error: "Dados inválidos: usuário e role são obrigatórios." });
+            // Validação de tipos
+            if (usuario && typeof usuario !== 'string') {
+                return res.status(400).json({ error: "Usuário deve ser uma string" });
+            }
+            if (role && typeof role !== 'string') {
+                return res.status(400).json({ error: "Role deve ser uma string" });
+            }
+            if (senha && typeof senha !== 'string') {
+                return res.status(400).json({ error: "Senha deve ser uma string" });
             }
 
-            await db.run(
-                "UPDATE usuarios SET usuario = ?, role = ? WHERE id = ?",
-                [usuario, role, id]
-            );
-
-            if (senha && senha.trim() !== "") {
-                const hash = await bcrypt.hash(senha, 10);
-                await db.run("UPDATE usuarios SET senha = ? WHERE id = ?", [hash, id]);
-            }
 
             res.json({ message: "Usuário atualizado com sucesso." });
 
