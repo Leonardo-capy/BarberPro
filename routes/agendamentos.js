@@ -1,5 +1,5 @@
 import express from "express";
-import { verificarAdmin, verificarLogin } from "../middleware/auth.js";
+import { verificarLogin } from "../middleware/auth.js";
 
 export function agendamentoRoutes(db) {
   const router = express.Router();
@@ -201,8 +201,6 @@ export function agendamentoRoutes(db) {
       res.status(500).json({ error: "Erro ao calcular faturamento." });
     }
   });
-
-
 
   return router;
 }

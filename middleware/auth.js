@@ -5,16 +5,14 @@ export function verificarLogin(req, res, next) {
   next();
 }
 
-//  Middleware para proteger rotas admin
 export function verificarBarbeiroOuAdmin(req, res, next) {
-  if (!req.session.usuario) return res.redirect("/");
+  if (!req.session.usuario) return res.status(401).json({ error: "Não autenticado" });
 
   const role = req.session.usuario.role;
   if (role === "barbeiro" || role === "admin") return next();
 
-  return res.redirect("/");
+  return res.status(403).json({ error: "Acesso negado" });
 }
-
 
 export function verificarAdminTotal(req, res, next) {
   if (!req.session.usuario) {
@@ -33,6 +31,5 @@ export function verificarAdmin(req, res, next) {
   if (!req.session.usuario || req.session.usuario.role !== "admin") {
     return res.status(403).json({ erro: "Acesso negado" });
   }
-
   next();
 }
