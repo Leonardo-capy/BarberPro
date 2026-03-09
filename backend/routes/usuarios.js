@@ -42,18 +42,61 @@ export function usuarioRoutes(db) {
             let { usuario, role, senha } = req.body;
 
             // Validação de tipos
-            if (usuario && typeof usuario !== 'string') {
+            if (usuario !== undefined && typeof usuario !== 'string') {
                 return res.status(400).json({ error: "Usuário deve ser uma string" });
             }
-            if (role && typeof role !== 'string') {
+            if (role !== undefined && typeof role !== 'string') {
                 return res.status(400).json({ error: "Role deve ser uma string" });
             }
-            if (senha && typeof senha !== 'string') {
+            if (senha !== undefined && senha !== null && typeof senha !== 'string') {
                 return res.status(400).json({ error: "Senha deve ser uma string" });
             }
 
+            // Sanitização
+            if (usuario) usuario = usuario.trim();
+            if (role) role = role.trim();
+            if (senha) senha = senha.trim();
 
-            res.json({ message: "Usuário atualizado com sucesso." });
+            // Validações de negócio
+            if (!usuario || usuario.length < 3) {
+                return res.status(400).json({ error: "Usuário deve ter pelo menos 3 caracteres" });
+            }
+
+            const rolesValidas = ['admin', 'barbeiro'];
+            if (role && !rolesValidas.includes(role)) {
+                return res.status(400).json({ error: "Role deve ser 'admin' ou 'barbeiro'" });
+            }
+
+            if (senha && senha.length < 6) {
+                return res.status(400).json({ error: "Senha deve ter pelo menos 6 caracteres" });
+            }
+
+            // Verificar se usuário existe
+            const existente = await db.get("SELECT id FROM usuarios WHERE id = ?", [id]);
+            if (!existente) {
+                return res.status(404).json({ error: "Usuário não encontrado" });
+            }
+
+            // Atualizar nome e role
+            if (role) {
+                await db.run(
+                    "UPDATE usuarios SET usuario = ?, role = ? WHERE id = ?",
+                    [usuario, role, id]
+                );
+            } else {
+                await db.run(
+                    "UPDATE usuarios SET usuario = ? WHERE id = ?",
+                    [usuario, id]
+                );
+            }
+
+            // Atualizar senha se fornecida
+            if (senha) {
+                const hash = await bcrypt.hash(senha, 10);
+                await db.run("UPDATE usuarios SET senha = ? WHERE id = ?", [hash, id]);
+            }
+
+            res.json({ success: true, message: "Usuário atualizado com sucesso." });
 
         } catch (err) {
             console.error("Erro ao atualizar usuário:", err);

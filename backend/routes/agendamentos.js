@@ -78,10 +78,25 @@ export function agendamentoRoutes(db) {
   // ===============================
   router.post("/", async (req, res) => {
     try {
-      const { nome, telefone, servico, data, horario, user_id } = req.body;
+      let { nome, telefone, servico, data, horario, user_id } = req.body;
       const userId = Number(user_id);
+
       if (!nome || !telefone || !servico || !data || !horario)
         return res.status(400).json({ error: "Todos os campos são obrigatórios." });
+
+      // Sanitização
+      nome = String(nome).trim();
+      telefone = String(telefone).replace(/\D/g, ''); // remove tudo que não for número
+
+      // Validações
+      if (nome.length < 2)
+        return res.status(400).json({ error: "Nome deve ter pelo menos 2 caracteres." });
+
+      if (telefone.length < 10 || telefone.length > 11)
+        return res.status(400).json({ error: "Telefone inválido. Use DDD + número (10 ou 11 dígitos)." });
+
+      if (!userId || isNaN(userId))
+        return res.status(400).json({ error: "Barbeiro inválido." });
 
       if (await isHorarioBloqueado(userId, data, horario))
         return res.status(403).json({ error: "Horário ou dia bloqueado." });

@@ -10,6 +10,7 @@ import { verificarLogin, verificarBarbeiroOuAdmin, verificarAdminTotal } from ".
 import bcrypt from "bcrypt";
 import helmet from "helmet";
 import { validateUserInput } from "./middleware/validate.js";
+import crypto from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,22 +21,51 @@ const app = express();
 app.disable('x-powered-by');
 
 app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"],
+            styleSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"],
+            imgSrc: ["'self'", "data:", "blob:"],
+            fontSrc: ["'self'", "data:"],
+            connectSrc: ["'self'", "https://api.barberpro.com"],
+            frameSrc: ["'none'"],
+            objectSrc: ["'none'"],
+            upgradeInsecureRequests: [],
+        },
+    },
     crossOriginEmbedderPolicy: false,
     crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
 const PORT = process.env.PORT || 3000;
 console.log("SERVIDOR INICIADO");
-app.use(cors({
-    origin: 'http://localhost:3001',
+
+
+const corsOptions = {
+    origin: process.env.NODE_ENV === 'production'
+        ? 'https://barberpro-mrg9.onrender.com' // Seu domínio de produção
+        : 'http://localhost:3001',
     credentials: true
-}));
+};
+app.use(cors(corsOptions));
+
+
 app.use(express.json());
 app.use(express.static("public"));
 
+if (!process.env.SESSION_SECRET) {
+    if (process.env.NODE_ENV === 'production') {
+        console.error("❌ ERRO CRÍTICO: SESSION_SECRET não definido em produção! Defina a variável de ambiente SESSION_SECRET.");
+        process.exit(1);
+    } else {
+        console.warn("⚠️  SESSION_SECRET não definido. Usando valor temporário — sessões serão invalidadas ao reiniciar o servidor.");
+    }
+}
+const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
 
 app.use(session({
-    secret: "barberpro-secret",
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -189,12 +219,22 @@ async function startServer() {
     app.post("/login", async (req, res) => {
         try {
             const { usuario, senha } = req.body;
+
+            // Busca usuário OU cria um hash fake para usuário inexistente
             const user = await db.get("SELECT * FROM usuarios WHERE usuario = ?", [usuario]);
 
-            if (!user) return res.status(401).json({ erro: "Credenciais inválidas" });
+            // Hash fake para timing attack
+            let senhaValida = false;
+            if (user) {
+                senhaValida = await bcrypt.compare(senha, user.senha);
+            } else {
+                // Delay artificial com hash fake
+                await bcrypt.compare(senha, '$2b$10$' + 'x'.repeat(53));
+            }
 
-            const senhaValida = await bcrypt.compare(senha, user.senha);
-            if (!senhaValida) return res.status(401).json({ erro: "Credenciais inválidas" });
+            if (!user || !senhaValida) {
+                return res.status(401).json({ erro: "Credenciais inválidas" });
+            }
 
             req.session.userId = user.id;
             req.session.usuario = { id: user.id, usuario: user.usuario, role: user.role };
