@@ -15,6 +15,7 @@ import crypto from 'crypto';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+app.set('trust proxy', 1);
 
 const app = express();
 
