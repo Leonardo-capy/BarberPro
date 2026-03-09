@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '',  // Sempre vazio — backend serve o frontend na mesma origem
+  baseURL: '',
   withCredentials: true,
   timeout: 10000
 });
