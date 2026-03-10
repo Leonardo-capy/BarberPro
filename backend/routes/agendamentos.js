@@ -113,6 +113,10 @@ export function agendamentoRoutes(db) {
         [userId, nome, telefone, servicoDB.nome, servicoDB.preco, data, horario]
       );
 
+      const barbeiro = await db.get("SELECT usuario FROM usuarios WHERE id = ?",
+        [userId]
+      );
+
       res.status(201).json({ message: "Agendamento realizado com sucesso!" });
     } catch (err) {
       console.error(err);

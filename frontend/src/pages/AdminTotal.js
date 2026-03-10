@@ -3,6 +3,160 @@ import NavbarAdmin from '../components/NavbarAdmin.js';
 import ModalEditarUsuario from '../components/ModalEditarUsuario.js';
 import api from '../services/api.js';
 
+function ModalVerPerfil({ usuario, onClose }) {
+  const [perfil, setPerfil] = useState(null);
+  const [agendamentos, setAgendamentos] = useState([]);
+  const [faturamento, setFaturamento] = useState(0);
+
+  useEffect(() => {
+    if (!usuario) return;
+
+    const carregarDados = async () => {
+      try {
+        const [resPerfil, resFaturamento] = await Promise.all([
+          api.get(`/api/usuarios/${usuario.id}`),
+          api.get(`/api/admin/barbeiro/${usuario.id}/faturamento`)
+        ]);
+        setPerfil(resPerfil.data);
+        setFaturamento(resFaturamento.data.total || 0);
+        setAgendamentos(resFaturamento.data.agendamentos || []);
+      } catch (err) {
+        console.error('Erro ao carregar perfil do barbeiro:', err);
+      }
+    };
+
+    carregarDados();
+  }, [usuario]);
+
+  if (!usuario) return null;
+
+  return (
+    <div style={styles.overlay} onClick={onClose}>
+      <div style={styles.modal} onClick={e => e.stopPropagation()}>
+        <button style={styles.fechar} onClick={onClose}>✕</button>
+
+        {perfil ? (
+          <>
+            <div style={styles.cabecalho}>
+              <div style={styles.avatar}>
+                {perfil.usuario.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <h2 style={styles.nome}>{perfil.usuario}</h2>
+                <span style={styles.badge}>{perfil.role}</span>
+              </div>
+            </div>
+
+            <div style={styles.stats}>
+              <div style={styles.statItem}>
+                <span style={styles.statValor}>R$ {Number(faturamento).toFixed(2)}</span>
+                <span style={styles.statLabel}>Faturamento Total</span>
+              </div>
+              <div style={styles.statItem}>
+                <span style={styles.statValor}>{agendamentos.length}</span>
+                <span style={styles.statLabel}>Atendimentos</span>
+              </div>
+              <div style={styles.statItem}>
+                <span style={{ ...styles.statValor, color: '#00ffd5' }}>Ativo</span>
+                <span style={styles.statLabel}>Status</span>
+              </div>
+            </div>
+
+            {perfil.descricao && (
+              <div style={styles.bio}>
+                <h4 style={{ color: '#00ffd5', marginBottom: '8px' }}>Bio</h4>
+                <p style={{ color: '#bbb', fontStyle: 'italic', lineHeight: '1.6' }}>
+                  "{perfil.descricao}"
+                </p>
+              </div>
+            )}
+
+            {agendamentos.length > 0 && (
+              <div style={styles.historico}>
+                <h4 style={{ color: '#00ffd5', marginBottom: '12px' }}>Últimos atendimentos</h4>
+                <div style={{ maxHeight: '180px', overflowY: 'auto' }}>
+                  {agendamentos.slice(0, 10).map((ag, i) => (
+                    <div key={i} style={styles.itemHistorico}>
+                      <span>{ag.nome}</span>
+                      <span style={{ color: '#aaa' }}>{ag.servico}</span>
+                      <span style={{ color: '#00ffd5' }}>R$ {Number(ag.preco).toFixed(2)}</span>
+                      <span style={{ color: '#666', fontSize: '12px' }}>{ag.data} {ag.horario}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <p style={{ textAlign: 'center', color: '#aaa' }}>Carregando...</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const styles = {
+  overlay: {
+    position: 'fixed', inset: 0,
+    background: 'rgba(0,0,0,0.75)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    zIndex: 1000
+  },
+  modal: {
+    background: '#1a1a1a',
+    border: '1px solid #333',
+    borderRadius: '16px',
+    padding: '32px',
+    width: '100%',
+    maxWidth: '520px',
+    position: 'relative',
+    maxHeight: '85vh',
+    overflowY: 'auto'
+  },
+  fechar: {
+    position: 'absolute', top: '16px', right: '16px',
+    background: 'none', border: 'none',
+    color: '#aaa', fontSize: '18px', cursor: 'pointer'
+  },
+  cabecalho: {
+    display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px'
+  },
+  avatar: {
+    width: '60px', height: '60px', borderRadius: '50%',
+    background: 'linear-gradient(135deg, #00ffd5, #00a896)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontSize: '24px', fontWeight: 'bold', color: '#000', flexShrink: 0
+  },
+  nome: { fontSize: '22px', marginBottom: '4px' },
+  badge: {
+    background: '#00ffd520', color: '#00ffd5',
+    padding: '2px 10px', borderRadius: '20px', fontSize: '12px'
+  },
+  stats: {
+    display: 'flex', gap: '12px', marginBottom: '24px'
+  },
+  statItem: {
+    flex: 1, background: '#111', borderRadius: '12px',
+    padding: '14px', textAlign: 'center',
+    display: 'flex', flexDirection: 'column', gap: '4px'
+  },
+  statValor: { fontSize: '18px', fontWeight: 'bold', color: '#00ffd5' },
+  statLabel: { fontSize: '11px', color: '#666', textTransform: 'uppercase' },
+  bio: {
+    background: '#111', borderRadius: '12px',
+    padding: '16px', marginBottom: '20px'
+  },
+  historico: {
+    background: '#111', borderRadius: '12px', padding: '16px'
+  },
+  itemHistorico: {
+    display: 'grid', gridTemplateColumns: '1fr 1fr 80px 80px',
+    gap: '8px', padding: '8px 0',
+    borderBottom: '1px solid #222', fontSize: '13px',
+    alignItems: 'center'
+  }
+};
+
 function AdminTotal() {
   const [dashboard, setDashboard] = useState({
     totalAgendamentos: 0,
@@ -14,6 +168,7 @@ function AdminTotal() {
   const [usuarios, setUsuarios] = useState([]);
   const [modalAberto, setModalAberto] = useState(false);
   const [usuarioEditando, setUsuarioEditando] = useState(null);
+  const [usuarioVerPerfil, setUsuarioVerPerfil] = useState(null);
   const [novoUsuario, setNovoUsuario] = useState({
     usuario: '',
     senha: '',
@@ -144,7 +299,13 @@ function AdminTotal() {
                     <td>{user.id}</td>
                     <td>{user.usuario}</td>
                     <td>{user.role}</td>
-                    <td>
+                    <td style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      <button
+                        onClick={() => setUsuarioVerPerfil(user)}
+                        style={{ background: '#00ffd520', color: '#00ffd5', border: '1px solid #00ffd540' }}
+                      >
+                        Ver Perfil
+                      </button>
                       <button onClick={() => abrirModalEdicao(user)}>Editar</button>
                       {user.id !== 1 ? (
                         <button onClick={() => excluirUsuario(user.id)}>Excluir</button>
@@ -195,6 +356,11 @@ function AdminTotal() {
         usuario={usuarioEditando}
         onClose={fecharModal}
         onSave={salvarEdicao}
+      />
+
+      <ModalVerPerfil
+        usuario={usuarioVerPerfil}
+        onClose={() => setUsuarioVerPerfil(null)}
       />
     </>
   );

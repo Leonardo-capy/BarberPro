@@ -18,6 +18,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+// Necessário para Render (proxy reverso) — permite detectar HTTPS e cookies seguros
 app.set('trust proxy', 1);
 
 app.disable('x-powered-by');
@@ -46,7 +47,7 @@ console.log("SERVIDOR INICIADO");
 
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production'
-        ? ['https://barberpro-mrg9.onrender.com'] // Seu domínio de produção
+        ? 'https://barberpro-mrg9.onrender.com' // Seu domínio de produção
         : 'http://localhost:3001',
     credentials: true
 };
@@ -87,17 +88,8 @@ async function startServer() {
 
     // Retorna dados do usuário logado
     app.get("/api/usuario-logado", (req, res) => {
-        console.log("Sessão atual:", req.session.id);
-        console.log("Usuário na sessão:", req.session.usuario);
-
-        if (!req.session.usuario) {
-            console.warn("Nenhum usuário logado na sessão.");
-            return res.status(401).json({ error: "Não autenticado" });
-        }
-
-        console.log("Usuário logado:", req.session.usuario);
+        if (!req.session.usuario) return res.status(401).json({ error: "Não autenticado" });
         res.json(req.session.usuario);
-
     });
 
     // Servir arquivos estáticos do admin
@@ -226,6 +218,32 @@ async function startServer() {
         }
     });
 
+
+    // Perfil + faturamento de um barbeiro específico (admin)
+    app.get("/api/admin/barbeiro/:id/faturamento", verificarAdminTotal, async (req, res) => {
+        try {
+            const { id } = req.params;
+
+            const faturamento = await db.get(
+                "SELECT SUM(preco) as total FROM agendamentos WHERE user_id = ? AND finalizado = 1",
+                [id]
+            );
+
+            const agendamentos = await db.all(
+                "SELECT nome, servico, preco, data, horario FROM agendamentos WHERE user_id = ? AND finalizado = 1 ORDER BY data DESC, horario DESC LIMIT 20",
+                [id]
+            );
+
+            res.json({
+                total: faturamento?.total || 0,
+                agendamentos
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Erro ao buscar dados do barbeiro" });
+        }
+    });
+
     // Login
     app.post("/login", async (req, res) => {
         try {
@@ -250,16 +268,7 @@ async function startServer() {
             req.session.userId = user.id;
             req.session.usuario = { id: user.id, usuario: user.usuario, role: user.role };
 
-            req.session.save((err) => {
-                if (err) {
-                    console.err("Erro ao salvar sessão:", err);
-                    return res.status(500).json({ error: "Erro ao criar sessão" });
-                }
-
-                console.log(`Usuário ${user.usuario} logado com sucesso`);
-                res.json({ success: true, role: user.role });
-            });
-
+            res.json({ success: true, role: user.role });
         } catch (err) {
             console.error(err);
             res.status(500).json({ error: "Erro no login" });
