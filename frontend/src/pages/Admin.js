@@ -9,7 +9,7 @@ function Admin() {
   const [servicos, setServicos] = useState([]);
   const [total, setTotal] = useState(0);
   const [hoje, setHoje] = useState(0);
-  const [faturamento, setFaturamento] = useState(0);
+  const [faturamento, setFaturamento] = useState({ total: 0, diario: 0, mensal: 0, anual: 0 });
   const [novoServico, setNovoServico] = useState({ nome: '', preco: '' });
 
   useEffect(() => {
@@ -46,7 +46,7 @@ function Admin() {
   const carregarFaturamento = async () => {
     try {
       const res = await api.get('/api/agendamentos/faturamento');
-      setFaturamento(res.data.total || 0);
+      setFaturamento(res.data);
     } catch (err) {
       console.error('Erro ao carregar faturamento:', err);
     }
@@ -111,8 +111,20 @@ function Admin() {
               <p>{hoje}</p>
             </div>
             <div className="stat-card">
+              <h3>Faturamento Hoje</h3>
+              <p>R$ {Number(faturamento.diario).toFixed(2)}</p>
+            </div>
+            <div className="stat-card">
+              <h3>Faturamento do Mês</h3>
+              <p>R$ {Number(faturamento.mensal).toFixed(2)}</p>
+            </div>
+            <div className="stat-card">
+              <h3>Faturamento do Ano</h3>
+              <p>R$ {Number(faturamento.anual).toFixed(2)}</p>
+            </div>
+            <div className="stat-card">
               <h3>Faturamento Total</h3>
-              <p>R$ {Number(faturamento).toFixed(2)}</p>
+              <p>R$ {Number(faturamento.total).toFixed(2)}</p>
             </div>
           </section>
 

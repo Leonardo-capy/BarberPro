@@ -29,7 +29,7 @@ export function agendamentoRoutes(db) {
       const { data } = req.body;
       const userId = req.session.userId;
 
-      if (!data) 
+      if (!data)
         return res.status(400).json({ error: "Data é obrigatória." });
 
       const jaBloqueado = await db.get(
@@ -39,21 +39,21 @@ export function agendamentoRoutes(db) {
 
       if (jaBloqueado) {
         await db.run("DELETE FROM bloqueios WHERE user_id = ? AND data = ? AND horario = 'DIA_INTEIRO'", [userId, data]);
-        return res.json({ 
-          bloqueado: false, 
-          message: "Dia desbloqueado!" 
+        return res.json({
+          bloqueado: false,
+          message: "Dia desbloqueado!"
         });
       }
 
-      await db.run("DELETE FROM bloqueios WHERE user_id = ? AND data = ?", 
+      await db.run("DELETE FROM bloqueios WHERE user_id = ? AND data = ?",
         [userId, data]);
 
-      await db.run("INSERT INTO bloqueios (user_id, data, horario) VALUES (?, ?, 'DIA_INTEIRO')", 
+      await db.run("INSERT INTO bloqueios (user_id, data, horario) VALUES (?, ?, 'DIA_INTEIRO')",
         [userId, data]);
 
-      res.json({ 
-        bloqueado: true, 
-        message: "Dia bloqueado!" 
+      res.json({
+        bloqueado: true,
+        message: "Dia bloqueado!"
       });
     } catch (err) {
       console.error(err);
@@ -214,9 +214,39 @@ export function agendamentoRoutes(db) {
   // ===============================
   router.get("/faturamento", verificarLogin, async (req, res) => {
     try {
-      const total = await db.get("SELECT SUM(preco) as total FROM agendamentos WHERE user_id = ? AND finalizado = 1", [req.session.userId]);
-      res.json({ total: total.total || 0 });
-    } catch {
+      const userId = req.session.userId;
+      const hoje = new Date();
+      const diaHoje = hoje.toISOString().split('T')[0];                          // "2026-03-10"
+      const mesHoje = diaHoje.substring(0, 7);                                   // "2026-03"
+      const anoHoje = diaHoje.substring(0, 4);                                   // "2026"
+
+      const [total, diario, mensal, anual] = await Promise.all([
+        db.get(
+          "SELECT SUM(preco) as total FROM agendamentos WHERE user_id = ? AND finalizado = 1",
+          [userId]
+        ),
+        db.get(
+          "SELECT SUM(preco) as total FROM agendamentos WHERE user_id = ? AND finalizado = 1 AND data = ?",
+          [userId, diaHoje]
+        ),
+        db.get(
+          "SELECT SUM(preco) as total FROM agendamentos WHERE user_id = ? AND finalizado = 1 AND strftime('%Y-%m', data) = ?",
+          [userId, mesHoje]
+        ),
+        db.get(
+          "SELECT SUM(preco) as total FROM agendamentos WHERE user_id = ? AND finalizado = 1 AND strftime('%Y', data) = ?",
+          [userId, anoHoje]
+        ),
+      ]);
+
+      res.json({
+        total: total?.total || 0,
+        diario: diario?.total || 0,
+        mensal: mensal?.total || 0,
+        anual: anual?.total || 0,
+      });
+    } catch (err) {
+      console.error(err);
       res.status(500).json({ error: "Erro ao calcular faturamento." });
     }
   });
