@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BarberPro – Documentação Técnica</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0e0c0a;
+    --paper: #f5f0e8;
+    --cream: #ede7d3;
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --rust: #b84a2e;
+    --forest: #2e5e3a;
+    --blade: #1a1a1a;
+    --muted: #6b6355;
+    --border: #d4c9b0;
+    --code-bg: #1c1a16;
+    --code-text: #e8dfc4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 260px;
+    height: 100vh;
+    background: var(--blade);
+    color: var(--paper);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    z-index: 100;
+    border-right: 3px solid var(--gold);
+  }
+
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+  }
+
+  .sidebar-logo .icon {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .sidebar-logo h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+  }
+
+  .sidebar-logo p {
+    font-size: 11px;
+    color: rgba(245,240,232,0.45);
+    font-weight: 300;
+    margin-top: 3px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .sidebar nav { padding: 16px 0; flex: 1; }
+
+  .nav-section {
+    padding: 12px 24px 4px;
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .nav-link {
+    display: block;
+    padding: 7px 24px;
+    color: rgba(245,240,232,0.65);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    position: relative;
+  }
+
+  .nav-link:hover, .nav-link.active {
+    color: var(--paper);
+    background: rgba(201,168,76,0.08);
+    border-left-color: var(--gold);
+  }
+
+  .sidebar-footer {
+    padding: 16px 24px;
+    border-top: 1px solid rgba(201,168,76,0.2);
+    font-size: 11px;
+    color: rgba(245,240,232,0.3);
+  }
+
+  /* ===== MAIN ===== */
+  .main {
+    margin-left: 260px;
+    min-height: 100vh;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: var(--blade);
+    color: var(--paper);
+    padding: 80px 64px 64px;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 3px solid var(--gold);
+  }
+
+  .hero::before {
+    content: '✂';
+    position: absolute;
+    right: 64px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-45deg);
+    font-size: 180px;
+    opacity: 0.04;
+    line-height: 1;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.4);
+    color: var(--gold-light);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 52px;
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--paper);
+    margin-bottom: 16px;
+  }
+
+  .hero h1 span { color: var(--gold); }
+
+  .hero p {
+    font-size: 16px;
+    color: rgba(245,240,232,0.6);
+    max-width: 540px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 28px;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  .tag-frontend { background: rgba(46,94,58,0.3); color: #7ec89a; border: 1px solid rgba(46,94,58,0.6); }
+  .tag-backend { background: rgba(184,74,46,0.3); color: #f0997a; border: 1px solid rgba(184,74,46,0.6); }
+  .tag-db { background: rgba(201,168,76,0.2); color: var(--gold-light); border: 1px solid rgba(201,168,76,0.4); }
+
+  /* ===== CONTENT ===== */
+  .content {
+    max-width: 900px;
+    padding: 56px 64px;
+  }
+
+  /* ===== SECTION ===== */
+  .section {
+    margin-bottom: 72px;
+    scroll-margin-top: 24px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 3px 8px;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+  }
+
+  .section-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .section-icon {
+    margin-left: auto;
+    font-size: 20px;
+    opacity: 0.5;
+  }
+
+  /* ===== CARDS ===== */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+  }
+
+  .card-public::before { background: var(--forest); }
+  .card-admin::before { background: var(--rust); }
+  .card-super::before { background: var(--gold); }
+  .card-tech::before { background: #5b6af0; }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(14,12,10,0.08);
+  }
+
+  .card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+    margin-left: 8px;
+  }
+
+  .card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-left: 8px;
+  }
+
+  .card-emoji {
+    font-size: 22px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  /* ===== TECH STACK ===== */
+  .tech-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 16px;
+  }
+
+  .tech-box {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+  }
+
+  .tech-box h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .tech-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--cream);
+    font-size: 13.5px;
+  }
+
+  .tech-item:last-child { border-bottom: none; }
+
+  .tech-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-frontend { background: var(--forest); }
+  .dot-backend { background: var(--rust); }
+
+  /* ===== API TABLE ===== */
+  .api-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 13px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .api-table thead {
+    background: var(--blade);
+    color: var(--paper);
+  }
+
+  .api-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+    color: var(--gold-light);
+  }
+
+  .api-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--cream);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  .api-table tr:last-child td { border-bottom: none; }
+  .api-table tr:hover td { background: var(--cream); }
+
+  .method {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  .method-get { background: #d4edda; color: #155724; }
+  .method-post { background: #d1ecf1; color: #0c5460; }
+  .method-put { background: #fff3cd; color: #856404; }
+  .method-delete { background: #f8d7da; color: #721c24; }
+
+  .route-path {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--ink);
+  }
+
+  .auth-badge {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 6px;
+    border-radius: 2px;
+    letter-spacing: 0.04em;
+  }
+
+  .auth-open { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+  .auth-lock { background: #fff8e1; color: #f57f17; border: 1px solid #ffe082; }
+  .auth-admin { background: #fce4ec; color: #880e4f; border: 1px solid #f48fb1; }
+
+  /* ===== DB SCHEMA ===== */
+  .db-table {
+    background: var(--blade);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: 1px solid rgba(201,168,76,0.25);
+  }
+
+  .db-table-header {
+    background: rgba(201,168,76,0.15);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .db-table-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gold-light);
+  }
+
+  .db-table-desc {
+    font-size: 12px;
+    color: rgba(245,240,232,0.4);
+  }
+
+  .db-fields {
+    padding: 8px 0;
+  }
+
+  .db-field {
+    display: grid;
+    grid-template-columns: 160px 100px 1fr;
+    gap: 16px;
+    padding: 8px 20px;
+    font-size: 12.5px;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .db-field:last-child { border-bottom: none; }
+
+  .db-field-name {
+    font-family: 'DM Mono', monospace;
+    color: #a8d8ea;
+    font-size: 12px;
+  }
+
+  .db-field-type {
+    font-family: 'DM Mono', monospace;
+    color: var(--gold-light);
+    font-size: 11px;
+  }
+
+  .db-field-desc {
+    color: rgba(245,240,232,0.45);
+    font-size: 12px;
+  }
+
+  /* ===== CODE ===== */
+  pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 20px 24px;
+    border-radius: 4px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin: 16px 0;
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+  }
+
+  pre::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: 10px; right: 14px;
+    font-size: 10px;
+    color: rgba(232,223,196,0.3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  code {
+    font-family: 'DM Mono', monospace;
+    background: rgba(201,168,76,0.12);
+    color: var(--rust);
+    padding: 1px 5px;
+    border-radius: 2px;
+    font-size: 12.5px;
+  }
+
+  pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+  }
+
+  .kw { color: #c792ea; }
+  .str { color: #c3e88d; }
+  .num { color: var(--gold-light); }
+  .cmt { color: rgba(232,223,196,0.35); font-style: italic; }
+  .fn { color: #82aaff; }
+
+  /* ===== FLOW ===== */
+  .flow {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+
+  .flow-step {
+    flex: 1;
+    min-width: 120px;
+    background: white;
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    text-align: center;
+    position: relative;
+    font-size: 12.5px;
+  }
+
+  .flow-step::after {
+    content: '→';
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 16px;
+    z-index: 2;
+    background: var(--paper);
+    padding: 0 2px;
+  }
+
+  .flow-step:last-child::after { display: none; }
+
+  .flow-step .step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .flow-step p {
+    color: var(--ink);
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  /* ===== SECURITY LIST ===== */
+  .security-list {
+    list-style: none;
+    margin-top: 16px;
+  }
+
+  .security-list li {
+    display: flex;
+    gap: 12px;
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--forest);
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 8px;
+    font-size: 13.5px;
+    align-items: flex-start;
+  }
+
+  .security-list li .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ===== RULES ===== */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .rule-item {
+    background: white;
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .rule-item .bullet {
+    width: 18px; height: 18px;
+    background: var(--blade);
+    color: var(--gold);
+    border-radius: 50%;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ===== USERS TABLE ===== */
+  .users-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 16px;
+    font-size: 13.5px;
+  }
+
+  .users-table th {
+    background: var(--cream);
+    padding: 11px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .users-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--cream);
+  }
+
+  .users-table tr:last-child td { border-bottom: none; }
+
+  .role-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .role-admin { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
+  .role-barber { background: #d4edda; color: #155724; border: 1px solid #28a745; }
+
+  /* ===== ROADMAP ===== */
+  .roadmap {
+    margin-top: 16px;
+  }
+
+  .roadmap-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .roadmap-item:last-child { border-bottom: none; }
+
+  .roadmap-status {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+  }
+
+  .status-pending {
+    border: 2px solid var(--border);
+    background: white;
+  }
+
+  .roadmap-text {
+    font-size: 13.5px;
+    color: var(--ink);
+  }
+
+  .roadmap-text small {
+    display: block;
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ===== INFO BOX ===== */
+  .info-box {
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-left: 3px solid var(--gold);
+    padding: 14px 18px;
+    border-radius: 0 4px 4px 0;
+    margin: 16px 0;
+    font-size: 13.5px;
+  }
+
+  .info-box strong { color: var(--gold); font-weight: 600; }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .hero { padding: 48px 28px 40px; }
+    .content { padding: 36px 28px; }
+    .tech-row { grid-template-columns: 1fr; }
+    .rules-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Animate on load */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section { animation: fadeUp 0.4s ease both; }
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(4) { animation-delay: 0.2s; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <span class="icon">💈</span>
+    <h1>BarberPro</h1>
+    <p>Documentação Técnica</p>
+  </div>
+  <nav>
+    <div class="nav-section">Projeto</div>
+    <a class="nav-link" href="#visao-geral">Visão Geral</a>
+    <a class="nav-link" href="#tecnologias">Tecnologias</a>
+    <a class="nav-link" href="#estrutura">Estrutura de Arquivos</a>
+
+    <div class="nav-section">Funcionalidades</div>
+    <a class="nav-link" href="#area-publica">Área Pública</a>
+    <a class="nav-link" href="#area-admin">Área Administrativa</a>
+    <a class="nav-link" href="#area-total">Admin Total</a>
+    <a class="nav-link" href="#dashboard">Dashboard</a>
+
+    <div class="nav-section">Backend</div>
+    <a class="nav-link" href="#api">Rotas da API</a>
+    <a class="nav-link" href="#banco">Banco de Dados</a>
+    <a class="nav-link" href="#seguranca">Segurança</a>
+    <a class="nav-link" href="#regras">Regras de Negócio</a>
+
+    <div class="nav-section">Sistema</div>
+    <a class="nav-link" href="#fluxo">Fluxo de Uso</a>
+    <a class="nav-link" href="#usuarios">Usuários Padrão</a>
+    <a class="nav-link" href="#execucao">Como Executar</a>
+    <a class="nav-link" href="#roadmap">Melhorias Futuras</a>
+  </nav>
+  <div class="sidebar-footer">v1.0 &nbsp;·&nbsp; React + Node.js</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-badge">💈 &nbsp; DOCUMENTAÇÃO TÉCNICA</div>
+    <h1>Barber<span>Pro</span></h1>
+    <p>Sistema web completo de agendamento online para barbearias, desenvolvido com React no frontend e Node.js/Express no backend, com banco de dados SQLite e autenticação por sessão.</p>
+    <div class="hero-tags">
+      <span class="tag tag-frontend">React 18</span>
+      <span class="tag tag-frontend">FullCalendar</span>
+      <span class="tag tag-frontend">Context API</span>
+      <span class="tag tag-backend">Node.js</span>
+      <span class="tag tag-backend">Express</span>
+      <span class="tag tag-backend">Bcrypt</span>
+      <span class="tag tag-db">SQLite</span>
+      <span class="tag tag-db">express-session</span>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- VISÃO GERAL -->
+    <section class="section" id="visao-geral">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2>Visão Geral do Projeto</h2>
+        <span class="section-icon">📋</span>
+      </div>
+      <p>O <strong>BarberPro</strong> é um sistema full stack voltado para barbearias que precisam gerenciar agendamentos online. O sistema oferece três níveis de acesso distintos — cliente (público), barbeiro e administrador total — com interfaces e permissões específicas para cada perfil.</p>
+      <div class="info-box">
+        <strong>Objetivo educacional:</strong> Projeto desenvolvido para prática real de desenvolvimento full stack, simulando um sistema profissional com separação de responsabilidades, autenticação completa, controle de acesso baseado em roles e regras de negócio complexas.
+      </div>
+    </section>
+
+    <!-- TECNOLOGIAS -->
+    <section class="section" id="tecnologias">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>Tecnologias Utilizadas</h2>
+        <span class="section-icon">⚙️</span>
+      </div>
+      <div class="tech-row">
+        <div class="tech-box">
+          <h3>🖥 Frontend</h3>
+          <div class="tech-item"><span class="tech-dot dot-frontend"></span>React 18</div>
+          <div class="tech-item"><span class="tech-dot dot-frontend"></span>React Router DOM v6</div>
+          <div class="tech-item"><span class="tech-dot dot-frontend"></span>Axios</div>
+          <div class="tech-item"><span class="tech-dot dot-frontend"></span>FullCalendar</div>
+          <div class="tech-item"><span class="tech-dot dot-frontend"></span>Context API</div>
+          <div class="tech-item"><span class="tech-dot dot-frontend"></span>CSS3 com animações</div>
+        </div>
+        <div class="tech-box">
+          <h3>🔧 Backend</h3>
+          <div class="tech-item"><span class="tech-dot dot-backend"></span>Node.js (ESModules)</div>
+          <div class="tech-item"><span class="tech-dot dot-backend"></span>Express.js</div>
+          <div class="tech-item"><span class="tech-dot dot-backend"></span>SQLite + sqlite3</div>
+          <div class="tech-item"><span class="tech-dot dot-backend"></span>express-session</div>
+          <div class="tech-item"><span class="tech-dot dot-backend"></span>Bcrypt (hash de senha)</div>
+          <div class="tech-item"><span class="tech-dot dot-backend"></span>Helmet (segurança HTTP)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ESTRUTURA DE ARQUIVOS -->
+    <section class="section" id="estrutura">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2>Estrutura de Arquivos</h2>
+        <span class="section-icon">📁</span>
+      </div>
+      <pre data-lang="tree"><span class="cmt">barberpro/</span>
+│
+├── backend/
+│   ├── <span class="fn">server.js</span>              <span class="cmt"># Servidor Express principal</span>
+│   ├── <span class="fn">database.js</span>            <span class="cmt"># Inicialização e schema do SQLite</span>
+│   ├── database.sqlite        <span class="cmt"># Arquivo do banco de dados</span>
+│   ├── middleware/
+│   │   ├── <span class="fn">auth.js</span>            <span class="cmt"># Middlewares de autenticação e roles</span>
+│   │   └── <span class="fn">validate.js</span>        <span class="cmt"># Validação de inputs</span>
+│   └── routes/
+│       ├── <span class="fn">agendamentos.js</span>    <span class="cmt"># CRUD de agendamentos, bloqueios e serviços</span>
+│       └── <span class="fn">usuarios.js</span>        <span class="cmt"># CRUD de usuários</span>
+│
+└── frontend/src/
+    ├── <span class="fn">App.js</span>                 <span class="cmt"># Componente raiz e configuração de rotas</span>
+    ├── components/
+    │   ├── <span class="fn">NavbarAdmin.js</span>     <span class="cmt"># Barra de navegação administrativa</span>
+    │   ├── <span class="fn">PrivateRoute.js</span>    <span class="cmt"># Componente para rotas protegidas</span>
+    │   ├── <span class="fn">ModalEditarUsuario.js</span>
+    │   └── <span class="fn">Toast.js</span>           <span class="cmt"># Notificações visuais</span>
+    ├── pages/
+    │   ├── <span class="fn">Index.js</span>           <span class="cmt"># Página pública de agendamento</span>
+    │   ├── <span class="fn">Login.js</span>           <span class="cmt"># Autenticação</span>
+    │   ├── <span class="fn">Admin.js</span>           <span class="cmt"># Painel do barbeiro</span>
+    │   ├── <span class="fn">AdminBloqueios.js</span>  <span class="cmt"># Gerenciamento de bloqueios</span>
+    │   ├── <span class="fn">AdminTotal.js</span>      <span class="cmt"># Painel do admin total</span>
+    │   └── <span class="fn">Perfil.js</span>          <span class="cmt"># Perfil do usuário</span>
+    ├── context/
+    │   └── <span class="fn">AuthContext.js</span>     <span class="cmt"># Estado global de autenticação</span>
+    └── services/
+        └── <span class="fn">api.js</span>             <span class="cmt"># Configuração do Axios</span></pre>
+    </section>
+
+    <!-- ÁREA PÚBLICA -->
+    <section class="section" id="area-publica">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2>Área Pública — Cliente</h2>
+        <span class="section-icon">🌍</span>
+      </div>
+      <p>Acessível sem login. Permite que qualquer cliente realize um agendamento diretamente pela interface web.</p>
+      <div class="card-grid" style="margin-top:20px">
+        <div class="card card-public">
+          <span class="card-emoji">📅</span>
+          <h3>Calendário Interativo</h3>
+          <p>Implementado com FullCalendar. Bloqueia automaticamente domingos e datas passadas.</p>
+        </div>
+        <div class="card card-public">
+          <span class="card-emoji">💇</span>
+          <h3>Seleção de Barbeiro</h3>
+          <p>Lista dinâmica de barbeiros com plano ativo cadastrados no sistema.</p>
+        </div>
+        <div class="card card-public">
+          <span class="card-emoji">🕐</span>
+          <h3>Horários Disponíveis</h3>
+          <p>Exibe apenas horários livres, excluindo agendados e bloqueados.</p>
+        </div>
+        <div class="card card-public">
+          <span class="card-emoji">✅</span>
+          <h3>Validações em Tempo Real</h3>
+          <p>Conflito de horários, dia bloqueado e campos obrigatórios verificados antes do envio.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ÁREA ADMIN BARBEIRO -->
+    <section class="section" id="area-admin">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2>Área Administrativa — Barbeiro</h2>
+        <span class="section-icon">✂️</span>
+      </div>
+      <p>Acesso mediante login. Cada barbeiro visualiza e gerencia apenas seus próprios dados.</p>
+      <div class="card-grid" style="margin-top:20px">
+        <div class="card card-admin">
+          <span class="card-emoji">📋</span>
+          <h3>Lista de Agendamentos</h3>
+          <p>Visualiza todos os agendamentos do dia e histórico completo com contador.</p>
+        </div>
+        <div class="card card-admin">
+          <span class="card-emoji">💰</span>
+          <h3>Faturamento</h3>
+          <p>Cálculo automático de faturamento diário, mensal, anual e total.</p>
+        </div>
+        <div class="card card-admin">
+          <span class="card-emoji">🔒</span>
+          <h3>Bloqueio de Horários</h3>
+          <p>Bloqueia e desbloqueia horários individuais ou o dia inteiro.</p>
+        </div>
+        <div class="card card-admin">
+          <span class="card-emoji">🛠</span>
+          <h3>Gestão de Serviços</h3>
+          <p>CRUD completo de serviços com nome e preço, vinculado ao barbeiro.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN TOTAL -->
+    <section class="section" id="area-total">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2>Admin Total</h2>
+        <span class="section-icon">👑</span>
+      </div>
+      <p>Nível mais alto de acesso. Controla todos os usuários e visualiza estatísticas globais do sistema.</p>
+      <div class="card-grid" style="margin-top:20px">
+        <div class="card card-super">
+          <span class="card-emoji">👥</span>
+          <h3>Gestão de Usuários</h3>
+          <p>Criar, editar e excluir barbeiros e admins. Altera nome, cargo e senha.</p>
+        </div>
+        <div class="card card-super">
+          <span class="card-emoji">📊</span>
+          <h3>Estatísticas Globais</h3>
+          <p>Visualiza dados de todos os barbeiros: faturamento e agendamentos consolidados.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section class="section" id="dashboard">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <h2>Dashboard Administrativo</h2>
+        <span class="section-icon">📊</span>
+      </div>
+      <p>Painel de indicadores disponível via <code>GET /api/admin/dashboard</code>. Retorna métricas consolidadas de todos os barbeiros.</p>
+      <div class="card-grid" style="margin-top:20px">
+        <div class="card card-tech"><span class="card-emoji">🧾</span><h3>Total de Agendamentos</h3><p>Soma de todos os atendimentos finalizados no sistema.</p></div>
+        <div class="card card-tech"><span class="card-emoji">💵</span><h3>Faturamento Total</h3><p>Soma dos preços de todos os agendamentos finalizados.</p></div>
+        <div class="card card-tech"><span class="card-emoji">👤</span><h3>Clientes Únicos</h3><p>Contagem distinta por número de telefone.</p></div>
+        <div class="card card-tech"><span class="card-emoji">🏆</span><h3>Barbeiro Top</h3><p>Barbeiro com maior faturamento total.</p></div>
+        <div class="card card-tech"><span class="card-emoji">⭐</span><h3>Serviço Mais Realizado</h3><p>Serviço com maior número de execuções.</p></div>
+      </div>
+    </section>
+
+    <!-- API -->
+    <section class="section" id="api">
+      <div class="section-header">
+        <span class="section-num">08</span>
+        <h2>Rotas da API</h2>
+        <span class="section-icon">🔌</span>
+      </div>
+
+      <p style="margin-bottom:12px; font-size:13px; color:var(--muted)">Base URL: <code>http://localhost:3000</code></p>
+
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>Método</th>
+            <th>Rota</th>
+            <th>Acesso</th>
+            <th>Descrição</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method method-post">POST</span></td>
+            <td class="route-path">/login</td>
+            <td><span class="auth-badge auth-open">Público</span></td>
+            <td>Autenticação por usuário e senha</td>
+          </tr>
+          <tr>
+            <td><span class="method method-get">GET</span></td>
+            <td class="route-path">/logout</td>
+            <td><span class="auth-badge auth-lock">Login</span></td>
+            <td>Encerra a sessão e redireciona</td>
+          </tr>
+          <tr>
+            <td><span class="method method-get">GET</span></td>
+            <td class="route-path">/api/me</td>
+            <td><span class="auth-badge auth-lock">Login</span></td>
+            <td>Retorna dados do usuário autenticado</td>
+          </tr>
+          <tr>
+            <td><span class="method method-get">GET</span></td>
+            <td class="route-path">/api/barbeiros</td>
+            <td><span class="auth-badge auth-open">Público</span></td>
+            <td>Lista todos os barbeiros com plano ativo</td>
+          </tr>
+          <tr>
+            <td><span class="method method-get">GET</span></td>
+            <td class="route-path">/api/agendamentos/disponiveis/:data</td>
+            <td><span class="auth-badge auth-open">Público</span></td>
+            <td>Horários livres de um barbeiro em uma data</td>
+          </tr>
+          <tr>
+            <td><span class="method method-post">POST</span></td>
+            <td class="route-path">/api/agendamentos</td>
+            <td><span class="auth-badge auth-open">Público</span></td>
+            <td>Cria novo agendamento</td>
+          </tr>
+          <tr>
+            <td><span class="method method-get">GET</span></td>
+            <td class="route-path">/api/agendamentos</td>
+            <td><span class="auth-badge auth-lock">Barbeiro</span></td>
+            <td>Lista agendamentos do barbeiro logado</td>
+          </tr>
+          <tr>
+            <td><span class="method method-put">PUT</span></td>
+            <td class="route-path">/api/agendamentos/finalizar/:id</td>
+            <td><span class="auth-badge auth-lock">Barbeiro</span></td>
+            <td>Marca agendamento como pago/finalizado</td>
+          </tr>
+          <tr>
+            <td><span class="method method-delete">DELETE</span></td>
+            <td class="route-path">/api/agendamentos/:id</td>
+            <td><span class="auth-badge auth-lock">Barbeiro</span></td>
+            <td>Remove um agendamento</td>
+          </tr>
+          <tr>
+            <td><span class="method method-get">GET</span></td>
+            <td class="route-path">/api/agendamentos/faturamento</td>
+            <td><span class="auth-badge auth-lock">Barbeiro</span></td>
+            <td>Faturamento diário, mensal, anual e total</td>
+          </tr>
+          <tr>
+            <td><span class="method method-post">POST</span></td>
+            <td class="route-path">/api/agendamentos/toggle-bloqueio</td>
+            <td><span class="auth-badge auth-lock">Barbeiro</span></td>
+            <td>Liga/desliga bloqueio de horário específico</td>
+          </tr>
+          <tr>
+            <td><span class="method method-post">POST</span></td>
+            <td class="route-path">/api/agendamentos/bloquear-dia</td>
+            <td><span class="auth-badge auth-lock">Barbeiro</span></td>
+            <td>Bloqueia ou desbloqueia o dia inteiro</td>
+          </tr>
+          <tr>
+            <td><span class="method method-get">GET</span></td>
+            <td class="route-path">/api/servicos</td>
+            <td><span class="auth-badge auth-lock">Barbeiro</span></td>
+            <td>Lista serviços do barbeiro logado</td>
+          </tr>
+          <tr>
+            <td><span class="method method-post">POST</span></td>
+            <td class="route-path">/api/servicos</td>
+            <td><span class="auth-badge auth-lock">Barbeiro</span></td>
+            <td>Cria novo serviço</td>
+          </tr>
+          <tr>
+            <td><span class="method method-delete">DELETE</span></td>
+            <td class="route-path">/api/servicos/:id</td>
+            <td><span class="auth-badge auth-lock">Barbeiro</span></td>
+            <td>Remove serviço do barbeiro logado</td>
+          </tr>
+          <tr>
+            <td><span class="method method-get">GET</span></td>
+            <td class="route-path">/api/admin/usuarios</td>
+            <td><span class="auth-badge auth-admin">Admin</span></td>
+            <td>Lista todos os usuários do sistema</td>
+          </tr>
+          <tr>
+            <td><span class="method method-post">POST</span></td>
+            <td class="route-path">/api/admin/usuarios</td>
+            <td><span class="auth-badge auth-admin">Admin</span></td>
+            <td>Cria novo usuário (barbeiro ou admin)</td>
+          </tr>
+          <tr>
+            <td><span class="method method-put">PUT</span></td>
+            <td class="route-path">/api/admin/usuarios/:id</td>
+            <td><span class="auth-badge auth-admin">Admin</span></td>
+            <td>Edita nome, role e senha de um usuário</td>
+          </tr>
+          <tr>
+            <td><span class="method method-delete">DELETE</span></td>
+            <td class="route-path">/api/admin/usuarios/:id</td>
+            <td><span class="auth-badge auth-admin">Admin</span></td>
+            <td>Remove usuário do sistema</td>
+          </tr>
+          <tr>
+            <td><span class="method method-get">GET</span></td>
+            <td class="route-path">/api/admin/dashboard</td>
+            <td><span class="auth-badge auth-lock">Barbeiro+</span></td>
+            <td>Estatísticas globais do sistema</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- BANCO DE DADOS -->
+    <section class="section" id="banco">
+      <div class="section-header">
+        <span class="section-num">09</span>
+        <h2>Banco de Dados</h2>
+        <span class="section-icon">🗄️</span>
+      </div>
+      <p style="margin-bottom:20px">Banco relacional SQLite com 4 tabelas principais, inicializado automaticamente na primeira execução.</p>
+
+      <div class="db-table">
+        <div class="db-table-header">
+          <span class="db-table-name">usuarios</span>
+          <span class="db-table-desc">Armazena barbeiros e administradores</span>
+        </div>
+        <div class="db-fields">
+          <div class="db-field"><span class="db-field-name">id</span><span class="db-field-type">INTEGER PK</span><span class="db-field-desc">Identificador único autoincrement</span></div>
+          <div class="db-field"><span class="db-field-name">usuario</span><span class="db-field-type">TEXT UNIQUE</span><span class="db-field-desc">Nome de login único</span></div>
+          <div class="db-field"><span class="db-field-name">senha</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Hash bcrypt da senha</span></div>
+          <div class="db-field"><span class="db-field-name">plano</span><span class="db-field-type">TEXT</span><span class="db-field-desc">'ativo' para aparecer como barbeiro disponível</span></div>
+          <div class="db-field"><span class="db-field-name">role</span><span class="db-field-type">TEXT</span><span class="db-field-desc">'admin' ou 'barbeiro'</span></div>
+          <div class="db-field"><span class="db-field-name">descricao</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Texto de perfil do barbeiro</span></div>
+          <div class="db-field"><span class="db-field-name">created_at</span><span class="db-field-type">DATETIME</span><span class="db-field-desc">Data de criação (automática)</span></div>
+        </div>
+      </div>
+
+      <div class="db-table">
+        <div class="db-table-header">
+          <span class="db-table-name">agendamentos</span>
+          <span class="db-table-desc">Registros de agendamentos dos clientes</span>
+        </div>
+        <div class="db-fields">
+          <div class="db-field"><span class="db-field-name">id</span><span class="db-field-type">INTEGER PK</span><span class="db-field-desc">Identificador único</span></div>
+          <div class="db-field"><span class="db-field-name">user_id</span><span class="db-field-type">INTEGER FK</span><span class="db-field-desc">Barbeiro responsável (ref. usuarios)</span></div>
+          <div class="db-field"><span class="db-field-name">nome</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Nome do cliente</span></div>
+          <div class="db-field"><span class="db-field-name">telefone</span><span class="db-field-type">TEXT</span><span class="db-field-desc">DDD + número (somente dígitos)</span></div>
+          <div class="db-field"><span class="db-field-name">servico</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Nome do serviço no momento do agendamento</span></div>
+          <div class="db-field"><span class="db-field-name">preco</span><span class="db-field-type">REAL</span><span class="db-field-desc">Valor cobrado pelo serviço</span></div>
+          <div class="db-field"><span class="db-field-name">data</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Data no formato YYYY-MM-DD</span></div>
+          <div class="db-field"><span class="db-field-name">horario</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Horário no formato HH:MM</span></div>
+          <div class="db-field"><span class="db-field-name">finalizado</span><span class="db-field-type">INTEGER</span><span class="db-field-desc">0 = pendente · 1 = finalizado/pago</span></div>
+        </div>
+      </div>
+
+      <div class="db-table">
+        <div class="db-table-header">
+          <span class="db-table-name">bloqueios</span>
+          <span class="db-table-desc">Horários e dias bloqueados por barbeiro</span>
+        </div>
+        <div class="db-fields">
+          <div class="db-field"><span class="db-field-name">user_id</span><span class="db-field-type">INTEGER FK</span><span class="db-field-desc">Barbeiro dono do bloqueio</span></div>
+          <div class="db-field"><span class="db-field-name">data</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Data do bloqueio (YYYY-MM-DD)</span></div>
+          <div class="db-field"><span class="db-field-name">horario</span><span class="db-field-type">TEXT</span><span class="db-field-desc">'HH:MM' para hora específica · 'DIA_INTEIRO' para bloquear o dia</span></div>
+        </div>
+      </div>
+
+      <div class="db-table">
+        <div class="db-table-header">
+          <span class="db-table-name">servicos</span>
+          <span class="db-table-desc">Catálogo de serviços por barbeiro</span>
+        </div>
+        <div class="db-fields">
+          <div class="db-field"><span class="db-field-name">user_id</span><span class="db-field-type">INTEGER FK</span><span class="db-field-desc">Barbeiro dono do serviço</span></div>
+          <div class="db-field"><span class="db-field-name">nome</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Nome do serviço (ex: "Corte + Barba")</span></div>
+          <div class="db-field"><span class="db-field-name">preco</span><span class="db-field-type">REAL</span><span class="db-field-desc">Preço em reais</span></div>
+        </div>
+      </div>
+
+      <p style="font-size:12.5px; color:var(--muted); margin-top:8px">Horários disponíveis são fixos no backend: <code>09:00 · 10:00 · 11:00 · 13:00 · 14:00 · 15:00 · 16:00 · 17:00</code></p>
+    </section>
+
+    <!-- SEGURANÇA -->
+    <section class="section" id="seguranca">
+      <div class="section-header">
+        <span class="section-num">10</span>
+        <h2>Segurança</h2>
+        <span class="section-icon">🔐</span>
+      </div>
+      <ul class="security-list">
+        <li><span class="icon">🔑</span><div><strong>Bcrypt para senhas</strong> — Todas as senhas são armazenadas como hash bcrypt com salt de fator 10. Comparações usam <code>bcrypt.compare()</code> para prevenir timing attacks.</div></li>
+        <li><span class="icon">🍪</span><div><strong>Express-session com cookie seguro</strong> — Cookies configurados com <code>httpOnly: true</code> e <code>secure: true</code> em produção. <code>sameSite: 'none'</code> no ambiente de produção para compatibilidade com proxy reverso.</div></li>
+        <li><span class="icon">🛡</span><div><strong>Helmet.js</strong> — Headers HTTP de segurança configurados, incluindo Content Security Policy, desativação do header <code>x-powered-by</code> e política CORS configurada por origin.</div></li>
+        <li><span class="icon">🎭</span><div><strong>Middleware de roles</strong> — Funções <code>verificarLogin</code>, <code>verificarBarbeiroOuAdmin</code> e <code>verificarAdminTotal</code> protegem as rotas conforme o nível de acesso necessário.</div></li>
+        <li><span class="icon">✔</span><div><strong>Validação de inputs</strong> — Campos de texto são validados quanto ao tipo, comprimento mínimo e valores permitidos antes de qualquer operação no banco de dados.</div></li>
+        <li><span class="icon">🔒</span><div><strong>SESSION_SECRET obrigatório em produção</strong> — O servidor aborta a inicialização se a variável de ambiente <code>SESSION_SECRET</code> não estiver definida em ambiente de produção.</div></li>
+      </ul>
+    </section>
+
+    <!-- REGRAS DE NEGÓCIO -->
+    <section class="section" id="regras">
+      <div class="section-header">
+        <span class="section-num">11</span>
+        <h2>Regras de Negócio</h2>
+        <span class="section-icon">📏</span>
+      </div>
+      <div class="rules-grid">
+        <div class="rule-item"><span class="bullet">✗</span>Não permite agendamento em datas passadas</div>
+        <div class="rule-item"><span class="bullet">✗</span>Não permite agendamento aos domingos</div>
+        <div class="rule-item"><span class="bullet">✗</span>Não permite dois agendamentos no mesmo horário e barbeiro</div>
+        <div class="rule-item"><span class="bullet">✗</span>Não permite agendamento em horário ou dia bloqueado</div>
+        <div class="rule-item"><span class="bullet">✓</span>Cada barbeiro vê e gerencia apenas seus próprios dados</div>
+        <div class="rule-item"><span class="bullet">✓</span>Horários fixos definidos no backend — não editáveis via frontend</div>
+        <div class="rule-item"><span class="bullet">✓</span>Preço e nome do serviço são gravados no agendamento no momento da criação</div>
+        <div class="rule-item"><span class="bullet">✓</span>Bloqueio de dia inteiro usa o valor especial <code>DIA_INTEIRO</code></div>
+        <div class="rule-item"><span class="bullet">✓</span>Telefone é sanitizado — apenas dígitos numéricos são aceitos (10–11 dígitos)</div>
+        <div class="rule-item"><span class="bullet">✓</span>Admin principal (ID 1) não pode ter sua role alterada</div>
+      </div>
+    </section>
+
+    <!-- FLUXO -->
+    <section class="section" id="fluxo">
+      <div class="section-header">
+        <span class="section-num">12</span>
+        <h2>Fluxo de Uso</h2>
+        <span class="section-icon">🔄</span>
+      </div>
+
+      <p style="margin-bottom:12px; font-size:13.5px; color:var(--muted); font-weight:500">👤 Fluxo do Cliente (público)</p>
+      <div class="flow">
+        <div class="flow-step"><span class="step-num">01</span><p>Acessa página inicial</p></div>
+        <div class="flow-step"><span class="step-num">02</span><p>Seleciona o barbeiro</p></div>
+        <div class="flow-step"><span class="step-num">03</span><p>Escolhe data no calendário</p></div>
+        <div class="flow-step"><span class="step-num">04</span><p>Seleciona horário livre</p></div>
+        <div class="flow-step"><span class="step-num">05</span><p>Escolhe o serviço</p></div>
+        <div class="flow-step"><span class="step-num">06</span><p>Informa nome e telefone</p></div>
+        <div class="flow-step"><span class="step-num">07</span><p>Confirma agendamento</p></div>
+      </div>
+
+      <p style="margin: 24px 0 12px; font-size:13.5px; color:var(--muted); font-weight:500">✂️ Fluxo do Barbeiro</p>
+      <div class="flow">
+        <div class="flow-step"><span class="step-num">01</span><p>Realiza login</p></div>
+        <div class="flow-step"><span class="step-num">02</span><p>Visualiza agendamentos do dia</p></div>
+        <div class="flow-step"><span class="step-num">03</span><p>Atende o cliente</p></div>
+        <div class="flow-step"><span class="step-num">04</span><p>Finaliza (marca como pago)</p></div>
+        <div class="flow-step"><span class="step-num">05</span><p>Consulta faturamento</p></div>
+      </div>
+    </section>
+
+    <!-- USUÁRIOS PADRÃO -->
+    <section class="section" id="usuarios">
+      <div class="section-header">
+        <span class="section-num">13</span>
+        <h2>Usuários Pré-Cadastrados</h2>
+        <span class="section-icon">👤</span>
+      </div>
+      <p style="margin-bottom:16px">Criados automaticamente na primeira inicialização do servidor, se o banco estiver vazio.</p>
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Usuário</th>
+            <th>Senha</th>
+            <th>Role</th>
+            <th>Acesso</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>1</code></td>
+            <td><strong>Chefe dos cabelo</strong></td>
+            <td><code>123456</code></td>
+            <td><span class="role-badge role-admin">admin</span></td>
+            <td>Total — gerencia usuários e visualiza todo o sistema</td>
+          </tr>
+          <tr>
+            <td><code>2</code></td>
+            <td><strong>lucas</strong></td>
+            <td><code>654321</code></td>
+            <td><span class="role-badge role-barber">barbeiro</span></td>
+            <td>Próprios agendamentos, serviços e bloqueios</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px; font-size:12.5px; color:var(--muted)">⚠️ Altere as senhas padrão antes de colocar em produção.</p>
+    </section>
+
+    <!-- EXECUÇÃO -->
+    <section class="section" id="execucao">
+      <div class="section-header">
+        <span class="section-num">14</span>
+        <h2>Como Executar</h2>
+        <span class="section-icon">🚀</span>
+      </div>
+
+      <p style="margin-bottom:4px"><strong>1. Backend</strong></p>
+      <pre data-lang="bash"><span class="cmt"># Na pasta /backend</span>
+<span class="fn">npm</span> install
+<span class="fn">node</span> server.js
+
+<span class="cmt"># Servidor disponível em:</span>
+<span class="str">http://localhost:3000</span></pre>
+
+      <p style="margin-bottom:4px"><strong>2. Frontend</strong></p>
+      <pre data-lang="bash"><span class="cmt"># Em outro terminal, na pasta /frontend</span>
+<span class="fn">npm</span> install
+<span class="fn">npm</span> start
+
+<span class="cmt"># Interface disponível em:</span>
+<span class="str">http://localhost:3001</span></pre>
+
+      <div class="info-box" style="margin-top:20px">
+        <strong>Produção:</strong> O backend serve os arquivos estáticos do <code>frontend/build</code> quando <code>NODE_ENV=production</code>. Defina <code>SESSION_SECRET</code> como variável de ambiente obrigatória antes de subir para produção.
+      </div>
+    </section>
+
+    <!-- ROADMAP -->
+    <section class="section" id="roadmap">
+      <div class="section-header">
+        <span class="section-num">15</span>
+        <h2>Melhorias Futuras</h2>
+        <span class="section-icon">🗺️</span>
+      </div>
+      <div class="roadmap">
+        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Envio de e-mail de confirmação de agendamento<small>Integração com serviço como SendGrid ou Nodemailer</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Recuperação de senha por e-mail<small>Fluxo de reset com token temporário</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Upload de foto de perfil<small>Armazenamento local ou em serviço de nuvem (S3, Cloudinary)</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Relatórios em PDF<small>Exportação de histórico de agendamentos e faturamento</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Notificações em tempo real<small>Uso de WebSockets (Socket.io) para alertas instantâneos</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Modo escuro / claro<small>Alternância de tema com persistência via localStorage</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Versão PWA (Progressive Web App)<small>Instalação no celular, funcionamento offline básico</small></div></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // Active nav link on scroll
+  const sections = document.querySelectorAll('.section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
