@@ -28,9 +28,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = async (usuario, senha) => {
+  const login = async (usuario, senha, barbearia_id) => {
     try {
-      const response = await api.post('/login', { usuario, senha });
+      // Sanitizar barbearia_id antes de enviar
+      const barbeariaIdLimpo = (barbearia_id === undefined || barbearia_id === 'undefined' || barbearia_id === null || barbearia_id === '')
+        ? null
+        : barbearia_id;
+      const body = { usuario, senha };
+      if (barbeariaIdLimpo !== null) body.barbearia_id = barbeariaIdLimpo;
+      const response = await api.post('/login', body);
       await checkAuth();
       return response.data;
     } catch (error) {
@@ -40,7 +46,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await api.get('/logout');
+      await api.post('/logout');
       setUser(null);
       navigate('/');
     } catch (error) {

@@ -7,29 +7,25 @@ export function verificarLogin(req, res, next) {
 
 export function verificarBarbeiroOuAdmin(req, res, next) {
   if (!req.session.usuario) return res.status(401).json({ error: "Não autenticado" });
-
   const role = req.session.usuario.role;
-  if (role === "barbeiro" || role === "admin") return next();
-
+  if (["barbeiro", "admin", "superadmin"].includes(role)) return next();
   return res.status(403).json({ error: "Acesso negado" });
 }
 
-export function verificarAdminTotal(req, res, next) {
-  if (!req.session.usuario) {
-    return res.status(401).json({ error: "Não autenticado" });
-  }
-
-  const role = req.session.usuario.role;
-  if (role === "admin") {
-    return next();
-  }
-
-  return res.status(403).json({ error: "Acesso negado" });
-}
-
+// Admin da barbearia (role = admin ou superadmin)
 export function verificarAdmin(req, res, next) {
-  if (!req.session.usuario || req.session.usuario.role !== "admin") {
-    return res.status(403).json({ erro: "Acesso negado" });
-  }
-  next();
+  if (!req.session.usuario) return res.status(401).json({ error: "Não autenticado" });
+  const role = req.session.usuario.role;
+  if (role === "admin" || role === "superadmin") return next();
+  return res.status(403).json({ erro: "Acesso negado" });
 }
+
+// Só superadmin (dono da plataforma)
+export function verificarSuperAdmin(req, res, next) {
+  if (!req.session.usuario) return res.status(401).json({ error: "Não autenticado" });
+  if (req.session.usuario.role === "superadmin") return next();
+  return res.status(403).json({ error: "Acesso negado" });
+}
+
+// Mantido por compatibilidade
+export const verificarAdminTotal = verificarSuperAdmin;

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BarberPro – Documentação Técnica</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
   :root {
     --ink: #0e0c0a;
@@ -72,12 +72,13 @@
   .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.4); color: var(--gold-light); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; padding: 4px 12px; border-radius: 2px; margin-bottom: 20px; }
   .hero h1 { font-family: 'Syne', sans-serif; font-size: 52px; font-weight: 800; line-height: 1.05; color: var(--paper); margin-bottom: 16px; }
   .hero h1 span { color: var(--gold); }
-  .hero p { font-size: 16px; color: rgba(245,240,232,0.6); max-width: 540px; font-weight: 300; line-height: 1.7; }
+  .hero p { font-size: 16px; color: rgba(245,240,232,0.6); max-width: 580px; font-weight: 300; line-height: 1.7; }
   .hero-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
   .tag { font-family: 'DM Mono', monospace; font-size: 11px; padding: 4px 10px; border-radius: 2px; letter-spacing: 0.05em; }
   .tag-frontend { background: rgba(46,94,58,0.3); color: #7ec89a; border: 1px solid rgba(46,94,58,0.6); }
   .tag-backend { background: rgba(184,74,46,0.3); color: #f0997a; border: 1px solid rgba(184,74,46,0.6); }
   .tag-db { background: rgba(201,168,76,0.2); color: var(--gold-light); border: 1px solid rgba(201,168,76,0.4); }
+  .tag-saas { background: rgba(91,106,240,0.2); color: #a0aaff; border: 1px solid rgba(91,106,240,0.4); }
 
   /* ===== CONTENT ===== */
   .content { max-width: 900px; padding: 56px 64px; }
@@ -102,6 +103,20 @@
   .card p { font-size: 13px; color: var(--muted); line-height: 1.55; margin-left: 8px; }
   .card-emoji { font-size: 22px; margin-bottom: 10px; display: block; }
 
+  /* ===== ROLES ===== */
+  .roles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+  .role-card { border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
+  .role-card-header { padding: 16px 18px 12px; }
+  .role-card-header.superadmin { background: rgba(201,168,76,0.12); border-bottom: 2px solid var(--gold); }
+  .role-card-header.admin { background: rgba(184,74,46,0.08); border-bottom: 2px solid var(--rust); }
+  .role-card-header.barbeiro { background: rgba(46,94,58,0.08); border-bottom: 2px solid var(--forest); }
+  .role-card-header h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .role-card-header p { font-size: 12px; color: var(--muted); }
+  .role-card-body { padding: 14px 18px; background: white; }
+  .role-perm { display: flex; gap: 8px; align-items: flex-start; padding: 5px 0; font-size: 13px; border-bottom: 1px solid var(--cream); }
+  .role-perm:last-child { border-bottom: none; }
+  .role-perm .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 7px; }
+
   /* ===== TECH STACK ===== */
   .tech-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
   .tech-box { background: white; border: 1px solid var(--border); border-radius: 4px; padding: 20px 24px; }
@@ -119,6 +134,7 @@
   .api-table td { padding: 11px 16px; border-bottom: 1px solid var(--cream); vertical-align: top; line-height: 1.5; }
   .api-table tr:last-child td { border-bottom: none; }
   .api-table tr:hover td { background: var(--cream); }
+  .api-group td { background: rgba(201,168,76,0.06); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); padding: 8px 16px; font-weight: 600; }
   .method { font-family: 'DM Mono', monospace; font-size: 10.5px; font-weight: 500; padding: 2px 7px; border-radius: 2px; letter-spacing: 0.05em; }
   .method-get { background: #d4edda; color: #155724; }
   .method-post { background: #d1ecf1; color: #0c5460; }
@@ -129,6 +145,7 @@
   .auth-open { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
   .auth-lock { background: #fff8e1; color: #f57f17; border: 1px solid #ffe082; }
   .auth-admin { background: #fce4ec; color: #880e4f; border: 1px solid #f48fb1; }
+  .auth-super { background: rgba(201,168,76,0.15); color: #8a6a00; border: 1px solid rgba(201,168,76,0.4); }
 
   /* ===== DB SCHEMA ===== */
   .db-table { background: var(--blade); border-radius: 6px; overflow: hidden; margin-bottom: 20px; border: 1px solid rgba(201,168,76,0.25); }
@@ -136,7 +153,7 @@
   .db-table-name { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: var(--gold-light); }
   .db-table-desc { font-size: 12px; color: rgba(245,240,232,0.4); }
   .db-fields { padding: 8px 0; }
-  .db-field { display: grid; grid-template-columns: 160px 100px 1fr; gap: 16px; padding: 8px 20px; font-size: 12.5px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .db-field { display: grid; grid-template-columns: 160px 130px 1fr; gap: 16px; padding: 8px 20px; font-size: 12.5px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.04); }
   .db-field:last-child { border-bottom: none; }
   .db-field-name { font-family: 'DM Mono', monospace; color: #a8d8ea; font-size: 12px; }
   .db-field-type { font-family: 'DM Mono', monospace; color: var(--gold-light); font-size: 11px; }
@@ -173,6 +190,7 @@
   .users-table td { padding: 12px 16px; border-bottom: 1px solid var(--cream); }
   .users-table tr:last-child td { border-bottom: none; }
   .role-badge { font-family: 'DM Mono', monospace; font-size: 10.5px; padding: 2px 8px; border-radius: 20px; }
+  .role-superadmin { background: rgba(201,168,76,0.2); color: #7a5c00; border: 1px solid rgba(201,168,76,0.5); }
   .role-admin { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
   .role-barber { background: #d4edda; color: #155724; border: 1px solid #28a745; }
 
@@ -181,6 +199,7 @@
   .roadmap-item { display: flex; gap: 16px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); }
   .roadmap-item:last-child { border-bottom: none; }
   .roadmap-status { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; font-size: 9px; }
+  .status-done { background: var(--forest); color: white; font-size: 10px; }
   .status-pending { border: 2px solid var(--border); background: white; }
   .roadmap-text { font-size: 13.5px; color: var(--ink); }
   .roadmap-text small { display: block; font-size: 11.5px; color: var(--muted); margin-top: 2px; }
@@ -188,296 +207,69 @@
   /* ===== INFO BOX ===== */
   .info-box { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.3); border-left: 3px solid var(--gold); padding: 14px 18px; border-radius: 0 4px 4px 0; margin: 16px 0; font-size: 13.5px; }
   .info-box strong { color: var(--gold); font-weight: 600; }
+  .warn-box { background: rgba(184,74,46,0.06); border: 1px solid rgba(184,74,46,0.3); border-left: 3px solid var(--rust); padding: 14px 18px; border-radius: 0 4px 4px 0; margin: 16px 0; font-size: 13.5px; }
 
   /* ===== PITCH SECTION ===== */
-  .pitch-hero {
-    background: var(--blade);
-    border: 2px solid var(--gold);
-    border-radius: 8px;
-    padding: 40px 40px 32px;
-    margin-bottom: 32px;
-    position: relative;
-    overflow: hidden;
-  }
-  .pitch-hero::before {
-    content: '💰';
-    position: absolute;
-    right: 32px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 120px;
-    opacity: 0.05;
-    line-height: 1;
-  }
-  .pitch-hero-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 12px;
-    display: block;
-  }
-  .pitch-hero h3 {
-    font-family: 'Syne', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--paper);
-    line-height: 1.2;
-    margin-bottom: 14px;
-  }
-  .pitch-hero h3 em {
-    color: var(--gold-light);
-    font-style: normal;
-  }
-  .pitch-hero p {
-    color: rgba(245,240,232,0.55);
-    font-size: 14px;
-    max-width: 500px;
-    line-height: 1.7;
-  }
+  .pitch-hero { background: var(--blade); border: 2px solid var(--gold); border-radius: 8px; padding: 40px 40px 32px; margin-bottom: 32px; position: relative; overflow: hidden; }
+  .pitch-hero::before { content: '💰'; position: absolute; right: 32px; top: 50%; transform: translateY(-50%); font-size: 120px; opacity: 0.05; line-height: 1; }
+  .pitch-hero-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; display: block; }
+  .pitch-hero h3 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--paper); line-height: 1.2; margin-bottom: 14px; }
+  .pitch-hero h3 em { color: var(--gold-light); font-style: normal; }
+  .pitch-hero p { color: rgba(245,240,232,0.55); font-size: 14px; max-width: 500px; line-height: 1.7; }
 
-  .invest-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 14px;
-    margin: 24px 0;
-  }
-  .invest-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 18px 20px;
-    position: relative;
-    overflow: hidden;
-  }
-  .invest-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0;
-    width: 100%; height: 3px;
-  }
+  .invest-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 24px 0; }
+  .invest-card { background: white; border: 1px solid var(--border); border-radius: 4px; padding: 18px 20px; position: relative; overflow: hidden; }
+  .invest-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; }
   .invest-card.ic-gold::after { background: var(--gold); }
   .invest-card.ic-forest::after { background: var(--forest); }
   .invest-card.ic-rust::after { background: var(--rust); }
   .invest-card-icon { font-size: 26px; margin-bottom: 10px; display: block; }
   .invest-card-label { font-family: 'DM Mono', monospace; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
-  .invest-card-value {
-    font-family: 'Syne', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--ink);
-    line-height: 1.2;
-  }
-  .invest-card-value.editable {
-    background: rgba(201,168,76,0.08);
-    border: 1px dashed rgba(201,168,76,0.5);
-    border-radius: 3px;
-    padding: 4px 8px;
-    font-size: 17px;
-    cursor: text;
-    outline: none;
-    min-width: 60px;
-    display: inline-block;
-    color: var(--gold);
-    transition: background 0.2s, border-color 0.2s;
-  }
-  .invest-card-value.editable:focus {
-    background: rgba(201,168,76,0.15);
-    border-color: var(--gold);
-  }
+  .invest-card-value { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--ink); line-height: 1.2; }
+  .invest-card-value.editable { background: rgba(201,168,76,0.08); border: 1px dashed rgba(201,168,76,0.5); border-radius: 3px; padding: 4px 8px; font-size: 17px; cursor: text; outline: none; min-width: 60px; display: inline-block; color: var(--gold); transition: background 0.2s, border-color 0.2s; }
+  .invest-card-value.editable:focus { background: rgba(201,168,76,0.15); border-color: var(--gold); }
   .invest-card-sub { font-size: 11.5px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
 
   /* ===== META BOXES ===== */
-  .meta-block {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-    margin-bottom: 20px;
-  }
-  .meta-block-header {
-    padding: 16px 22px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    border-bottom: 1px solid var(--border);
-  }
+  .meta-block { background: white; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 20px; }
+  .meta-block-header { padding: 16px 22px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border); }
   .meta-block-header.short { background: rgba(46,94,58,0.06); border-bottom-color: rgba(46,94,58,0.2); }
   .meta-block-header.mid { background: rgba(201,168,76,0.07); border-bottom-color: rgba(201,168,76,0.25); }
-  .meta-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 9.5px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 20px;
-    flex-shrink: 0;
-  }
+  .meta-label { font-family: 'DM Mono', monospace; font-size: 9.5px; letter-spacing: 0.15em; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; flex-shrink: 0; }
   .meta-label.short { background: rgba(46,94,58,0.15); color: var(--forest); border: 1px solid rgba(46,94,58,0.3); }
   .meta-label.mid { background: rgba(201,168,76,0.15); color: #8a6a00; border: 1px solid rgba(201,168,76,0.4); }
-  .meta-block-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--ink);
-  }
+  .meta-block-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--ink); }
   .meta-block-body { padding: 22px 22px; }
-
-  .meta-timeline {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-  .meta-pill {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    padding: 5px 12px;
-    border-radius: 20px;
-    letter-spacing: 0.05em;
-  }
+  .meta-timeline { display: flex; gap: 8px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+  .meta-pill { font-family: 'DM Mono', monospace; font-size: 11px; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.05em; }
   .meta-pill.period { background: var(--blade); color: var(--gold-light); }
   .meta-pill.target { background: rgba(46,94,58,0.1); color: var(--forest); border: 1px solid rgba(46,94,58,0.3); }
 
   /* Revenue calculator */
-  .rev-calc {
-    background: var(--blade);
-    border-radius: 6px;
-    padding: 24px 28px;
-    margin-top: 16px;
-    border: 1px solid rgba(201,168,76,0.2);
-  }
-  .rev-calc-title {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: rgba(245,240,232,0.4);
-    margin-bottom: 18px;
-  }
-  .rev-scenarios {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 20px;
-  }
-  .rev-scenario {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 4px;
-    padding: 16px 18px;
-  }
-  .rev-scenario-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 26px;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-  .rev-scenario-num span {
-    font-size: 13px;
-    font-weight: 400;
-    color: rgba(245,240,232,0.4);
-    margin-left: 4px;
-  }
-  .rev-scenario-label {
-    font-size: 11.5px;
-    color: rgba(245,240,232,0.45);
-    line-height: 1.5;
-    margin-bottom: 10px;
-  }
-  .rev-line {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 0;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    font-size: 12px;
-  }
+  .rev-calc { background: var(--blade); border-radius: 6px; padding: 24px 28px; margin-top: 16px; border: 1px solid rgba(201,168,76,0.2); }
+  .rev-calc-title { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(245,240,232,0.4); margin-bottom: 18px; }
+  .rev-scenarios { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .rev-scenario { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 4px; padding: 16px 18px; }
+  .rev-scenario-num { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+  .rev-scenario-num span { font-size: 13px; font-weight: 400; color: rgba(245,240,232,0.4); margin-left: 4px; }
+  .rev-scenario-label { font-size: 11.5px; color: rgba(245,240,232,0.45); line-height: 1.5; margin-bottom: 10px; }
+  .rev-line { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-top: 1px solid rgba(255,255,255,0.06); font-size: 12px; }
   .rev-line-label { color: rgba(245,240,232,0.45); }
   .rev-line-val { font-family: 'DM Mono', monospace; color: var(--gold-light); font-size: 12px; }
-  .rev-total {
-    border-top: 1px solid rgba(201,168,76,0.3);
-    padding-top: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .rev-total-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(245,240,232,0.4);
-  }
-  .rev-total-val {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--gold-light);
-  }
+  .rev-total { border-top: 1px solid rgba(201,168,76,0.3); padding-top: 14px; display: flex; justify-content: space-between; align-items: center; }
+  .rev-total-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(245,240,232,0.4); }
+  .rev-total-val { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--gold-light); }
 
-  .milestone-row {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 10px;
-    align-items: flex-start;
-  }
-  .milestone-dot {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--gold);
-    color: var(--blade);
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
+  .milestone-row { display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
+  .milestone-dot { width: 28px; height: 28px; border-radius: 50%; background: var(--gold); color: var(--blade); font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
   .milestone-text { font-size: 13.5px; color: var(--ink); line-height: 1.5; }
   .milestone-text strong { color: var(--ink); font-weight: 600; }
 
-  .price-compare {
-    display: flex;
-    gap: 12px;
-    margin: 18px 0;
-    flex-wrap: wrap;
-  }
-  .price-pill {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 12px 20px;
-    text-align: center;
-    flex: 1;
-    min-width: 120px;
-    position: relative;
-  }
-  .price-pill.active {
-    border-color: var(--gold);
-    background: rgba(201,168,76,0.05);
-  }
-  .price-pill-period {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 6px;
-    display: block;
-  }
-  .price-pill-val {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--ink);
-  }
+  .price-compare { display: flex; gap: 12px; margin: 18px 0; flex-wrap: wrap; }
+  .price-pill { background: white; border: 1px solid var(--border); border-radius: 4px; padding: 12px 20px; text-align: center; flex: 1; min-width: 120px; position: relative; }
+  .price-pill.active { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+  .price-pill-period { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; display: block; }
+  .price-pill-val { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--ink); }
   .price-pill.active .price-pill-val { color: var(--gold); }
   .price-pill-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
 
@@ -496,6 +288,7 @@
     .rules-grid { grid-template-columns: 1fr; }
     .invest-grid { grid-template-columns: 1fr; }
     .rev-scenarios { grid-template-columns: 1fr; }
+    .roles-grid { grid-template-columns: 1fr; }
   }
 
   @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -525,7 +318,7 @@
 <aside class="sidebar">
   <div class="sidebar-logo">
     <span class="icon">💈</span>
-    <h1>BarberPro</h1>
+    <h1>BarberPro(Sujeito a mudança de nome)</h1>
     <p>Documentação Técnica</p>
   </div>
   <nav>
@@ -533,8 +326,10 @@
     <a class="nav-link" href="#visao-geral">Visão Geral</a>
     <a class="nav-link" href="#tecnologias">Tecnologias</a>
     <a class="nav-link" href="#estrutura">Estrutura de Arquivos</a>
+    <a class="nav-link" href="#multitenancy">Multi-tenancy SaaS</a>
 
     <div class="nav-section">Funcionalidades</div>
+    <a class="nav-link" href="#roles">Roles e Permissões</a>
     <a class="nav-link" href="#area-publica">Área Pública</a>
     <a class="nav-link" href="#area-admin">Área Administrativa</a>
     <a class="nav-link" href="#area-total">Admin Total</a>
@@ -553,10 +348,10 @@
     <a class="nav-link" href="#roadmap">Melhorias Futuras</a>
 
     <div class="nav-section">Negócio</div>
-    <a class="nav-link" href="#pitch">Investimento & Valor</a>
+    <a class="nav-link" href="#pitch">Investimento &amp; Valor</a>
     <a class="nav-link" href="#metas">Metas de Crescimento</a>
   </nav>
-  <div class="sidebar-footer">v1.0 &nbsp;·&nbsp; React + Node.js</div>
+  <div class="sidebar-footer">v2.0 &nbsp;·&nbsp; SaaS Multi-tenant</div>
 </aside>
 
 <!-- MAIN -->
@@ -564,15 +359,16 @@
 
   <!-- HERO -->
   <header class="hero">
-    <div class="hero-badge">💈 &nbsp; DOCUMENTAÇÃO TÉCNICA</div>
-    <h1>Barber<span>Pro</span></h1>
-    <p>Sistema web completo de agendamento online para barbearias, desenvolvido com React no frontend e Node.js/Express no backend, com banco de dados SQLite e autenticação por sessão.</p>
+    <div class="hero-badge">💈 &nbsp; DOCUMENTAÇÃO TÉCNICA v2.0</div>
+    <h1>Barber<span>Pro(Sujeito a mudança de nome)</span></h1>
+    <p>Plataforma SaaS completa de agendamento para barbearias. Múltiplas barbearias, isolamento total de dados, três níveis de acesso, dashboard com métricas em tempo real e arquitetura multi-tenant.</p>
     <div class="hero-tags">
+      <span class="tag tag-saas">SaaS Multi-tenant</span>
       <span class="tag tag-frontend">React 18</span>
       <span class="tag tag-frontend">FullCalendar</span>
       <span class="tag tag-frontend">Context API</span>
-      <span class="tag tag-backend">Node.js</span>
-      <span class="tag tag-backend">Express</span>
+      <span class="tag tag-backend">Node.js ESM</span>
+      <span class="tag tag-backend">Express 5</span>
       <span class="tag tag-backend">Bcrypt</span>
       <span class="tag tag-db">SQLite</span>
       <span class="tag tag-db">express-session</span>
@@ -589,9 +385,12 @@
         <h2>Visão Geral do Projeto</h2>
         <span class="section-icon">📋</span>
       </div>
-      <p>O <strong>BarberPro</strong> é um sistema full stack voltado para barbearias que precisam gerenciar agendamentos online. O sistema oferece três níveis de acesso distintos — cliente (público), barbeiro e administrador total — com interfaces e permissões específicas para cada perfil.</p>
-      <div class="info-box">
-        <strong>Objetivo educacional:</strong> Projeto desenvolvido para prática real de desenvolvimento full stack, simulando um sistema profissional com separação de responsabilidades, autenticação completa, controle de acesso baseado em roles e regras de negócio complexas.
+      <p>O <strong>BarberPro(Sujeito a mudança de nome)</strong> é uma plataforma SaaS multi-tenant para barbearias. Cada barbearia cadastrada na plataforma opera de forma completamente isolada — com seus próprios usuários, agendamentos, serviços e métricas financeiras — sem que haja qualquer vazamento de dados entre elas.</p>
+      <div class="info-box" style="margin-top:18px">
+        <strong>Arquitetura SaaS:</strong> Uma única instância da aplicação serve múltiplas barbearias simultaneamente. O isolamento é garantido por <code>barbearia_id</code> em todas as tabelas do banco, com filtragem obrigatória em todas as queries.
+      </div>
+      <div class="info-box" style="margin-top:10px">
+        <strong>Deploy:</strong> Hospedado no <strong>Render.com</strong> — backend Node.js serve o build estático do frontend em produção. Repositório no GitHub: <code>Leonardo-capy/BarberPro</code>.
       </div>
     </section>
 
@@ -608,15 +407,15 @@
           <div class="tech-item"><span class="tech-dot dot-frontend"></span>React 18</div>
           <div class="tech-item"><span class="tech-dot dot-frontend"></span>React Router DOM v6</div>
           <div class="tech-item"><span class="tech-dot dot-frontend"></span>Axios</div>
-          <div class="tech-item"><span class="tech-dot dot-frontend"></span>FullCalendar</div>
-          <div class="tech-item"><span class="tech-dot dot-frontend"></span>Context API</div>
+          <div class="tech-item"><span class="tech-dot dot-frontend"></span>FullCalendar 6</div>
+          <div class="tech-item"><span class="tech-dot dot-frontend"></span>Context API (AuthContext)</div>
           <div class="tech-item"><span class="tech-dot dot-frontend"></span>CSS3 com animações</div>
         </div>
         <div class="tech-box">
           <h3>🔧 Backend</h3>
-          <div class="tech-item"><span class="tech-dot dot-backend"></span>Node.js (ESModules)</div>
-          <div class="tech-item"><span class="tech-dot dot-backend"></span>Express.js</div>
-          <div class="tech-item"><span class="tech-dot dot-backend"></span>SQLite + sqlite3</div>
+          <div class="tech-item"><span class="tech-dot dot-backend"></span>Node.js (ES Modules)</div>
+          <div class="tech-item"><span class="tech-dot dot-backend"></span>Express 5</div>
+          <div class="tech-item"><span class="tech-dot dot-backend"></span>SQLite (sqlite3 + sqlite)</div>
           <div class="tech-item"><span class="tech-dot dot-backend"></span>express-session</div>
           <div class="tech-item"><span class="tech-dot dot-backend"></span>Bcrypt (hash de senha)</div>
           <div class="tech-item"><span class="tech-dot dot-backend"></span>Helmet (segurança HTTP)</div>
@@ -631,62 +430,153 @@
         <h2>Estrutura de Arquivos</h2>
         <span class="section-icon">📁</span>
       </div>
-      <pre data-lang="tree"><span class="cmt">barberpro/</span>
+      <pre data-lang="tree"><span class="cmt">barbearia agenda/</span>
 │
 ├── backend/
-│   ├── <span class="fn">server.js</span>              <span class="cmt"># Servidor Express principal</span>
-│   ├── <span class="fn">database.js</span>            <span class="cmt"># Inicialização e schema do SQLite</span>
+│   ├── <span class="fn">server.js</span>              <span class="cmt"># Servidor Express principal + todas as rotas</span>
+│   ├── <span class="fn">database.js</span>            <span class="cmt"># Schema SQLite multi-tenant + seed inicial</span>
 │   ├── database.sqlite        <span class="cmt"># Arquivo do banco de dados</span>
-│   ├── middleware/
-│   │   ├── <span class="fn">auth.js</span>            <span class="cmt"># Middlewares de autenticação e roles</span>
-│   │   └── <span class="fn">validate.js</span>        <span class="cmt"># Validação de inputs</span>
-│   └── routes/
-│       ├── <span class="fn">agendamentos.js</span>    <span class="cmt"># CRUD de agendamentos, bloqueios e serviços</span>
-│       └── <span class="fn">usuarios.js</span>        <span class="cmt"># CRUD de usuários</span>
+│   └── middleware/
+│       ├── <span class="fn">auth.js</span>            <span class="cmt"># verificarLogin / verificarAdmin / verificarSuperAdmin</span>
+│       └── <span class="fn">validate.js</span>        <span class="cmt"># Validação de inputs (roles: admin/barbeiro/superadmin)</span>
 │
 └── frontend/src/
-    ├── <span class="fn">App.js</span>                 <span class="cmt"># Componente raiz e configuração de rotas</span>
+    ├── <span class="fn">App.js</span>                 <span class="cmt"># Rotas protegidas por role (PrivateRoute)</span>
     ├── components/
-    │   ├── <span class="fn">NavbarAdmin.js</span>     <span class="cmt"># Barra de navegação administrativa</span>
-    │   ├── <span class="fn">PrivateRoute.js</span>    <span class="cmt"># Componente para rotas protegidas</span>
-    │   ├── <span class="fn">ModalEditarUsuario.js</span>
+    │   ├── <span class="fn">NavbarAdmin.js</span>     <span class="cmt"># Navbar com link ao Painel Total para admin+</span>
+    │   ├── <span class="fn">PrivateRoute.js</span>    <span class="cmt"># Aceita array de roles: requiredRole={["admin","superadmin"]}</span>
+    │   ├── <span class="fn">ModalEditarUsuario.js</span> <span class="cmt"># Modal de edição (senha só atualiza se preenchida)</span>
     │   └── <span class="fn">Toast.js</span>           <span class="cmt"># Notificações visuais</span>
     ├── pages/
-    │   ├── <span class="fn">Index.js</span>           <span class="cmt"># Página pública de agendamento</span>
-    │   ├── <span class="fn">Login.js</span>           <span class="cmt"># Autenticação</span>
-    │   ├── <span class="fn">Admin.js</span>           <span class="cmt"># Painel do barbeiro</span>
-    │   ├── <span class="fn">AdminBloqueios.js</span>  <span class="cmt"># Gerenciamento de bloqueios</span>
-    │   ├── <span class="fn">AdminTotal.js</span>      <span class="cmt"># Painel do admin total</span>
-    │   └── <span class="fn">Perfil.js</span>          <span class="cmt"># Perfil do usuário</span>
+    │   ├── <span class="fn">Agenda.js</span>          <span class="cmt"># Lista pública de barbearias ativas</span>
+    │   ├── <span class="fn">AgendaBarbearia.js</span> <span class="cmt"># Agendamento público de uma barbearia específica</span>
+    │   ├── <span class="fn">Login.js</span>           <span class="cmt"># Login com select de barbearia + opção Superadmin</span>
+    │   ├── <span class="fn">Admin.js</span>           <span class="cmt"># Dashboard por role (barbeiro / admin / superadmin)</span>
+    │   ├── <span class="fn">AdminBloqueios.js</span>  <span class="cmt"># Bloqueios de horários e dias</span>
+    │   ├── <span class="fn">AdminTotal.js</span>      <span class="cmt"># Painel de gestão de barbearias e usuários</span>
+    │   └── <span class="fn">Perfil.js</span>          <span class="cmt"># Perfil do usuário logado</span>
     ├── context/
-    │   └── <span class="fn">AuthContext.js</span>     <span class="cmt"># Estado global de autenticação</span>
+    │   └── <span class="fn">AuthContext.js</span>     <span class="cmt"># Estado global + sanitização de barbearia_id no login</span>
     └── services/
-        └── <span class="fn">api.js</span>             <span class="cmt"># Configuração do Axios</span></pre>
+        └── <span class="fn">api.js</span>             <span class="cmt"># Axios com logs de request/response</span></pre>
+    </section>
+
+    <!-- MULTI-TENANCY -->
+    <section class="section" id="multitenancy">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2>Arquitetura Multi-tenancy SaaS</h2>
+        <span class="section-icon">🏢</span>
+      </div>
+      <p>Toda a plataforma opera com isolamento de dados por <code>barbearia_id</code>. Cada barbearia tem sua própria URL pública, seus próprios barbeiros, agendamentos e métricas.</p>
+
+      <div class="card-grid" style="margin-top: 20px">
+        <div class="card card-tech">
+          <span class="card-emoji">🔀</span>
+          <h3>Isolamento por barbearia_id</h3>
+          <p>Todas as tabelas possuem <code>barbearia_id</code>. Todas as queries filtram por ele obrigatoriamente.</p>
+        </div>
+        <div class="card card-tech">
+          <span class="card-emoji">🌐</span>
+          <h3>URLs públicas por slug</h3>
+          <p>Cada barbearia tem uma URL única: <code>/agenda/minha-barbearia</code> identificada pelo seu slug.</p>
+        </div>
+        <div class="card card-tech">
+          <span class="card-emoji">👤</span>
+          <h3>Usuário único por barbearia</h3>
+          <p>O mesmo nome de usuário pode existir em barbearias diferentes. Constraint: <code>UNIQUE(barbearia_id, usuario)</code>.</p>
+        </div>
+        <div class="card card-tech">
+          <span class="card-emoji">🔐</span>
+          <h3>Login com seleção de barbearia</h3>
+          <p>O login exige seleção da barbearia. Superadmin usa opção especial sem vínculo a barbearia.</p>
+        </div>
+      </div>
+
+      <pre data-lang="sql" style="margin-top:20px"><span class="cmt">-- Constraint que garante isolamento no login</span>
+<span class="kw">UNIQUE</span>(barbearia_id, usuario)
+
+<span class="cmt">-- Todas as queries protegidas por barbearia_id</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> agendamentos
+<span class="kw">WHERE</span> barbearia_id = <span class="num">?</span> <span class="kw">AND</span> user_id = <span class="num">?</span></pre>
+    </section>
+
+    <!-- ROLES -->
+    <section class="section" id="roles">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2>Roles e Permissões</h2>
+        <span class="section-icon">🎭</span>
+      </div>
+      <p>O sistema possui três níveis de acesso com permissões progressivas e completamente isoladas.</p>
+      <div class="roles-grid">
+        <div class="role-card">
+          <div class="role-card-header superadmin">
+            <h3>👑 Superadmin</h3>
+            <p>Dono da plataforma</p>
+          </div>
+          <div class="role-card-body">
+            <div class="role-perm"><span class="dot"></span>Gerencia todas as barbearias</div>
+            <div class="role-perm"><span class="dot"></span>Cria, ativa e desativa barbearias</div>
+            <div class="role-perm"><span class="dot"></span>Faturamento consolidado da plataforma</div>
+            <div class="role-perm"><span class="dot"></span>Métricas: atendimentos e clientes únicos</div>
+            <div class="role-perm"><span class="dot"></span>Breakdown por barbearia</div>
+            <div class="role-perm"><span class="dot"></span>Cria usuários em qualquer barbearia</div>
+          </div>
+        </div>
+        <div class="role-card">
+          <div class="role-card-header admin">
+            <h3>🔑 Admin</h3>
+            <p>Dono da barbearia</p>
+          </div>
+          <div class="role-card-body">
+            <div class="role-perm"><span class="dot"></span>Gerencia usuários da sua barbearia</div>
+            <div class="role-perm"><span class="dot"></span>Faturamento da barbearia inteira</div>
+            <div class="role-perm"><span class="dot"></span>Breakdown por barbeiro</div>
+            <div class="role-perm"><span class="dot"></span>Atendimentos e clientes únicos</div>
+            <div class="role-perm"><span class="dot"></span>Seus próprios agendamentos</div>
+            <div class="role-perm"><span class="dot"></span>Acessa Painel Total</div>
+          </div>
+        </div>
+        <div class="role-card">
+          <div class="role-card-header barbeiro">
+            <h3>✂️ Barbeiro</h3>
+            <p>Profissional da barbearia</p>
+          </div>
+          <div class="role-card-body">
+            <div class="role-perm"><span class="dot"></span>Vê somente seus agendamentos</div>
+            <div class="role-perm"><span class="dot"></span>Faturamento próprio (dia/mês/ano)</div>
+            <div class="role-perm"><span class="dot"></span>Gerencia seus serviços</div>
+            <div class="role-perm"><span class="dot"></span>Bloqueia horários e dias</div>
+            <div class="role-perm"><span class="dot"></span>Finaliza atendimentos</div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ÁREA PÚBLICA -->
     <section class="section" id="area-publica">
       <div class="section-header">
-        <span class="section-num">04</span>
+        <span class="section-num">06</span>
         <h2>Área Pública — Cliente</h2>
         <span class="section-icon">🌍</span>
       </div>
-      <p>Acessível sem login. Permite que qualquer cliente realize um agendamento diretamente pela interface web.</p>
+      <p>Acessível sem login. O cliente navega pela lista de barbearias e realiza agendamentos diretamente.</p>
       <div class="card-grid" style="margin-top:20px">
+        <div class="card card-public">
+          <span class="card-emoji">💈</span>
+          <h3>Vitrine de Barbearias</h3>
+          <p>Página <code>/agenda</code> lista todas as barbearias ativas da plataforma com nome e cidade.</p>
+        </div>
         <div class="card card-public">
           <span class="card-emoji">📅</span>
           <h3>Calendário Interativo</h3>
-          <p>Implementado com FullCalendar. Bloqueia automaticamente domingos e datas passadas.</p>
+          <p>FullCalendar por barbearia em <code>/agenda/:slug</code>. Bloqueia domingos e datas passadas.</p>
         </div>
         <div class="card card-public">
           <span class="card-emoji">💇</span>
           <h3>Seleção de Barbeiro</h3>
-          <p>Lista dinâmica de barbeiros com plano ativo cadastrados no sistema.</p>
-        </div>
-        <div class="card card-public">
-          <span class="card-emoji">🕐</span>
-          <h3>Horários Disponíveis</h3>
-          <p>Exibe apenas horários livres, excluindo agendados e bloqueados.</p>
+          <p>Lista dinâmica dos barbeiros com plano ativo daquela barbearia específica.</p>
         </div>
         <div class="card card-public">
           <span class="card-emoji">✅</span>
@@ -699,31 +589,31 @@
     <!-- ÁREA ADMIN BARBEIRO -->
     <section class="section" id="area-admin">
       <div class="section-header">
-        <span class="section-num">05</span>
+        <span class="section-num">07</span>
         <h2>Área Administrativa — Barbeiro</h2>
         <span class="section-icon">✂️</span>
       </div>
-      <p>Acesso mediante login. Cada barbeiro visualiza e gerencia apenas seus próprios dados.</p>
+      <p>Acesso mediante login com seleção da barbearia. Cada barbeiro visualiza e gerencia apenas seus próprios dados dentro da sua barbearia.</p>
       <div class="card-grid" style="margin-top:20px">
         <div class="card card-admin">
           <span class="card-emoji">📋</span>
           <h3>Lista de Agendamentos</h3>
-          <p>Visualiza todos os agendamentos do dia e histórico completo com contador.</p>
+          <p>Visualiza todos os agendamentos com contador total e de hoje. Finaliza ou exclui.</p>
         </div>
         <div class="card card-admin">
           <span class="card-emoji">💰</span>
-          <h3>Faturamento</h3>
-          <p>Cálculo automático de faturamento diário, mensal, anual e total.</p>
+          <h3>Faturamento Pessoal</h3>
+          <p>Cards com faturamento diário, mensal, anual e total dos próprios atendimentos.</p>
         </div>
         <div class="card card-admin">
           <span class="card-emoji">🔒</span>
           <h3>Bloqueio de Horários</h3>
-          <p>Bloqueia e desbloqueia horários individuais ou o dia inteiro.</p>
+          <p>Bloqueia e desbloqueia horários individuais ou o dia inteiro via <code>/admin/bloqueios</code>.</p>
         </div>
         <div class="card card-admin">
           <span class="card-emoji">🛠</span>
           <h3>Gestão de Serviços</h3>
-          <p>CRUD completo de serviços com nome e preço, vinculado ao barbeiro.</p>
+          <p>CRUD completo de serviços com nome e preço, vinculado ao barbeiro e à barbearia.</p>
         </div>
       </div>
     </section>
@@ -731,21 +621,31 @@
     <!-- ADMIN TOTAL -->
     <section class="section" id="area-total">
       <div class="section-header">
-        <span class="section-num">06</span>
-        <h2>Admin Total</h2>
+        <span class="section-num">08</span>
+        <h2>Painel Total — Admin &amp; Superadmin</h2>
         <span class="section-icon">👑</span>
       </div>
-      <p>Nível mais alto de acesso. Controla todos os usuários e visualiza estatísticas globais do sistema.</p>
+      <p>Acessível por admins e superadmins via <code>/admin-total</code>. O conteúdo exibido varia conforme a role.</p>
       <div class="card-grid" style="margin-top:20px">
         <div class="card card-super">
           <span class="card-emoji">👥</span>
           <h3>Gestão de Usuários</h3>
-          <p>Criar, editar e excluir barbeiros e admins. Altera nome, cargo e senha.</p>
+          <p>Admin gerencia usuários da própria barbearia. Superadmin gerencia todos. Ninguém exclui superadmin.</p>
+        </div>
+        <div class="card card-super">
+          <span class="card-emoji">🏢</span>
+          <h3>Gestão de Barbearias</h3>
+          <p>Superadmin cria, edita, ativa e desativa barbearias. Admin não vê esta seção.</p>
         </div>
         <div class="card card-super">
           <span class="card-emoji">📊</span>
-          <h3>Estatísticas Globais</h3>
-          <p>Visualiza dados de todos os barbeiros: faturamento e agendamentos consolidados.</p>
+          <h3>Visão Consolidada</h3>
+          <p>Superadmin vê faturamento de toda a plataforma. Admin vê apenas sua barbearia.</p>
+        </div>
+        <div class="card card-super">
+          <span class="card-emoji">🔒</span>
+          <h3>Proteção do Superadmin</h3>
+          <p>Botões de Editar/Excluir ocultos para superadmin no frontend. Backend bloqueia no nível da rota.</p>
         </div>
       </div>
     </section>
@@ -753,24 +653,48 @@
     <!-- DASHBOARD -->
     <section class="section" id="dashboard">
       <div class="section-header">
-        <span class="section-num">07</span>
-        <h2>Dashboard Administrativo</h2>
+        <span class="section-num">09</span>
+        <h2>Dashboard — Métricas por Role</h2>
         <span class="section-icon">📊</span>
       </div>
-      <p>Painel de indicadores disponível via <code>GET /api/admin/dashboard</code>. Retorna métricas consolidadas de todos os barbeiros.</p>
-      <div class="card-grid" style="margin-top:20px">
-        <div class="card card-tech"><span class="card-emoji">🧾</span><h3>Total de Agendamentos</h3><p>Soma de todos os atendimentos finalizados no sistema.</p></div>
-        <div class="card card-tech"><span class="card-emoji">💵</span><h3>Faturamento Total</h3><p>Soma dos preços de todos os agendamentos finalizados.</p></div>
-        <div class="card card-tech"><span class="card-emoji">👤</span><h3>Clientes Únicos</h3><p>Contagem distinta por número de telefone.</p></div>
-        <div class="card card-tech"><span class="card-emoji">🏆</span><h3>Barbeiro Top</h3><p>Barbeiro com maior faturamento total.</p></div>
-        <div class="card card-tech"><span class="card-emoji">⭐</span><h3>Serviço Mais Realizado</h3><p>Serviço com maior número de execuções.</p></div>
+      <p>O painel em <code>/admin</code> exibe métricas diferentes conforme a role do usuário logado.</p>
+
+      <div style="margin-top:20px; display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div style="background:white; border:1px solid var(--border); border-radius:4px; padding:20px; border-top: 3px solid var(--rust);">
+          <p style="font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:14px;">✂️ Barbeiro</p>
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:13px;">
+            <div>📦 Total de Agendamentos</div>
+            <div>📅 Agendamentos Hoje</div>
+            <div>💵 Faturamento Hoje</div>
+            <div>📆 Faturamento do Mês</div>
+            <div>📈 Faturamento do Ano</div>
+            <div>💰 Faturamento Total</div>
+          </div>
+        </div>
+        <div style="background:white; border:1px solid var(--border); border-radius:4px; padding:20px; border-top: 3px solid var(--gold);">
+          <p style="font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:14px;">🔑 Admin &nbsp;/&nbsp; 👑 Superadmin</p>
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:13px;">
+            <div>🧾 Total de Atendimentos finalizados</div>
+            <div>👤 Clientes Únicos (por telefone)</div>
+            <div>💵 Faturamento Hoje</div>
+            <div>📆 Faturamento do Mês</div>
+            <div>📈 Faturamento do Ano</div>
+            <div>💰 Faturamento Total</div>
+            <div style="border-top:1px solid var(--cream); margin-top:4px; padding-top:8px;">📋 Breakdown por Barbeiro <em style="font-size:11px;color:var(--muted)">(admin)</em></div>
+            <div>📋 Breakdown por Barbearia <em style="font-size:11px;color:var(--muted)">(superadmin)</em></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top:18px">
+        <strong>Clientes Únicos:</strong> Calculado por <code>COUNT(DISTINCT telefone)</code> — o mesmo cliente que retorna diversas vezes é contado apenas uma vez.
       </div>
     </section>
 
     <!-- API -->
     <section class="section" id="api">
       <div class="section-header">
-        <span class="section-num">08</span>
+        <span class="section-num">10</span>
         <h2>Rotas da API</h2>
         <span class="section-icon">🔌</span>
       </div>
@@ -780,26 +704,47 @@
           <tr><th>Método</th><th>Rota</th><th>Acesso</th><th>Descrição</th></tr>
         </thead>
         <tbody>
-          <tr><td><span class="method method-post">POST</span></td><td class="route-path">/login</td><td><span class="auth-badge auth-open">Público</span></td><td>Autenticação por usuário e senha</td></tr>
-          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/logout</td><td><span class="auth-badge auth-lock">Login</span></td><td>Encerra a sessão e redireciona</td></tr>
-          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/me</td><td><span class="auth-badge auth-lock">Login</span></td><td>Retorna dados do usuário autenticado</td></tr>
-          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/barbeiros</td><td><span class="auth-badge auth-open">Público</span></td><td>Lista todos os barbeiros com plano ativo</td></tr>
-          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/agendamentos/disponiveis/:data</td><td><span class="auth-badge auth-open">Público</span></td><td>Horários livres de um barbeiro em uma data</td></tr>
+          <tr class="api-group"><td colspan="4">Autenticação</td></tr>
+          <tr><td><span class="method method-post">POST</span></td><td class="route-path">/login</td><td><span class="auth-badge auth-open">Público</span></td><td>Login com <code>{ usuario, senha, barbearia_id }</code></td></tr>
+          <tr><td><span class="method method-post">POST</span></td><td class="route-path">/logout</td><td><span class="auth-badge auth-lock">Login</span></td><td>Encerra a sessão</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/usuario-logado</td><td><span class="auth-badge auth-lock">Login</span></td><td>Dados completos do usuário na sessão</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/me</td><td><span class="auth-badge auth-lock">Login</span></td><td>Alias de usuario-logado</td></tr>
+
+          <tr class="api-group"><td colspan="4">Barbearias (públicas)</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/barbearias</td><td><span class="auth-badge auth-open">Público</span></td><td>Lista barbearias ativas</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/barbearias/:slug</td><td><span class="auth-badge auth-open">Público</span></td><td>Busca barbearia pelo slug</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/barbearias/:slug/barbeiros</td><td><span class="auth-badge auth-open">Público</span></td><td>Barbeiros ativos de uma barbearia</td></tr>
+
+          <tr class="api-group"><td colspan="4">Agendamentos (público)</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/agendamentos/disponiveis/:data</td><td><span class="auth-badge auth-open">Público</span></td><td>Horários livres por <code>user_id</code> e <code>barbearia_id</code></td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/agendamentos/servicos</td><td><span class="auth-badge auth-open">Público</span></td><td>Serviços públicos por <code>user_id</code> e <code>barbearia_id</code></td></tr>
           <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/agendamentos</td><td><span class="auth-badge auth-open">Público</span></td><td>Cria novo agendamento</td></tr>
-          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/agendamentos</td><td><span class="auth-badge auth-lock">Barbeiro</span></td><td>Lista agendamentos do barbeiro logado</td></tr>
-          <tr><td><span class="method method-put">PUT</span></td><td class="route-path">/api/agendamentos/finalizar/:id</td><td><span class="auth-badge auth-lock">Barbeiro</span></td><td>Marca agendamento como pago/finalizado</td></tr>
-          <tr><td><span class="method method-delete">DELETE</span></td><td class="route-path">/api/agendamentos/:id</td><td><span class="auth-badge auth-lock">Barbeiro</span></td><td>Remove um agendamento</td></tr>
-          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/agendamentos/faturamento</td><td><span class="auth-badge auth-lock">Barbeiro</span></td><td>Faturamento diário, mensal, anual e total</td></tr>
-          <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/agendamentos/toggle-bloqueio</td><td><span class="auth-badge auth-lock">Barbeiro</span></td><td>Liga/desliga bloqueio de horário específico</td></tr>
-          <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/agendamentos/bloquear-dia</td><td><span class="auth-badge auth-lock">Barbeiro</span></td><td>Bloqueia ou desbloqueia o dia inteiro</td></tr>
-          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/servicos</td><td><span class="auth-badge auth-lock">Barbeiro</span></td><td>Lista serviços do barbeiro logado</td></tr>
-          <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/servicos</td><td><span class="auth-badge auth-lock">Barbeiro</span></td><td>Cria novo serviço</td></tr>
-          <tr><td><span class="method method-delete">DELETE</span></td><td class="route-path">/api/servicos/:id</td><td><span class="auth-badge auth-lock">Barbeiro</span></td><td>Remove serviço do barbeiro logado</td></tr>
-          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/admin/usuarios</td><td><span class="auth-badge auth-admin">Admin</span></td><td>Lista todos os usuários do sistema</td></tr>
-          <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/admin/usuarios</td><td><span class="auth-badge auth-admin">Admin</span></td><td>Cria novo usuário (barbeiro ou admin)</td></tr>
-          <tr><td><span class="method method-put">PUT</span></td><td class="route-path">/api/admin/usuarios/:id</td><td><span class="auth-badge auth-admin">Admin</span></td><td>Edita nome, role e senha de um usuário</td></tr>
-          <tr><td><span class="method method-delete">DELETE</span></td><td class="route-path">/api/admin/usuarios/:id</td><td><span class="auth-badge auth-admin">Admin</span></td><td>Remove usuário do sistema</td></tr>
-          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/admin/dashboard</td><td><span class="auth-badge auth-lock">Barbeiro+</span></td><td>Estatísticas globais do sistema</td></tr>
+
+          <tr class="api-group"><td colspan="4">Agendamentos (autenticado)</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/agendamentos</td><td><span class="auth-badge auth-lock">Login</span></td><td>Agendamentos do usuário logado</td></tr>
+          <tr><td><span class="method method-put">PUT</span></td><td class="route-path">/api/agendamentos/finalizar/:id</td><td><span class="auth-badge auth-lock">Login</span></td><td>Marca como finalizado/pago</td></tr>
+          <tr><td><span class="method method-delete">DELETE</span></td><td class="route-path">/api/agendamentos/:id</td><td><span class="auth-badge auth-lock">Login</span></td><td>Remove agendamento</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/agendamentos/faturamento</td><td><span class="auth-badge auth-lock">Login</span></td><td>Faturamento pessoal (dia/mês/ano/total)</td></tr>
+          <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/agendamentos/toggle-bloqueio</td><td><span class="auth-badge auth-lock">Login</span></td><td>Liga/desliga bloqueio de horário</td></tr>
+          <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/agendamentos/bloquear-dia</td><td><span class="auth-badge auth-lock">Login</span></td><td>Bloqueia/desbloqueia dia inteiro</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/servicos</td><td><span class="auth-badge auth-lock">Login</span></td><td>Serviços do usuário logado</td></tr>
+          <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/servicos</td><td><span class="auth-badge auth-lock">Login</span></td><td>Cria novo serviço</td></tr>
+          <tr><td><span class="method method-delete">DELETE</span></td><td class="route-path">/api/servicos/:id</td><td><span class="auth-badge auth-lock">Login</span></td><td>Remove serviço</td></tr>
+
+          <tr class="api-group"><td colspan="4">Admin da Barbearia</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/admin/usuarios</td><td><span class="auth-badge auth-admin">Admin</span></td><td>Lista usuários da barbearia</td></tr>
+          <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/admin/usuarios</td><td><span class="auth-badge auth-admin">Admin</span></td><td>Cria usuário na barbearia</td></tr>
+          <tr><td><span class="method method-put">PUT</span></td><td class="route-path">/api/admin/usuarios/:id</td><td><span class="auth-badge auth-admin">Admin</span></td><td>Edita nome, role e senha</td></tr>
+          <tr><td><span class="method method-delete">DELETE</span></td><td class="route-path">/api/admin/usuarios/:id</td><td><span class="auth-badge auth-admin">Admin</span></td><td>Remove usuário (não remove superadmin)</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/admin/faturamento-barbearia</td><td><span class="auth-badge auth-admin">Admin</span></td><td>Faturamento + atendimentos + clientes da barbearia</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/admin/barbeiro/:id/faturamento</td><td><span class="auth-badge auth-admin">Admin</span></td><td>Faturamento individual de um barbeiro</td></tr>
+
+          <tr class="api-group"><td colspan="4">Superadmin — Plataforma</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/admin/faturamento-geral</td><td><span class="auth-badge auth-super">Superadmin</span></td><td>Faturamento + atendimentos + clientes de toda a plataforma</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route-path">/api/barbearias/admin/todas</td><td><span class="auth-badge auth-super">Superadmin</span></td><td>Todas as barbearias (ativas e inativas)</td></tr>
+          <tr><td><span class="method method-post">POST</span></td><td class="route-path">/api/barbearias</td><td><span class="auth-badge auth-super">Superadmin</span></td><td>Cria nova barbearia</td></tr>
+          <tr><td><span class="method method-put">PUT</span></td><td class="route-path">/api/barbearias/:id</td><td><span class="auth-badge auth-super">Superadmin</span></td><td>Edita / ativa / desativa barbearia</td></tr>
+          <tr><td><span class="method method-delete">DELETE</span></td><td class="route-path">/api/barbearias/:id</td><td><span class="auth-badge auth-super">Superadmin</span></td><td>Remove barbearia da plataforma</td></tr>
         </tbody>
       </table>
     </section>
@@ -807,22 +752,35 @@
     <!-- BANCO DE DADOS -->
     <section class="section" id="banco">
       <div class="section-header">
-        <span class="section-num">09</span>
+        <span class="section-num">11</span>
         <h2>Banco de Dados</h2>
         <span class="section-icon">🗄️</span>
       </div>
-      <p style="margin-bottom:20px">Banco relacional SQLite com 4 tabelas principais, inicializado automaticamente na primeira execução.</p>
+      <p style="margin-bottom:20px">SQLite com 5 tabelas, todas com <code>barbearia_id</code> para isolamento multi-tenant. Inicializado automaticamente com seed na primeira execução.</p>
 
       <div class="db-table">
-        <div class="db-table-header"><span class="db-table-name">usuarios</span><span class="db-table-desc">Armazena barbeiros e administradores</span></div>
+        <div class="db-table-header"><span class="db-table-name">barbearias</span><span class="db-table-desc">Tenant principal da plataforma</span></div>
         <div class="db-fields">
           <div class="db-field"><span class="db-field-name">id</span><span class="db-field-type">INTEGER PK</span><span class="db-field-desc">Identificador único autoincrement</span></div>
-          <div class="db-field"><span class="db-field-name">usuario</span><span class="db-field-type">TEXT UNIQUE</span><span class="db-field-desc">Nome de login único</span></div>
+          <div class="db-field"><span class="db-field-name">nome</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Nome da barbearia</span></div>
+          <div class="db-field"><span class="db-field-name">slug</span><span class="db-field-type">TEXT UNIQUE</span><span class="db-field-desc">Identificador de URL (ex: minha-barbearia)</span></div>
+          <div class="db-field"><span class="db-field-name">cidade</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Cidade da barbearia</span></div>
+          <div class="db-field"><span class="db-field-name">ativo</span><span class="db-field-type">INTEGER</span><span class="db-field-desc">1 = aparece na vitrine pública · 0 = desativada</span></div>
+          <div class="db-field"><span class="db-field-name">created_at</span><span class="db-field-type">DATETIME</span><span class="db-field-desc">Data de criação (automática)</span></div>
+        </div>
+      </div>
+
+      <div class="db-table">
+        <div class="db-table-header"><span class="db-table-name">usuarios</span><span class="db-table-desc">Barbeiros e administradores, isolados por barbearia</span></div>
+        <div class="db-fields">
+          <div class="db-field"><span class="db-field-name">id</span><span class="db-field-type">INTEGER PK</span><span class="db-field-desc">Identificador único</span></div>
+          <div class="db-field"><span class="db-field-name">barbearia_id</span><span class="db-field-type">INTEGER FK</span><span class="db-field-desc">Barbearia à qual pertence</span></div>
+          <div class="db-field"><span class="db-field-name">usuario</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Nome de login — único por barbearia</span></div>
           <div class="db-field"><span class="db-field-name">senha</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Hash bcrypt da senha</span></div>
           <div class="db-field"><span class="db-field-name">plano</span><span class="db-field-type">TEXT</span><span class="db-field-desc">'ativo' para aparecer como barbeiro disponível</span></div>
-          <div class="db-field"><span class="db-field-name">role</span><span class="db-field-type">TEXT</span><span class="db-field-desc">'admin' ou 'barbeiro'</span></div>
+          <div class="db-field"><span class="db-field-name">role</span><span class="db-field-type">TEXT</span><span class="db-field-desc">'superadmin' · 'admin' · 'barbeiro'</span></div>
           <div class="db-field"><span class="db-field-name">descricao</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Texto de perfil do barbeiro</span></div>
-          <div class="db-field"><span class="db-field-name">created_at</span><span class="db-field-type">DATETIME</span><span class="db-field-desc">Data de criação (automática)</span></div>
+          <div class="db-field"><span class="db-field-name">created_at</span><span class="db-field-type">DATETIME</span><span class="db-field-desc">Data de criação</span></div>
         </div>
       </div>
 
@@ -830,11 +788,12 @@
         <div class="db-table-header"><span class="db-table-name">agendamentos</span><span class="db-table-desc">Registros de agendamentos dos clientes</span></div>
         <div class="db-fields">
           <div class="db-field"><span class="db-field-name">id</span><span class="db-field-type">INTEGER PK</span><span class="db-field-desc">Identificador único</span></div>
-          <div class="db-field"><span class="db-field-name">user_id</span><span class="db-field-type">INTEGER FK</span><span class="db-field-desc">Barbeiro responsável (ref. usuarios)</span></div>
+          <div class="db-field"><span class="db-field-name">barbearia_id</span><span class="db-field-type">INTEGER FK</span><span class="db-field-desc">Barbearia do agendamento</span></div>
+          <div class="db-field"><span class="db-field-name">user_id</span><span class="db-field-type">INTEGER FK</span><span class="db-field-desc">Barbeiro responsável</span></div>
           <div class="db-field"><span class="db-field-name">nome</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Nome do cliente</span></div>
-          <div class="db-field"><span class="db-field-name">telefone</span><span class="db-field-type">TEXT</span><span class="db-field-desc">DDD + número (somente dígitos)</span></div>
-          <div class="db-field"><span class="db-field-name">servico</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Nome do serviço no momento do agendamento</span></div>
-          <div class="db-field"><span class="db-field-name">preco</span><span class="db-field-type">REAL</span><span class="db-field-desc">Valor cobrado pelo serviço</span></div>
+          <div class="db-field"><span class="db-field-name">telefone</span><span class="db-field-type">TEXT</span><span class="db-field-desc">DDD + número (somente dígitos, 10–11)</span></div>
+          <div class="db-field"><span class="db-field-name">servico</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Nome do serviço gravado no momento do agendamento</span></div>
+          <div class="db-field"><span class="db-field-name">preco</span><span class="db-field-type">REAL</span><span class="db-field-desc">Valor cobrado gravado no momento do agendamento</span></div>
           <div class="db-field"><span class="db-field-name">data</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Data no formato YYYY-MM-DD</span></div>
           <div class="db-field"><span class="db-field-name">horario</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Horário no formato HH:MM</span></div>
           <div class="db-field"><span class="db-field-name">finalizado</span><span class="db-field-type">INTEGER</span><span class="db-field-desc">0 = pendente · 1 = finalizado/pago</span></div>
@@ -844,6 +803,7 @@
       <div class="db-table">
         <div class="db-table-header"><span class="db-table-name">bloqueios</span><span class="db-table-desc">Horários e dias bloqueados por barbeiro</span></div>
         <div class="db-fields">
+          <div class="db-field"><span class="db-field-name">barbearia_id</span><span class="db-field-type">INTEGER FK</span><span class="db-field-desc">Barbearia do bloqueio</span></div>
           <div class="db-field"><span class="db-field-name">user_id</span><span class="db-field-type">INTEGER FK</span><span class="db-field-desc">Barbeiro dono do bloqueio</span></div>
           <div class="db-field"><span class="db-field-name">data</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Data do bloqueio (YYYY-MM-DD)</span></div>
           <div class="db-field"><span class="db-field-name">horario</span><span class="db-field-type">TEXT</span><span class="db-field-desc">'HH:MM' para hora específica · 'DIA_INTEIRO' para bloquear o dia</span></div>
@@ -853,35 +813,39 @@
       <div class="db-table">
         <div class="db-table-header"><span class="db-table-name">servicos</span><span class="db-table-desc">Catálogo de serviços por barbeiro</span></div>
         <div class="db-fields">
+          <div class="db-field"><span class="db-field-name">barbearia_id</span><span class="db-field-type">INTEGER FK</span><span class="db-field-desc">Barbearia do serviço</span></div>
           <div class="db-field"><span class="db-field-name">user_id</span><span class="db-field-type">INTEGER FK</span><span class="db-field-desc">Barbeiro dono do serviço</span></div>
-          <div class="db-field"><span class="db-field-name">nome</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Nome do serviço (ex: "Corte + Barba")</span></div>
+          <div class="db-field"><span class="db-field-name">nome</span><span class="db-field-type">TEXT</span><span class="db-field-desc">Nome do serviço</span></div>
           <div class="db-field"><span class="db-field-name">preco</span><span class="db-field-type">REAL</span><span class="db-field-desc">Preço em reais</span></div>
         </div>
       </div>
-      <p style="font-size:12.5px; color:var(--muted); margin-top:8px">Horários disponíveis são fixos no backend: <code>09:00 · 10:00 · 11:00 · 13:00 · 14:00 · 15:00 · 16:00 · 17:00</code></p>
+
+      <p style="font-size:12.5px; color:var(--muted); margin-top:8px">Horários disponíveis fixos no backend: <code>09:00 · 10:00 · 11:00 · 13:00 · 14:00 · 15:00 · 16:00 · 17:00</code></p>
     </section>
 
     <!-- SEGURANÇA -->
     <section class="section" id="seguranca">
       <div class="section-header">
-        <span class="section-num">10</span>
+        <span class="section-num">12</span>
         <h2>Segurança</h2>
         <span class="section-icon">🔐</span>
       </div>
       <ul class="security-list">
-        <li><span class="icon">🔑</span><div><strong>Bcrypt para senhas</strong> — Todas as senhas são armazenadas como hash bcrypt com salt de fator 10. Comparações usam <code>bcrypt.compare()</code> para prevenir timing attacks.</div></li>
-        <li><span class="icon">🍪</span><div><strong>Express-session com cookie seguro</strong> — Cookies configurados com <code>httpOnly: true</code> e <code>secure: true</code> em produção. <code>sameSite: 'none'</code> no ambiente de produção para compatibilidade com proxy reverso.</div></li>
-        <li><span class="icon">🛡</span><div><strong>Helmet.js</strong> — Headers HTTP de segurança configurados, incluindo Content Security Policy, desativação do header <code>x-powered-by</code> e política CORS configurada por origin.</div></li>
-        <li><span class="icon">🎭</span><div><strong>Middleware de roles</strong> — Funções <code>verificarLogin</code>, <code>verificarBarbeiroOuAdmin</code> e <code>verificarAdminTotal</code> protegem as rotas conforme o nível de acesso necessário.</div></li>
-        <li><span class="icon">✔</span><div><strong>Validação de inputs</strong> — Campos de texto são validados quanto ao tipo, comprimento mínimo e valores permitidos antes de qualquer operação no banco de dados.</div></li>
-        <li><span class="icon">🔒</span><div><strong>SESSION_SECRET obrigatório em produção</strong> — O servidor aborta a inicialização se a variável de ambiente <code>SESSION_SECRET</code> não estiver definida em ambiente de produção.</div></li>
+        <li><span class="icon">🔑</span><div><strong>Bcrypt para senhas</strong> — Hash bcrypt com salt de fator 10. Senha só é atualizada se o campo vier preenchido no PUT — campo vazio não sobrescreve.</div></li>
+        <li><span class="icon">🍪</span><div><strong>Express-session com cookie seguro</strong> — Cookies com <code>httpOnly: true</code> e <code>secure: true</code> em produção. <code>sameSite: 'none'</code> para compatibilidade com proxy reverso no Render.</div></li>
+        <li><span class="icon">🛡</span><div><strong>Helmet.js</strong> — Headers HTTP de segurança, Content Security Policy, CORS configurado por origin.</div></li>
+        <li><span class="icon">🎭</span><div><strong>Três middlewares de role</strong> — <code>verificarLogin</code>, <code>verificarAdmin</code> e <code>verificarSuperAdmin</code> protegem cada grupo de rotas.</div></li>
+        <li><span class="icon">🏢</span><div><strong>Isolamento de tenant</strong> — Todas as queries obrigatoriamente filtram por <code>barbearia_id</code>. Admin nunca acessa dados de outra barbearia.</div></li>
+        <li><span class="icon">👑</span><div><strong>Proteção do Superadmin</strong> — Nenhum endpoint permite deletar ou rebaixar um usuário com <code>role = 'superadmin'</code>. Verificação no backend e ocultação no frontend.</div></li>
+        <li><span class="icon">✔</span><div><strong>Validação de inputs</strong> — Campos validados quanto ao tipo, comprimento e valores permitidos. <code>barbearia_id</code> sanitizado no frontend antes do envio no login.</div></li>
+        <li><span class="icon">🔒</span><div><strong>SESSION_SECRET obrigatório em produção</strong> — Servidor avisa se não definido. Variável de ambiente obrigatória no Render.</div></li>
       </ul>
     </section>
 
     <!-- REGRAS DE NEGÓCIO -->
     <section class="section" id="regras">
       <div class="section-header">
-        <span class="section-num">11</span>
+        <span class="section-num">13</span>
         <h2>Regras de Negócio</h2>
         <span class="section-icon">📏</span>
       </div>
@@ -890,78 +854,95 @@
         <div class="rule-item"><span class="bullet">✗</span>Não permite agendamento aos domingos</div>
         <div class="rule-item"><span class="bullet">✗</span>Não permite dois agendamentos no mesmo horário e barbeiro</div>
         <div class="rule-item"><span class="bullet">✗</span>Não permite agendamento em horário ou dia bloqueado</div>
+        <div class="rule-item"><span class="bullet">✗</span>Admin não pode criar ou promover usuários como superadmin</div>
+        <div class="rule-item"><span class="bullet">✗</span>Ninguém pode excluir um usuário com role superadmin</div>
         <div class="rule-item"><span class="bullet">✓</span>Cada barbeiro vê e gerencia apenas seus próprios dados</div>
-        <div class="rule-item"><span class="bullet">✓</span>Horários fixos definidos no backend — não editáveis via frontend</div>
-        <div class="rule-item"><span class="bullet">✓</span>Preço e nome do serviço são gravados no agendamento no momento da criação</div>
+        <div class="rule-item"><span class="bullet">✓</span>Admin opera somente sobre usuários da própria barbearia</div>
+        <div class="rule-item"><span class="bullet">✓</span>Superadmin usa <code>barbearia_id</code> do body ao criar usuários</div>
+        <div class="rule-item"><span class="bullet">✓</span>Preço e nome do serviço gravados no agendamento na criação</div>
         <div class="rule-item"><span class="bullet">✓</span>Bloqueio de dia inteiro usa o valor especial <code>DIA_INTEIRO</code></div>
-        <div class="rule-item"><span class="bullet">✓</span>Telefone é sanitizado — apenas dígitos numéricos são aceitos (10–11 dígitos)</div>
-        <div class="rule-item"><span class="bullet">✓</span>Admin principal (ID 1) não pode ter sua role alterada</div>
+        <div class="rule-item"><span class="bullet">✓</span>Telefone sanitizado — apenas dígitos (10–11 caracteres)</div>
+        <div class="rule-item"><span class="bullet">✓</span>Mesmo nome de usuário pode existir em barbearias diferentes</div>
+        <div class="rule-item"><span class="bullet">✓</span>Clientes únicos calculados por <code>DISTINCT telefone</code></div>
       </div>
     </section>
 
     <!-- FLUXO -->
     <section class="section" id="fluxo">
       <div class="section-header">
-        <span class="section-num">12</span>
+        <span class="section-num">14</span>
         <h2>Fluxo de Uso</h2>
         <span class="section-icon">🔄</span>
       </div>
       <p style="margin-bottom:12px; font-size:13.5px; color:var(--muted); font-weight:500">👤 Fluxo do Cliente (público)</p>
       <div class="flow">
-        <div class="flow-step"><span class="step-num">01</span><p>Acessa página inicial</p></div>
-        <div class="flow-step"><span class="step-num">02</span><p>Seleciona o barbeiro</p></div>
-        <div class="flow-step"><span class="step-num">03</span><p>Escolhe data no calendário</p></div>
-        <div class="flow-step"><span class="step-num">04</span><p>Seleciona horário livre</p></div>
-        <div class="flow-step"><span class="step-num">05</span><p>Escolhe o serviço</p></div>
+        <div class="flow-step"><span class="step-num">01</span><p>Acessa <code>/agenda</code></p></div>
+        <div class="flow-step"><span class="step-num">02</span><p>Escolhe a barbearia</p></div>
+        <div class="flow-step"><span class="step-num">03</span><p>Seleciona o barbeiro</p></div>
+        <div class="flow-step"><span class="step-num">04</span><p>Escolhe data e horário</p></div>
+        <div class="flow-step"><span class="step-num">05</span><p>Seleciona o serviço</p></div>
         <div class="flow-step"><span class="step-num">06</span><p>Informa nome e telefone</p></div>
         <div class="flow-step"><span class="step-num">07</span><p>Confirma agendamento</p></div>
       </div>
       <p style="margin: 24px 0 12px; font-size:13.5px; color:var(--muted); font-weight:500">✂️ Fluxo do Barbeiro</p>
       <div class="flow">
-        <div class="flow-step"><span class="step-num">01</span><p>Realiza login</p></div>
-        <div class="flow-step"><span class="step-num">02</span><p>Visualiza agendamentos do dia</p></div>
+        <div class="flow-step"><span class="step-num">01</span><p>Login com barbearia</p></div>
+        <div class="flow-step"><span class="step-num">02</span><p>Vê agendamentos do dia</p></div>
         <div class="flow-step"><span class="step-num">03</span><p>Atende o cliente</p></div>
-        <div class="flow-step"><span class="step-num">04</span><p>Finaliza (marca como pago)</p></div>
+        <div class="flow-step"><span class="step-num">04</span><p>Finaliza (marca pago)</p></div>
         <div class="flow-step"><span class="step-num">05</span><p>Consulta faturamento</p></div>
+      </div>
+      <p style="margin: 24px 0 12px; font-size:13.5px; color:var(--muted); font-weight:500">👑 Fluxo do Superadmin</p>
+      <div class="flow">
+        <div class="flow-step"><span class="step-num">01</span><p>Login como Superadmin</p></div>
+        <div class="flow-step"><span class="step-num">02</span><p>Vê faturamento geral</p></div>
+        <div class="flow-step"><span class="step-num">03</span><p>Acessa Painel Total</p></div>
+        <div class="flow-step"><span class="step-num">04</span><p>Cria / edita barbearias</p></div>
+        <div class="flow-step"><span class="step-num">05</span><p>Gerencia usuários</p></div>
       </div>
     </section>
 
     <!-- USUÁRIOS PADRÃO -->
     <section class="section" id="usuarios">
       <div class="section-header">
-        <span class="section-num">13</span>
+        <span class="section-num">15</span>
         <h2>Usuários Pré-Cadastrados</h2>
         <span class="section-icon">👤</span>
       </div>
-      <p style="margin-bottom:16px">Criados automaticamente na primeira inicialização do servidor, se o banco estiver vazio.</p>
+      <p style="margin-bottom:16px">Criados automaticamente no seed inicial junto com a barbearia demo <strong>"BarberPro Demo"</strong> (slug: <code>barberpro-demo</code>, cidade: Naviraí).</p>
       <table class="users-table">
         <thead>
-          <tr><th>ID</th><th>Usuário</th><th>Senha</th><th>Role</th><th>Acesso</th></tr>
+          <tr><th>ID</th><th>Usuário</th><th>Senha</th><th>Role</th><th>Barbearia</th><th>Acesso</th></tr>
         </thead>
         <tbody>
           <tr>
             <td><code>1</code></td>
-            <td><strong>Chefe dos cabelo</strong></td>
+            <td><strong>admin</strong></td>
             <td><code>123456</code></td>
-            <td><span class="role-badge role-admin">admin</span></td>
-            <td>Total — gerencia usuários e visualiza todo o sistema</td>
+            <td><span class="role-badge role-superadmin">superadmin</span></td>
+            <td>— plataforma</td>
+            <td>Acesso total à plataforma, sem vínculo a barbearia</td>
           </tr>
           <tr>
             <td><code>2</code></td>
             <td><strong>lucas</strong></td>
             <td><code>654321</code></td>
             <td><span class="role-badge role-barber">barbeiro</span></td>
+            <td>BarberPro Demo</td>
             <td>Próprios agendamentos, serviços e bloqueios</td>
           </tr>
         </tbody>
       </table>
-      <p style="margin-top:12px; font-size:12.5px; color:var(--muted)">⚠️ Altere as senhas padrão antes de colocar em produção.</p>
+      <p style="margin-top:12px; font-size:12.5px; color:var(--muted)">⚠️ Altere as senhas padrão antes de colocar em produção. Para recriar o banco do zero, delete <code>database.sqlite</code> e reinicie o servidor.</p>
+      <div class="warn-box" style="margin-top:14px">
+        <strong>Atenção — schema multi-tenant:</strong> Se você possuir um banco antigo com <code>UNIQUE(usuario)</code> global, ele causará conflitos. Delete o <code>database.sqlite</code> para recriar com o schema correto: <code>UNIQUE(barbearia_id, usuario)</code>.
+      </div>
     </section>
 
     <!-- EXECUÇÃO -->
     <section class="section" id="execucao">
       <div class="section-header">
-        <span class="section-num">14</span>
+        <span class="section-num">16</span>
         <h2>Como Executar</h2>
         <span class="section-icon">🚀</span>
       </div>
@@ -978,44 +959,50 @@
 <span class="fn">npm</span> start
 
 <span class="cmt"># Interface disponível em:</span>
-<span class="str">http://localhost:3001</span></pre>
+<span class="str">http://localhost:3001</span>
+
+<span class="cmt"># Se o cache do React causar problemas:</span>
+<span class="fn">rmdir</span> /s /q node_modules\.cache
+<span class="fn">npm</span> start</pre>
       <div class="info-box" style="margin-top:20px">
-        <strong>Produção:</strong> O backend serve os arquivos estáticos do <code>frontend/build</code> quando <code>NODE_ENV=production</code>. Defina <code>SESSION_SECRET</code> como variável de ambiente obrigatória antes de subir para produção.
+        <strong>Produção (Render.com):</strong> O backend serve os arquivos estáticos do <code>frontend/build</code> quando <code>NODE_ENV=production</code>. Variáveis de ambiente obrigatórias: <code>SESSION_SECRET</code> (string aleatória fixa) e <code>NODE_ENV=production</code>.
       </div>
     </section>
 
     <!-- ROADMAP -->
     <section class="section" id="roadmap">
       <div class="section-header">
-        <span class="section-num">15</span>
+        <span class="section-num">17</span>
         <h2>Melhorias Futuras</h2>
         <span class="section-icon">🗺️</span>
       </div>
       <div class="roadmap">
-        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Envio de e-mail de confirmação de agendamento<small>Integração com serviço como SendGrid ou Nodemailer</small></div></div>
-        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Recuperação de senha por e-mail<small>Fluxo de reset com token temporário</small></div></div>
-        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Upload de foto de perfil<small>Armazenamento local ou em serviço de nuvem (S3, Cloudinary)</small></div></div>
-        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Relatórios em PDF<small>Exportação de histórico de agendamentos e faturamento</small></div></div>
-        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Notificações em tempo real<small>Uso de WebSockets (Socket.io) para alertas instantâneos</small></div></div>
-        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Modo escuro / claro<small>Alternância de tema com persistência via localStorage</small></div></div>
-        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Versão PWA (Progressive Web App)<small>Instalação no celular, funcionamento offline básico</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-done">✓</div><div class="roadmap-text">Arquitetura multi-tenant com isolamento por barbearia<small>Implementado — todas as tabelas com barbearia_id</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-done">✓</div><div class="roadmap-text">Três níveis de acesso: superadmin, admin, barbeiro<small>Implementado — middlewares verificarLogin / verificarAdmin / verificarSuperAdmin</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-done">✓</div><div class="roadmap-text">Dashboard com atendimentos e clientes únicos<small>Implementado — métricas por role no /admin</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-done">✓</div><div class="roadmap-text">Vitrine pública de barbearias por slug<small>Implementado — /agenda e /agenda/:slug</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Envio de confirmação por WhatsApp ou e-mail<small>Integração com API do WhatsApp Business ou SendGrid</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Upload de foto de perfil dos barbeiros<small>Armazenamento no Cloudinary ou S3</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Exportação de relatórios em PDF<small>Histórico de agendamentos e faturamento por período</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Notificações em tempo real<small>WebSockets (Socket.io) para alertas de novos agendamentos</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Página de configurações da barbearia<small>Logo, horário de funcionamento, redes sociais</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Versão PWA (Progressive Web App)<small>Instalação no celular e funcionamento offline básico</small></div></div>
+        <div class="roadmap-item"><div class="roadmap-status status-pending"></div><div class="roadmap-text">Migração para PostgreSQL<small>Para escalar além do SQLite em produção com muitos tenants</small></div></div>
       </div>
     </section>
 
-    <!-- ============================================================ -->
-    <!-- PITCH — INVESTIMENTO & VALOR                                  -->
-    <!-- ============================================================ -->
+    <!-- PITCH -->
     <section class="section" id="pitch">
       <div class="section-header">
-        <span class="section-num">16</span>
-        <h2>Investimento & Valor do App</h2>
+        <span class="section-num">18</span>
+        <h2>Investimento &amp; Valor do App</h2>
         <span class="section-icon">💎</span>
       </div>
 
       <div class="pitch-hero">
         <span class="pitch-hero-label">⚡ Apresentação do Negócio</span>
         <h3>Construído com<br><em>dedicação real</em> — não com dinheiro</h3>
-        <p>O BarberPro foi desenvolvido sem investimento financeiro externo. O custo real foi tempo, disciplina e conhecimento — os ativos mais valiosos de qualquer produto de tecnologia.</p>
+        <p>O BarberPro(Sujeito a mudança de nome) foi desenvolvido sem investimento financeiro externo. O custo real foi tempo, disciplina e conhecimento — os ativos mais valiosos de qualquer produto de tecnologia.</p>
       </div>
 
       <div class="invest-grid">
@@ -1043,21 +1030,18 @@
       </div>
 
       <div class="info-box">
-        <strong>Valor percebido:</strong> Um sistema com esse nível de funcionalidade — autenticação por roles, CRUD completo, calendário interativo, dashboard de métricas — custaria entre <strong>R$ 3.000 e R$ 8.000+</strong> se contratado de uma agência ou freelancer experiente. Este app não seria vendido por menos do que esse valor.
+        <strong>Valor percebido:</strong> Uma plataforma SaaS multi-tenant com autenticação por roles, CRUD completo, calendário interativo, isolamento de dados, dashboard de métricas e deploy em cloud custaria entre <strong>R$ 8.000 e R$ 20.000+</strong> se contratado de uma agência ou freelancer experiente.
       </div>
     </section>
 
-    <!-- ============================================================ -->
-    <!-- METAS DE CRESCIMENTO                                          -->
-    <!-- ============================================================ -->
+    <!-- METAS -->
     <section class="section" id="metas">
       <div class="section-header">
-        <span class="section-num">17</span>
+        <span class="section-num">19</span>
         <h2>Metas de Crescimento</h2>
         <span class="section-icon">📈</span>
       </div>
 
-      <!-- META CURTO PRAZO -->
       <div class="meta-block" style="margin-bottom:20px">
         <div class="meta-block-header short">
           <span class="meta-label short">Curto Prazo</span>
@@ -1066,16 +1050,16 @@
         <div class="meta-block-body">
           <div class="meta-timeline">
             <span class="meta-pill period">🗓 90 dias</span>
-            <span class="meta-pill target">🎯 15 a 30 profissionais</span>
+            <span class="meta-pill target">🎯 15 a 30 barbearias</span>
           </div>
 
           <div class="milestone-row">
             <div class="milestone-dot">1</div>
-            <div class="milestone-text"><strong>Montar plano de vendas</strong> — definir canais de prospecção (Instagram, WhatsApp, indicação direta em barbearias), script de abordagem e proposta de valor clara.</div>
+            <div class="milestone-text"><strong>Montar plano de vendas</strong> — canais de prospecção (Instagram, WhatsApp, visitas presenciais), script de abordagem e demonstração ao vivo do sistema.</div>
           </div>
           <div class="milestone-row">
             <div class="milestone-dot">2</div>
-            <div class="milestone-text"><strong>Atingir de 15 a 30 barbearias</strong> — meta realista para os primeiros 3 meses, com foco em fechamentos locais e demonstrações ao vivo do sistema.</div>
+            <div class="milestone-text"><strong>Atingir de 15 a 30 barbearias</strong> — meta realista para os primeiros 3 meses com foco em fechamentos locais.</div>
           </div>
 
           <p style="font-size:13px; color:var(--muted); margin: 18px 0 10px; font-weight:500">Tabela de preços — fase de entrada</p>
@@ -1098,33 +1082,20 @@
               <div class="rev-scenario">
                 <div class="rev-scenario-num" style="color: var(--gold-light);">25 <span>barbearias</span></div>
                 <div class="rev-scenario-label">Cenário conservador dentro da meta</div>
-                <div class="rev-line">
-                  <span class="rev-line-label">Nos 2 primeiros meses (R$ 89,90)</span>
-                  <span class="rev-line-val">R$ 2.247,50</span>
-                </div>
-                <div class="rev-line">
-                  <span class="rev-line-label">A partir do 3º mês (R$ 99,90)</span>
-                  <span class="rev-line-val">R$ 2.497,50</span>
-                </div>
+                <div class="rev-line"><span class="rev-line-label">2 primeiros meses (R$ 89,90)</span><span class="rev-line-val">R$ 2.247,50</span></div>
+                <div class="rev-line"><span class="rev-line-label">A partir do 3º mês (R$ 99,90)</span><span class="rev-line-val">R$ 2.497,50</span></div>
               </div>
               <div class="rev-scenario">
                 <div class="rev-scenario-num" style="color: #7ec89a;">30 <span>barbearias</span></div>
                 <div class="rev-scenario-label">Cenário otimista dentro da meta</div>
-                <div class="rev-line">
-                  <span class="rev-line-label">Nos 2 primeiros meses (R$ 89,90)</span>
-                  <span class="rev-line-val">R$ 2.697,00</span>
-                </div>
-                <div class="rev-line">
-                  <span class="rev-line-label">A partir do 3º mês (R$ 99,90)</span>
-                  <span class="rev-line-val">R$ 2.997,00</span>
-                </div>
+                <div class="rev-line"><span class="rev-line-label">2 primeiros meses (R$ 89,90)</span><span class="rev-line-val">R$ 2.697,00</span></div>
+                <div class="rev-line"><span class="rev-line-label">A partir do 3º mês (R$ 99,90)</span><span class="rev-line-val">R$ 2.997,00</span></div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- META MÉDIO PRAZO -->
       <div class="meta-block">
         <div class="meta-block-header mid">
           <span class="meta-label mid">Médio Prazo</span>
@@ -1133,16 +1104,16 @@
         <div class="meta-block-body">
           <div class="meta-timeline">
             <span class="meta-pill period">🗓 12 meses</span>
-            <span class="meta-pill target">🎯 50 profissionais</span>
+            <span class="meta-pill target">🎯 50 barbearias</span>
           </div>
 
           <div class="milestone-row">
             <div class="milestone-dot">1</div>
-            <div class="milestone-text"><strong>Escalar para 50 barbearias</strong> — duplicando a base em relação ao curto prazo através de indicações, reputação consolidada e possível expansão para outras cidades.</div>
+            <div class="milestone-text"><strong>Escalar para 50 barbearias</strong> — duplicando a base através de indicações, reputação consolidada e expansão para outras cidades.</div>
           </div>
           <div class="milestone-row">
             <div class="milestone-dot">2</div>
-            <div class="milestone-text"><strong>Receita recorrente estável</strong> — a base de assinantes pagando mensalmente gera previsibilidade financeira (modelo SaaS).</div>
+            <div class="milestone-text"><strong>Receita recorrente estável</strong> — modelo SaaS garante previsibilidade financeira mensal.</div>
           </div>
 
           <div class="rev-calc">
@@ -1151,18 +1122,9 @@
               <div class="rev-scenario" style="grid-column: 1 / -1;">
                 <div class="rev-scenario-num" style="color: var(--gold-light);">50 <span>barbearias × R$ 99,90/mês</span></div>
                 <div class="rev-scenario-label">Todos os clientes no preço regular após a fase de entrada</div>
-                <div class="rev-line">
-                  <span class="rev-line-label">Receita mensal (50 × R$ 99,90)</span>
-                  <span class="rev-line-val">R$ 4.995,00 / mês</span>
-                </div>
-                <div class="rev-line">
-                  <span class="rev-line-label">Projeção anual</span>
-                  <span class="rev-line-val">R$ 59.940,00 / ano</span>
-                </div>
-                <div class="rev-line">
-                  <span class="rev-line-label">Churn zero — receita recorrente garantida</span>
-                  <span class="rev-line-val" style="color: #7ec89a;">✓ SaaS</span>
-                </div>
+                <div class="rev-line"><span class="rev-line-label">Receita mensal (50 × R$ 99,90)</span><span class="rev-line-val">R$ 4.995,00 / mês</span></div>
+                <div class="rev-line"><span class="rev-line-label">Projeção anual</span><span class="rev-line-val">R$ 59.940,00 / ano</span></div>
+                <div class="rev-line"><span class="rev-line-label">Modelo de receita recorrente</span><span class="rev-line-val" style="color: #7ec89a;">✓ SaaS</span></div>
               </div>
             </div>
             <div class="rev-total">
@@ -1172,7 +1134,7 @@
           </div>
 
           <div class="info-box" style="margin-top:20px">
-            <strong>Visão de longo prazo:</strong> A cada 10 novos clientes adicionados além da meta de 50, a receita cresce +R$ 999/mês. Com 100 barbearias no sistema, a receita ultrapassa <strong>R$ 9.990/mês</strong> — tudo com o mesmo produto, sem custo adicional de desenvolvimento.
+            <strong>Visão de longo prazo:</strong> A cada 10 novos clientes além da meta de 50, a receita cresce +R$ 999/mês. Com 100 barbearias no sistema, a receita ultrapassa <strong>R$ 9.990/mês</strong> — tudo com o mesmo produto, sem custo adicional de desenvolvimento.
           </div>
         </div>
       </div>
@@ -1183,7 +1145,6 @@
 </div>
 
 <script>
-  // Active nav link on scroll
   const sections = document.querySelectorAll('.section[id]');
   const navLinks = document.querySelectorAll('.nav-link');
 
@@ -1199,7 +1160,6 @@
 
   sections.forEach(s => observer.observe(s));
 
-  // Editable time field
   const tempoInput = document.getElementById('tempo-input');
   tempoInput.addEventListener('focus', () => {
     if (tempoInput.textContent === '___') tempoInput.textContent = '';
@@ -1208,6 +1168,5 @@
     if (tempoInput.textContent.trim() === '') tempoInput.textContent = '___';
   });
 </script>
-
 </body>
 </html>
