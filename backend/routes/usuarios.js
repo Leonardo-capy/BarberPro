@@ -86,6 +86,7 @@ export function usuarioRoutes(db) {
   });
 
   // Excluir usuário (admin da barbearia)
+  // Excluir usuário (Hard Delete com limpeza de vínculos)
   router.delete("/:id", verificarAdmin, async (req, res) => {
     try {
       const { id } = req.params;
@@ -94,11 +95,20 @@ export function usuarioRoutes(db) {
       if (Number(id) === req.session.userId)
         return res.status(400).json({ error: "Voce nao pode excluir sua propria conta" });
 
+      // 1. Deleta primeiro os agendamentos vinculados a esse usuário
+      await db.run("DELETE FROM agendamentos WHERE usuario_id = ?", [id]);
+
+      // Se houver uma tabela de faturamento vinculada ao usuário, delete dela aqui também:
+      // await db.run("DELETE FROM faturamento WHERE usuario_id = ?", [id]);
+
+      // 2. Agora sim, deleta o usuário com segurança
       const result = await db.run("DELETE FROM usuarios WHERE id = ? AND barbearia_id = ?", [id, barbeariaId]);
+
       if (result.changes === 0) return res.status(404).json({ error: "Usuario nao encontrado" });
 
       res.json({ success: true });
     } catch (err) {
+      console.error(err);
       res.status(500).json({ error: "Erro ao excluir usuario" });
     }
   });
