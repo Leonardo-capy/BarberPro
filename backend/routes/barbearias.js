@@ -20,7 +20,7 @@ export function barbeariasRoutes(db) {
   router.get("/:slug", async (req, res) => {
     try {
       const barbearia = await db.get(
-        "SELECT id, nome, slug, cidade FROM barbearias WHERE slug = ? AND ativo = 1",
+        "SELECT id, nome, slug, cidade FROM barbearias WHERE slug = $1 AND ativo = 1",
         [req.params.slug]
       );
       if (!barbearia) return res.status(404).json({ error: "Barbearia não encontrada" });
@@ -34,13 +34,13 @@ export function barbeariasRoutes(db) {
   router.get("/:slug/barbeiros", async (req, res) => {
     try {
       const barbearia = await db.get(
-        "SELECT id FROM barbearias WHERE slug = ? AND ativo = 1",
+        "SELECT id FROM barbearias WHERE slug = $1 AND ativo = 1",
         [req.params.slug]
       );
       if (!barbearia) return res.status(404).json({ error: "Barbearia não encontrada" });
 
       const barbeiros = await db.all(
-        "SELECT id, usuario FROM usuarios WHERE barbearia_id = ? AND plano = 'ativo' AND role != 'superadmin'",
+        "SELECT id, usuario FROM usuarios WHERE barbearia_id = $1 AND plano = 'ativo' AND role != 'superadmin'",
         [barbearia.id]
       );
       res.json(barbeiros);
@@ -75,14 +75,14 @@ export function barbeariasRoutes(db) {
       slug = slug.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
       cidade = cidade?.trim() || null;
 
-      const existe = await db.get("SELECT id FROM barbearias WHERE slug = ?", [slug]);
+      const existe = await db.get("SELECT id FROM barbearias WHERE slug = $1", [slug]);
       if (existe) return res.status(409).json({ error: "Slug já em uso" });
 
       await db.run(
-        "INSERT INTO barbearias (nome, slug, cidade, ativo) VALUES (?, ?, ?, 1)",
+        "INSERT INTO barbearias (nome, slug, cidade, ativo) VALUES ($1, $2, $3, 1)",
         [nome, slug, cidade]
       );
-      const nova = await db.get("SELECT * FROM barbearias WHERE slug = ?", [slug]);
+      const nova = await db.get("SELECT * FROM barbearias WHERE slug = $1", [slug]);
       res.status(201).json(nova);
     } catch (err) {
       console.error(err);
@@ -99,7 +99,7 @@ export function barbeariasRoutes(db) {
       slug = slug?.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
       await db.run(
-        "UPDATE barbearias SET nome = ?, slug = ?, cidade = ?, ativo = ? WHERE id = ?",
+        "UPDATE barbearias SET nome = $1, slug = $2, cidade = $3, ativo = $4 WHERE id = $5",
         [nome, slug, cidade, ativo, id]
       );
       res.json({ success: true });
@@ -109,20 +109,20 @@ export function barbeariasRoutes(db) {
   });
 
   // Excluir barbearia
-router.delete("/:id", verificarSuperAdmin, async (req, res) => {
+  router.delete("/:id", verificarSuperAdmin, async (req, res) => {
     try {
       const { id } = req.params;
 
-      await db.run("DELETE FROM agendamentos WHERE barbearia_id = ?", [id]);
-      await db.run("DELETE FROM servicos WHERE barbearia_id = ?", [id]);
-      await db.run("DELETE FROM usuarios WHERE barbearia_id = ?", [id]);
+      await db.run("DELETE FROM agendamentos WHERE barbearia_id = $1", [id]);
+      await db.run("DELETE FROM servicos WHERE barbearia_id = $1", [id]);
+      await db.run("DELETE FROM usuarios WHERE barbearia_id = $1", [id]);
 
-      const result = await db.run("DELETE FROM barbearias WHERE id = ?", [id]);
-      
+      const result = await db.run("DELETE FROM barbearias WHERE id = $1", [id]);
+
       if (result.changes === 0) return res.status(404).json({ error: "Não encontrada" });
       res.json({ success: true });
     } catch (err) {
-      console.error("Erro ao excluir barbearia:", err); 
+      console.error("Erro ao excluir barbearia:", err);
       res.status(500).json({ error: "Erro ao excluir barbearia" });
     }
   });

@@ -1,5 +1,5 @@
 import express from "express";
-import { verificarAdmin, verificarLogin, verificarSuperAdmin } from "../middleware/auth.js";
+import { verificarAdmin, verificarLogin } from "../middleware/auth.js";
 import bcrypt from "bcrypt";
 
 export function usuarioRoutes(db) {
@@ -10,7 +10,7 @@ export function usuarioRoutes(db) {
     try {
       const barbeariaId = req.session.usuario.barbearia_id;
       const usuarios = await db.all(
-        "SELECT id, usuario, role, plano FROM usuarios WHERE barbearia_id = ? ORDER BY id",
+        "SELECT id, usuario, role, plano FROM usuarios WHERE barbearia_id = $1 ORDER BY id",
         [barbeariaId]
       );
       res.json(usuarios);
@@ -29,7 +29,7 @@ export function usuarioRoutes(db) {
     }
 
     const usuario = await db.get(
-      "SELECT id, usuario, role, plano, descricao FROM usuarios WHERE id = ?",
+      "SELECT id, usuario, role, plano, descricao FROM usuarios WHERE id = $1",
       [id]
     );
     if (!usuario) return res.status(404).json({ error: "Usuario nao encontrado" });
@@ -64,18 +64,27 @@ export function usuarioRoutes(db) {
       if (senha && senha.length < 6)
         return res.status(400).json({ error: "Senha deve ter pelo menos 6 caracteres" });
 
-      const existente = await db.get("SELECT id FROM usuarios WHERE id = ? AND barbearia_id = ?", [id, barbeariaId]);
+      const existente = await db.get(
+        "SELECT id FROM usuarios WHERE id = $1 AND barbearia_id = $2",
+        [id, barbeariaId]
+      );
       if (!existente) return res.status(404).json({ error: "Usuário não encontrado" });
 
       if (role) {
-        await db.run("UPDATE usuarios SET usuario = ?, role = ? WHERE id = ?", [usuario, role, id]);
+        await db.run(
+          "UPDATE usuarios SET usuario = $1, role = $2 WHERE id = $3",
+          [usuario, role, id]
+        );
       } else {
-        await db.run("UPDATE usuarios SET usuario = ? WHERE id = ?", [usuario, id]);
+        await db.run(
+          "UPDATE usuarios SET usuario = $1 WHERE id = $2",
+          [usuario, id]
+        );
       }
 
       if (senha) {
         const hash = await bcrypt.hash(senha, 10);
-        await db.run("UPDATE usuarios SET senha = ? WHERE id = ?", [hash, id]);
+        await db.run("UPDATE usuarios SET senha = $1 WHERE id = $2", [hash, id]);
       }
 
       res.json({ success: true, message: "Usuário atualizado com sucesso." });
@@ -85,27 +94,22 @@ export function usuarioRoutes(db) {
     }
   });
 
-
-  //deleta usuario
+  // Deletar usuário
   router.delete("/:id", verificarAdmin, async (req, res) => {
     try {
       const { id } = req.params;
       const barbeariaId = req.session.usuario.barbearia_id;
 
-      // CORREÇÃO DO BUG 1: Acessando o ID correto da sessão do usuário
       if (Number(id) === Number(req.session.usuario.id)) {
         return res.status(400).json({ error: "Voce nao pode excluir sua propria conta" });
       }
 
-      // 1. Limpa os agendamentos vinculados a esse usuário
-      await db.run("DELETE FROM agendamentos WHERE usuario_id = ?", [id]);
+      await db.run("DELETE FROM agendamentos WHERE user_id = $1", [id]);
 
-      // SE HOUVER TABELA DE FATURAMENTO OU OUTRA QUE USE usuario_id, LIMPE AQUI:
-      // await db.run("DELETE FROM faturamento WHERE usuario_id = ?", [id]);
-      // await db.run("DELETE FROM servicos_prestados WHERE barbeiro_id = ?", [id]);
-
-      // 2. Agora sim, deleta o usuário com segurança
-      const result = await db.run("DELETE FROM usuarios WHERE id = ? AND barbearia_id = ?", [id, barbeariaId]);
+      const result = await db.run(
+        "DELETE FROM usuarios WHERE id = $1 AND barbearia_id = $2",
+        [id, barbeariaId]
+      );
 
       if (result.changes === 0) {
         return res.status(404).json({ error: "Usuario nao encontrado" });
@@ -114,12 +118,7 @@ export function usuarioRoutes(db) {
       res.json({ success: true });
     } catch (err) {
       console.error("Erro interno ao deletar usuário:", err);
-      
-      // RETORNO DE SEGURANÇA: Mostra a mensagem real do SQLite no Front-end se algo prender
-      res.status(500).json({ 
-        error: "Erro ao excluir usuario", 
-        detalhe: err.message || err 
-      });
+      res.status(500).json({ error: "Erro ao excluir usuario", detalhe: err.message || err });
     }
   });
 
@@ -130,16 +129,16 @@ export function usuarioRoutes(db) {
       const { senhaAtual, novaSenha, descricao } = req.body;
       const eu = req.session.usuario;
 
-      await db.run("UPDATE usuarios SET descricao = ? WHERE id = ?", [descricao, id]);
+      await db.run("UPDATE usuarios SET descricao = $1 WHERE id = $2", [descricao, id]);
 
       if (novaSenha) {
         if (eu.role !== 'admin' && eu.role !== 'superadmin' || eu.id == id) {
-          const user = await db.get("SELECT senha FROM usuarios WHERE id = ?", [id]);
+          const user = await db.get("SELECT senha FROM usuarios WHERE id = $1", [id]);
           const valida = await bcrypt.compare(senhaAtual, user.senha);
           if (!valida) return res.status(400).json({ error: "Senha atual incorreta" });
         }
         const hash = await bcrypt.hash(novaSenha, 10);
-        await db.run("UPDATE usuarios SET senha = ? WHERE id = ?", [hash, id]);
+        await db.run("UPDATE usuarios SET senha = $1 WHERE id = $2", [hash, id]);
       }
 
       res.json({ success: true, message: "Perfil atualizado!" });

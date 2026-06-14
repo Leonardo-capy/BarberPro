@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api.js';
 
 function Agenda() {
   const [barbearias, setBarbearias] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cidadeFiltro, setCidadeFiltro] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,12 +15,22 @@ function Agenda() {
       .finally(() => setLoading(false));
   }, []);
 
+  const cidades = useMemo(() => {
+    const set = new Set(barbearias.map(b => b.cidade).filter(Boolean));
+    return Array.from(set).sort();
+  }, [barbearias]);
+
+  const barbeirasFiltradas = useMemo(() => {
+    if (!cidadeFiltro) return barbearias;
+    return barbearias.filter(b => b.cidade === cidadeFiltro);
+  }, [barbearias, cidadeFiltro]);
+
   return (
     <>
       <header className="navbar navbar-cliente">
         <div className="container">
           <div className="logo">
-            <a href="/login">✂ BarberPro</a>
+            <a href="/login">✂ BarberMaxPro</a>
           </div>
         </div>
       </header>
@@ -34,13 +45,32 @@ function Agenda() {
 
         <section className="agendamento-section">
           <div className="container">
+
+            {!loading && barbearias.length > 0 && (
+              <div style={{ maxWidth: '600px', margin: '0 auto 24px' }}>
+                <div className="input-group">
+                  <select
+                    value={cidadeFiltro}
+                    onChange={(e) => setCidadeFiltro(e.target.value)}
+                  >
+                    <option value="">Todas as cidades</option>
+                    {cidades.map(cidade => (
+                      <option key={cidade} value={cidade}>{cidade}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+
             {loading ? (
               <p style={{ textAlign: 'center', color: '#aaa' }}>Carregando barbearias...</p>
             ) : barbearias.length === 0 ? (
               <p style={{ textAlign: 'center', color: '#aaa' }}>Nenhuma barbearia disponível.</p>
+            ) : barbeirasFiltradas.length === 0 ? (
+              <p style={{ textAlign: 'center', color: '#aaa' }}>Nenhuma barbearia em {cidadeFiltro}.</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '600px', margin: '0 auto' }}>
-                {barbearias?.map(b => (
+                {barbeirasFiltradas.map(b => (
                   <div
                     key={b.id}
                     className="card"
@@ -58,6 +88,7 @@ function Agenda() {
                 ))}
               </div>
             )}
+
           </div>
         </section>
       </main>

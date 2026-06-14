@@ -8,7 +8,7 @@ export function agendamentoRoutes(db) {
 
   async function isHorarioBloqueado(userId, barbeariaId, data, horario) {
     const bloqueio = await db.get(
-      "SELECT * FROM bloqueios WHERE data = ? AND user_id = ? AND barbearia_id = ? AND (horario = ? OR horario = 'DIA_INTEIRO')",
+      "SELECT * FROM bloqueios WHERE data = $1 AND user_id = $2 AND barbearia_id = $3 AND (horario = $4 OR horario = 'DIA_INTEIRO')",
       [data, userId, barbeariaId, horario]
     );
     return !!bloqueio;
@@ -16,7 +16,7 @@ export function agendamentoRoutes(db) {
 
   async function getServico(userId, barbeariaId, servico_id) {
     return db.get(
-      "SELECT nome, preco FROM servicos WHERE id = ? AND user_id = ? AND barbearia_id = ?",
+      "SELECT nome, preco FROM servicos WHERE id = $1 AND user_id = $2 AND barbearia_id = $3",
       [servico_id, userId, barbeariaId]
     );
   }
@@ -33,17 +33,26 @@ export function agendamentoRoutes(db) {
       if (!data) return res.status(400).json({ error: "Data é obrigatória." });
 
       const jaBloqueado = await db.get(
-        "SELECT id FROM bloqueios WHERE user_id = ? AND barbearia_id = ? AND data = ? AND horario = 'DIA_INTEIRO'",
+        "SELECT id FROM bloqueios WHERE user_id = $1 AND barbearia_id = $2 AND data = $3 AND horario = 'DIA_INTEIRO'",
         [userId, barbeariaId, data]
       );
 
       if (jaBloqueado) {
-        await db.run("DELETE FROM bloqueios WHERE user_id = ? AND barbearia_id = ? AND data = ? AND horario = 'DIA_INTEIRO'", [userId, barbeariaId, data]);
+        await db.run(
+          "DELETE FROM bloqueios WHERE user_id = $1 AND barbearia_id = $2 AND data = $3 AND horario = 'DIA_INTEIRO'",
+          [userId, barbeariaId, data]
+        );
         return res.json({ bloqueado: false, message: "Dia desbloqueado!" });
       }
 
-      await db.run("DELETE FROM bloqueios WHERE user_id = ? AND barbearia_id = ? AND data = ?", [userId, barbeariaId, data]);
-      await db.run("INSERT INTO bloqueios (user_id, barbearia_id, data, horario) VALUES (?, ?, ?, 'DIA_INTEIRO')", [userId, barbeariaId, data]);
+      await db.run(
+        "DELETE FROM bloqueios WHERE user_id = $1 AND barbearia_id = $2 AND data = $3",
+        [userId, barbeariaId, data]
+      );
+      await db.run(
+        "INSERT INTO bloqueios (user_id, barbearia_id, data, horario) VALUES ($1, $2, $3, 'DIA_INTEIRO')",
+        [userId, barbeariaId, data]
+      );
       res.json({ bloqueado: true, message: "Dia bloqueado!" });
     } catch (err) {
       console.error(err);
@@ -57,7 +66,7 @@ export function agendamentoRoutes(db) {
       const userId = req.session.userId;
       const barbeariaId = req.session.usuario.barbearia_id;
       const bloqueios = await db.all(
-        "SELECT horario FROM bloqueios WHERE data = ? AND user_id = ? AND barbearia_id = ?",
+        "SELECT horario FROM bloqueios WHERE data = $1 AND user_id = $2 AND barbearia_id = $3",
         [data, userId, barbeariaId]
       );
       res.json(bloqueios.map(b => b.horario));
@@ -94,7 +103,7 @@ export function agendamentoRoutes(db) {
         return res.status(403).json({ error: "Horário ou dia bloqueado." });
 
       const conflito = await db.get(
-        "SELECT * FROM agendamentos WHERE data = ? AND horario = ? AND user_id = ? AND barbearia_id = ?",
+        "SELECT * FROM agendamentos WHERE data = $1 AND horario = $2 AND user_id = $3 AND barbearia_id = $4",
         [data, horario, userId, barbeariaId]
       );
       if (conflito) return res.status(409).json({ error: "Horário já reservado." });
@@ -104,7 +113,7 @@ export function agendamentoRoutes(db) {
 
       await db.run(
         `INSERT INTO agendamentos (barbearia_id, user_id, nome, telefone, servico, preco, data, horario)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
         [barbeariaId, userId, nome, telefone, servicoDB.nome, servicoDB.preco, data, horario]
       );
 
@@ -119,23 +128,33 @@ export function agendamentoRoutes(db) {
   // Serviços por barbeiro (público)
   // ===============================
   router.get("/servicos", async (req, res) => {
-    const userId = req.query.user_id;
-    const barbeariaId = req.query.barbearia_id;
-    const servicos = await db.all(
-      "SELECT * FROM servicos WHERE user_id = ? AND barbearia_id = ?",
-      [userId, barbeariaId]
-    );
-    res.json(servicos);
+    try {
+      const userId = req.query.user_id;
+      const barbeariaId = req.query.barbearia_id;
+      const servicos = await db.all(
+        "SELECT * FROM servicos WHERE user_id = $1 AND barbearia_id = $2",
+        [userId, barbeariaId]
+      );
+      res.json(servicos);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Erro ao buscar serviços." });
+    }
   });
 
   router.post("/servicos", verificarLogin, async (req, res) => {
-    const { nome, preco } = req.body;
-    const barbeariaId = req.session.usuario.barbearia_id;
-    await db.run(
-      "INSERT INTO servicos (barbearia_id, user_id, nome, preco) VALUES (?, ?, ?, ?)",
-      [barbeariaId, req.session.userId, nome, preco]
-    );
-    res.json({ message: "Serviço criado." });
+    try {
+      const { nome, preco } = req.body;
+      const barbeariaId = req.session.usuario.barbearia_id;
+      await db.run(
+        "INSERT INTO servicos (barbearia_id, user_id, nome, preco) VALUES ($1, $2, $3, $4)",
+        [barbeariaId, req.session.userId, nome, preco]
+      );
+      res.json({ message: "Serviço criado." });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Erro ao criar serviço." });
+    }
   });
 
   // ===============================
@@ -145,7 +164,7 @@ export function agendamentoRoutes(db) {
     try {
       const barbeariaId = req.session.usuario.barbearia_id;
       await db.run(
-        "UPDATE agendamentos SET finalizado = 1 WHERE id = ? AND user_id = ? AND barbearia_id = ?",
+        "UPDATE agendamentos SET finalizado = 1 WHERE id = $1 AND user_id = $2 AND barbearia_id = $3",
         [req.params.id, req.session.userId, barbeariaId]
       );
       res.json({ message: "Atendimento finalizado!" });
@@ -158,7 +177,7 @@ export function agendamentoRoutes(db) {
     try {
       const barbeariaId = req.session.usuario.barbearia_id;
       await db.run(
-        "DELETE FROM agendamentos WHERE id = ? AND user_id = ? AND barbearia_id = ?",
+        "DELETE FROM agendamentos WHERE id = $1 AND user_id = $2 AND barbearia_id = $3",
         [req.params.id, req.session.userId, barbeariaId]
       );
       res.json({ message: "Agendamento excluído." });
@@ -171,7 +190,7 @@ export function agendamentoRoutes(db) {
     try {
       const barbeariaId = req.session.usuario.barbearia_id;
       const agendamentos = await db.all(
-        "SELECT * FROM agendamentos WHERE user_id = ? AND barbearia_id = ? ORDER BY data, horario",
+        "SELECT * FROM agendamentos WHERE user_id = $1 AND barbearia_id = $2 ORDER BY data, horario",
         [req.session.userId, barbeariaId]
       );
       res.json(agendamentos);
@@ -190,24 +209,25 @@ export function agendamentoRoutes(db) {
       const barbeariaId = req.query.barbearia_id;
 
       const diaInteiro = await db.get(
-        "SELECT id FROM bloqueios WHERE user_id = ? AND barbearia_id = ? AND data = ? AND horario = 'DIA_INTEIRO'",
+        "SELECT id FROM bloqueios WHERE user_id = $1 AND barbearia_id = $2 AND data = $3 AND horario = 'DIA_INTEIRO'",
         [userId, barbeariaId, data]
       );
       if (diaInteiro) return res.json([]);
 
       const agendados = (await db.all(
-        "SELECT horario FROM agendamentos WHERE data = ? AND user_id = ? AND barbearia_id = ?",
+        "SELECT horario FROM agendamentos WHERE data = $1 AND user_id = $2 AND barbearia_id = $3",
         [data, userId, barbeariaId]
       )).map(a => a.horario);
 
       const bloqueados = (await db.all(
-        "SELECT horario FROM bloqueios WHERE data = ? AND user_id = ? AND barbearia_id = ?",
+        "SELECT horario FROM bloqueios WHERE data = $1 AND user_id = $2 AND barbearia_id = $3",
         [data, userId, barbeariaId]
       )).map(b => b.horario);
 
       const indisponiveis = [...agendados, ...bloqueados];
       res.json(horariosFixos.filter(h => !indisponiveis.includes(h)));
-    } catch {
+    } catch (err) {
+      console.error(err);
       res.status(500).json({ error: "Erro ao buscar horários." });
     }
   });
@@ -222,18 +242,25 @@ export function agendamentoRoutes(db) {
       const barbeariaId = req.session.usuario.barbearia_id;
 
       const existe = await db.get(
-        "SELECT * FROM bloqueios WHERE data = ? AND horario = ? AND user_id = ? AND barbearia_id = ?",
+        "SELECT * FROM bloqueios WHERE data = $1 AND horario = $2 AND user_id = $3 AND barbearia_id = $4",
         [data, horario, userId, barbeariaId]
       );
 
       if (existe) {
-        await db.run("DELETE FROM bloqueios WHERE data = ? AND horario = ? AND user_id = ? AND barbearia_id = ?", [data, horario, userId, barbeariaId]);
+        await db.run(
+          "DELETE FROM bloqueios WHERE data = $1 AND horario = $2 AND user_id = $3 AND barbearia_id = $4",
+          [data, horario, userId, barbeariaId]
+        );
         res.json({ status: "desbloqueado" });
       } else {
-        await db.run("INSERT INTO bloqueios (barbearia_id, user_id, data, horario) VALUES (?, ?, ?, ?)", [barbeariaId, userId, data, horario]);
+        await db.run(
+          "INSERT INTO bloqueios (barbearia_id, user_id, data, horario) VALUES ($1, $2, $3, $4)",
+          [barbeariaId, userId, data, horario]
+        );
         res.json({ status: "bloqueado" });
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       res.status(500).json({ error: "Erro ao alternar bloqueio." });
     }
   });
@@ -251,10 +278,10 @@ export function agendamentoRoutes(db) {
       const anoHoje = diaHoje.substring(0, 4);
 
       const [total, diario, mensal, anual] = await Promise.all([
-        db.get("SELECT SUM(preco) as total FROM agendamentos WHERE user_id = ? AND barbearia_id = ? AND finalizado = 1", [userId, barbeariaId]),
-        db.get("SELECT SUM(preco) as total FROM agendamentos WHERE user_id = ? AND barbearia_id = ? AND finalizado = 1 AND data = ?", [userId, barbeariaId, diaHoje]),
-        db.get("SELECT SUM(preco) as total FROM agendamentos WHERE user_id = ? AND barbearia_id = ? AND finalizado = 1 AND strftime('%Y-%m', data) = ?", [userId, barbeariaId, mesHoje]),
-        db.get("SELECT SUM(preco) as total FROM agendamentos WHERE user_id = ? AND barbearia_id = ? AND finalizado = 1 AND strftime('%Y', data) = ?", [userId, barbeariaId, anoHoje]),
+        db.get("SELECT SUM(preco) as total FROM agendamentos WHERE user_id = $1 AND barbearia_id = $2 AND finalizado = 1", [userId, barbeariaId]),
+        db.get("SELECT SUM(preco) as total FROM agendamentos WHERE user_id = $1 AND barbearia_id = $2 AND finalizado = 1 AND data = $3", [userId, barbeariaId, diaHoje]),
+        db.get("SELECT SUM(preco) as total FROM agendamentos WHERE user_id = $1 AND barbearia_id = $2 AND finalizado = 1 AND TO_CHAR(data::date, 'YYYY-MM') = $3", [userId, barbeariaId, mesHoje]),
+        db.get("SELECT SUM(preco) as total FROM agendamentos WHERE user_id = $1 AND barbearia_id = $2 AND finalizado = 1 AND TO_CHAR(data::date, 'YYYY') = $3", [userId, barbeariaId, anoHoje]),
       ]);
 
       res.json({

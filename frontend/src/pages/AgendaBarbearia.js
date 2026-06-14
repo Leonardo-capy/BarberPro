@@ -115,7 +115,7 @@ function AgendaBarbearia() {
       <header className="navbar navbar-cliente">
         <div className="container">
           <div className="logo">
-            <a href="/agenda">✂ BarberPro</a>
+            <a href="/agenda">✂ BarberMaxPro</a>
           </div>
           <nav className="navp">
             <a href="/agenda">← Todas as barbearias</a>
@@ -127,7 +127,9 @@ function AgendaBarbearia() {
       <main>
         <section className="hero" id="inicio">
           <div className="container">
-            <h1>💈 {barbearia.nome}</h1>
+            <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <span>💈</span> {barbearia.nome}
+            </h1>
             {barbearia.cidade && <p>📍 {barbearia.cidade}</p>}
             <p>Agende seu horário online — rápido, simples e sem espera.</p>
           </div>
