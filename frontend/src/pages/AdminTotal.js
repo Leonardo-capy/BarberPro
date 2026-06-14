@@ -84,6 +84,80 @@ function ModalVerPerfil({ usuario, onClose }) {
   );
 }
 
+function ModalEditarBarbearia({ barbearia, onClose, onSave }) {
+  const [form, setForm] = useState({ nome: '', slug: '', cidade: '' });
+
+  useEffect(() => {
+    if (barbearia) {
+      setForm({
+        nome: barbearia.nome || '',
+        slug: barbearia.slug || '',
+        cidade: barbearia.cidade || ''
+      });
+    }
+  }, [barbearia]);
+
+  if (!barbearia) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave({ ...barbearia, ...form });
+  };
+
+  return (
+    <div style={styles.overlay} onClick={onClose}>
+      <div style={{ ...styles.modal, maxWidth: '420px' }} onClick={e => e.stopPropagation()}>
+        <button style={styles.fechar} onClick={onClose}>✕</button>
+        <h2 style={{ marginBottom: '24px', fontSize: '18px' }}>Editar Barbearia</h2>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div>
+            <label style={stylesEdit.label}>Nome</label>
+            <input
+              style={stylesEdit.input}
+              type="text"
+              value={form.nome}
+              onChange={e => setForm({ ...form, nome: e.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <label style={stylesEdit.label}>Slug</label>
+            <input
+              style={stylesEdit.input}
+              type="text"
+              value={form.slug}
+              onChange={e => setForm({ ...form, slug: e.target.value })}
+              required
+            />
+            <span style={stylesEdit.hint}>Usado na URL: /agenda/{form.slug}</span>
+          </div>
+          <div>
+            <label style={stylesEdit.label}>Cidade</label>
+            <input
+              style={stylesEdit.input}
+              type="text"
+              value={form.cidade}
+              onChange={e => setForm({ ...form, cidade: e.target.value })}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+            <button type="button" onClick={onClose} style={stylesEdit.btnCancelar}>Cancelar</button>
+            <button type="submit" style={stylesEdit.btnSalvar}>Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+const stylesEdit = {
+  label: { display: 'block', color: '#aaa', fontSize: '12px', marginBottom: '6px', textTransform: 'uppercase' },
+  input: { width: '100%', background: '#111', border: '1px solid #333', borderRadius: '8px', padding: '10px 12px', color: '#fff', fontSize: '14px', boxSizing: 'border-box' },
+  hint: { fontSize: '11px', color: '#555', marginTop: '4px', display: 'block' },
+  btnCancelar: { flex: 1, background: 'transparent', border: '1px solid #333', color: '#aaa', borderRadius: '8px', padding: '10px', cursor: 'pointer' },
+  btnSalvar: { flex: 1, background: '#00ffd5', border: 'none', color: '#000', borderRadius: '8px', padding: '10px', cursor: 'pointer', fontWeight: 'bold' }
+};
+
 const styles = {
   overlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 },
   modal: { background: '#1a1a1a', border: '1px solid #333', borderRadius: '16px', padding: '32px', width: '100%', maxWidth: '520px', position: 'relative', maxHeight: '85vh', overflowY: 'auto' },
@@ -107,6 +181,7 @@ function AdminTotal() {
 
   const [barbearias, setBarbearias] = useState([]);
   const [barbeariaAtiva, setBarbeariaAtiva] = useState(null);
+  const [barbeariaEditando, setBarbeariaEditando] = useState(null);
   const [usuarios, setUsuarios] = useState([]);
   const [modalAberto, setModalAberto] = useState(false);
   const [usuarioEditando, setUsuarioEditando] = useState(null);
@@ -116,10 +191,8 @@ function AdminTotal() {
 
   useEffect(() => {
     if (isSuperAdmin) {
-      // Superadmin carrega todas as barbearias
       carregarBarbearias();
     } else {
-      // Admin carrega direto os usuários da sua barbearia
       carregarUsuarios(user.barbearia_id);
     }
   }, [isSuperAdmin, user]);
@@ -150,6 +223,16 @@ function AdminTotal() {
       carregarBarbearias();
     } catch (err) {
       alert(err.response?.data?.error || 'Erro ao criar barbearia');
+    }
+  };
+
+  const handleSalvarEdicaoBarbearia = async (dados) => {
+    try {
+      await api.put(`/api/barbearias/${dados.id}`, dados);
+      setBarbeariaEditando(null);
+      carregarBarbearias();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Erro ao editar barbearia');
     }
   };
 
@@ -208,13 +291,11 @@ function AdminTotal() {
     }
   };
 
-  // Quando superadmin clica em "Usuários" de uma barbearia
   const selecionarBarbearia = (b) => {
     setBarbeariaAtiva(b);
     carregarUsuarios(b.id);
   };
 
-  // Barbearia sendo gerenciada no momento
   const barbeariaGerenciada = isSuperAdmin ? barbeariaAtiva : { id: user?.barbearia_id, nome: 'Minha Barbearia' };
 
   return (
@@ -223,7 +304,6 @@ function AdminTotal() {
       <main className="admin-layout">
         <div className="lado-esquerdo">
 
-          {/* Tabela de barbearias — só superadmin vê */}
           {isSuperAdmin && (
             <section className="table-container">
               <h2>Barbearias</h2>
@@ -255,6 +335,9 @@ function AdminTotal() {
                         >
                           Usuários
                         </button>
+                        <button onClick={() => setBarbeariaEditando(b)}>
+                          Editar
+                        </button>
                         <button onClick={() => toggleAtivoBarbearia(b)}>
                           {b.ativo ? 'Desativar' : 'Ativar'}
                         </button>
@@ -267,7 +350,6 @@ function AdminTotal() {
             </section>
           )}
 
-          {/* Tabela de usuários */}
           {(barbeariaGerenciada || !isSuperAdmin) && (
             <section className="table-container" style={{ marginTop: isSuperAdmin ? '24px' : '0' }}>
               <h2>
@@ -319,7 +401,6 @@ function AdminTotal() {
 
         <div className="lado-direito">
 
-          {/* Criar barbearia — só superadmin */}
           {isSuperAdmin && (
             <section className="servicos-admin">
               <h2>Nova Barbearia</h2>
@@ -346,7 +427,6 @@ function AdminTotal() {
             </section>
           )}
 
-          {/* Criar usuário — admin vê sempre, superadmin só após selecionar barbearia */}
           {(!isSuperAdmin || barbeariaAtiva) && (
             <section className="servicos-admin" style={{ marginTop: isSuperAdmin ? '24px' : '0' }}>
               <h2>
@@ -391,6 +471,12 @@ function AdminTotal() {
       <ModalVerPerfil
         usuario={usuarioVerPerfil}
         onClose={() => setUsuarioVerPerfil(null)}
+      />
+
+      <ModalEditarBarbearia
+        barbearia={barbeariaEditando}
+        onClose={() => setBarbeariaEditando(null)}
+        onSave={handleSalvarEdicaoBarbearia}
       />
     </>
   );
