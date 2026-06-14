@@ -109,12 +109,20 @@ export function barbeariasRoutes(db) {
   });
 
   // Excluir barbearia
-  router.delete("/:id", verificarSuperAdmin, async (req, res) => {
+router.delete("/:id", verificarSuperAdmin, async (req, res) => {
     try {
-      const result = await db.run("DELETE FROM barbearias WHERE id = ?", [req.params.id]);
+      const { id } = req.params;
+
+      await db.run("DELETE FROM agendamentos WHERE barbearia_id = ?", [id]);
+      await db.run("DELETE FROM servicos WHERE barbearia_id = ?", [id]);
+      await db.run("DELETE FROM usuarios WHERE barbearia_id = ?", [id]);
+
+      const result = await db.run("DELETE FROM barbearias WHERE id = ?", [id]);
+      
       if (result.changes === 0) return res.status(404).json({ error: "Não encontrada" });
       res.json({ success: true });
     } catch (err) {
+      console.error("Erro ao excluir barbearia:", err); 
       res.status(500).json({ error: "Erro ao excluir barbearia" });
     }
   });
