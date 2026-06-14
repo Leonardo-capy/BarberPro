@@ -43,7 +43,7 @@ const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production'
-    ? 'https://barbermaxpro.vercel.com'
+    ? 'https://barbermaxpro.vercel.app'
     : 'http://localhost:3001',
   credentials: true
 };
