@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: process.env.NODE_ENV === 'production' 
-    ? '' // vazio = mesma origem
+    ? (process.env.REACT_APP_API_URL || '') // Usa a variável da Vercel se existir
     : 'http://localhost:3000',
   withCredentials: true,
   timeout: 10000

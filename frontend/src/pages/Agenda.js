@@ -40,7 +40,7 @@ function Agenda() {
               <p style={{ textAlign: 'center', color: '#aaa' }}>Nenhuma barbearia disponível.</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '600px', margin: '0 auto' }}>
-                {barbearias.map(b => (
+                {barbearias?.map(b => (
                   <div
                     key={b.id}
                     className="card"

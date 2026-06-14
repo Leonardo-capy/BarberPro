@@ -151,7 +151,7 @@ function AgendaBarbearia() {
                 <div className="input-group">
                   <select value={barbeiroId} onChange={(e) => setBarbeiroId(e.target.value)} required>
                     <option value="">Escolha quem cortará seu cabelo</option>
-                    {barbeiros.map(b => (
+                    {barbeiros?.map(b => (
                       <option key={b.id} value={b.id}>{b.usuario}</option>
                     ))}
                   </select>
@@ -160,7 +160,7 @@ function AgendaBarbearia() {
                 <div className="input-group">
                   <select value={servicoId} onChange={(e) => setServicoId(e.target.value)} required>
                     <option value="">Selecione o serviço</option>
-                    {servicos.map(s => (
+                    {servicos?.map(s => (
                       <option key={s.id} value={s.id}>{s.nome} — R$ {Number(s.preco).toFixed(2)}</option>
                     ))}
                   </select>
@@ -186,7 +186,7 @@ function AgendaBarbearia() {
                   <div className="horarios-wrapper">
                     {data ? (
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                        {horarios.map(horario => {
+                        {horarios?.map(horario => {
                           const agora = new Date();
                           const hojeLocal = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-${String(agora.getDate()).padStart(2, '0')}`;
                           const [hora, minuto] = horario.split(':');

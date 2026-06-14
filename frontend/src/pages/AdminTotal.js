@@ -66,7 +66,7 @@ function ModalVerPerfil({ usuario, onClose }) {
               <div style={styles.historico}>
                 <h4 style={{ color: '#00ffd5', marginBottom: '12px' }}>Últimos atendimentos</h4>
                 <div style={{ maxHeight: '180px', overflowY: 'auto' }}>
-                  {agendamentos.slice(0, 10).map((ag, i) => (
+                  {agendamentos.slice(0, 10)?.map((ag, i) => (
                     <div key={i} style={styles.itemHistorico}>
                       <span>{ag.nome}</span>
                       <span style={{ color: '#aaa' }}>{ag.servico}</span>
@@ -238,7 +238,7 @@ function AdminTotal() {
                   </tr>
                 </thead>
                 <tbody>
-                  {barbearias.map(b => (
+                  {barbearias?.map(b => (
                     <tr key={b.id} style={barbeariaAtiva?.id === b.id ? { background: '#00ffd510' } : {}}>
                       <td>{b.nome}</td>
                       <td style={{ color: '#aaa', fontSize: '13px' }}>{b.slug}</td>
@@ -289,7 +289,7 @@ function AdminTotal() {
                     </tr>
                   </thead>
                   <tbody>
-                    {usuarios.map(u => (
+                    {usuarios?.map(u => (
                       <tr key={u.id}>
                         <td>{u.id}</td>
                         <td>{u.usuario}</td>

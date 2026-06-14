@@ -100,7 +100,7 @@ function Login() {
         >
           <option value="">Selecione a barbearia</option>
           <option value="superadmin">⚙ Superadmin (plataforma)</option>
-          {barbearias.map(b => (
+          {barbearias?.map(b => (
             <option key={b.id} value={b.id}>{b.nome}{b.cidade ? ` — ${b.cidade}` : ''}</option>
           ))}
         </select>

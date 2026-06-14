@@ -167,7 +167,7 @@ function Index() {
                     required
                   >
                     <option value="">Escolha quem cortará seu cabelo</option>
-                    {barbeiros.map(barbeiro => (
+                    {barbeiros?.map(barbeiro => (
                       <option key={barbeiro.id} value={barbeiro.id}>
                         {barbeiro.usuario}
                       </option>
@@ -182,7 +182,7 @@ function Index() {
                     required
                   >
                     <option value="">Selecione o serviço</option>
-                    {servicos.map(servico => (
+                    {servicos?.map(servico => (
                       <option key={servico.id} value={servico.id}>
                         {servico.nome} — R$ {Number(servico.preco).toFixed(2)}
                       </option>
@@ -216,7 +216,7 @@ function Index() {
                   <div className="horarios-wrapper" id="horariosContainer">
                     {data ? (
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                        {horarios.map(horario => {
+                        {horarios?.map(horario => {
                           const agora = new Date();
                           const hojeLocal = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-${String(agora.getDate()).padStart(2, '0')}`;
                           const [hora, minuto] = horario.split(':');

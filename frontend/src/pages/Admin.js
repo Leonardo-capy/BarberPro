@@ -155,7 +155,7 @@ function Admin() {
                 <table>
                   <thead><tr><th>Barbearia</th><th>Atendimentos</th><th>Faturamento</th></tr></thead>
                   <tbody>
-                    {faturamentoPorBarbearia.map((b, i) => (
+                    {faturamentoPorBarbearia?.map((b, i) => (
                       <tr key={i}>
                         <td>💈 {b.nome}</td>
                         <td>{b.atendimentos}</td>
@@ -209,7 +209,7 @@ function Admin() {
                 <table>
                   <thead><tr><th>Barbeiro</th><th>Atendimentos</th><th>Faturamento</th></tr></thead>
                   <tbody>
-                    {faturamentoPorBarbeiro.map((b, i) => (
+                    {faturamentoPorBarbeiro?.map((b, i) => (
                       <tr key={i}>
                         <td>✂ {b.usuario}</td>
                         <td>{b.atendimentos}</td>
@@ -228,7 +228,7 @@ function Admin() {
                   <tr><th>Nome</th><th>Telefone</th><th>Serviço</th><th>Data</th><th>Horário</th><th>Ações</th></tr>
                 </thead>
                 <tbody>
-                  {agendamentos.map(item => (
+                  {agendamentos?.map(item => (
                     <tr key={item.id} style={item.finalizado === 1 ? { backgroundColor: '#d4edda' } : {}}>
                       <td>{item.nome}</td>
                       <td>{item.telefone}</td>
@@ -259,7 +259,7 @@ function Admin() {
                 <button type="submit">Adicionar Serviço</button>
               </form>
               <ul id="listaServicos">
-                {servicos.map(s => (
+                {servicos?.map(s => (
                   <li key={s.id}>{s.nome} - R$ {Number(s.preco).toFixed(2)}
                     <button onClick={() => excluirServico(s.id)}>Excluir</button>
                   </li>
@@ -296,7 +296,7 @@ function Admin() {
                 <tr><th>Nome</th><th>Telefone</th><th>Serviço</th><th>Data</th><th>Horário</th><th>Ações</th></tr>
               </thead>
               <tbody>
-                {agendamentos.map(item => (
+                {agendamentos?.map(item => (
                   <tr key={item.id} style={item.finalizado === 1 ? { backgroundColor: '#d4edda' } : {}}>
                     <td>{item.nome}</td>
                     <td>{item.telefone}</td>
@@ -327,7 +327,7 @@ function Admin() {
               <button type="submit">Adicionar Serviço</button>
             </form>
             <ul id="listaServicos">
-              {servicos.map(s => (
+              {servicos?.map(s => (
                 <li key={s.id}>{s.nome} - R$ {Number(s.preco).toFixed(2)}
                   <button onClick={() => excluirServico(s.id)}>Excluir</button>
                 </li>
