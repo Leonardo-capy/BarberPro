@@ -85,31 +85,41 @@ export function usuarioRoutes(db) {
     }
   });
 
-  // Excluir usuário (admin da barbearia)
-  // Excluir usuário (Hard Delete com limpeza de vínculos)
+
+  //deleta usuario
   router.delete("/:id", verificarAdmin, async (req, res) => {
     try {
       const { id } = req.params;
       const barbeariaId = req.session.usuario.barbearia_id;
 
-      if (Number(id) === req.session.userId)
+      // CORREÇÃO DO BUG 1: Acessando o ID correto da sessão do usuário
+      if (Number(id) === Number(req.session.usuario.id)) {
         return res.status(400).json({ error: "Voce nao pode excluir sua propria conta" });
+      }
 
-      // 1. Deleta primeiro os agendamentos vinculados a esse usuário
+      // 1. Limpa os agendamentos vinculados a esse usuário
       await db.run("DELETE FROM agendamentos WHERE usuario_id = ?", [id]);
 
-      // Se houver uma tabela de faturamento vinculada ao usuário, delete dela aqui também:
+      // SE HOUVER TABELA DE FATURAMENTO OU OUTRA QUE USE usuario_id, LIMPE AQUI:
       // await db.run("DELETE FROM faturamento WHERE usuario_id = ?", [id]);
+      // await db.run("DELETE FROM servicos_prestados WHERE barbeiro_id = ?", [id]);
 
       // 2. Agora sim, deleta o usuário com segurança
       const result = await db.run("DELETE FROM usuarios WHERE id = ? AND barbearia_id = ?", [id, barbeariaId]);
 
-      if (result.changes === 0) return res.status(404).json({ error: "Usuario nao encontrado" });
+      if (result.changes === 0) {
+        return res.status(404).json({ error: "Usuario nao encontrado" });
+      }
 
       res.json({ success: true });
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Erro ao excluir usuario" });
+      console.error("Erro interno ao deletar usuário:", err);
+      
+      // RETORNO DE SEGURANÇA: Mostra a mensagem real do SQLite no Front-end se algo prender
+      res.status(500).json({ 
+        error: "Erro ao excluir usuario", 
+        detalhe: err.message || err 
+      });
     }
   });
 
