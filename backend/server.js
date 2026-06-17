@@ -360,7 +360,7 @@ async function startServer() {
 
       if (barbeariaAlvo) {
         const usuarios = await db.all(
-          `SELECT id, usuario, role, barbearia_id FROM usuarios
+          `SELECT id, usuario, role, barbearia_id, ativo FROM usuarios
            WHERE barbearia_id = $1 OR role = 'superadmin'
            ORDER BY id ASC`,
           [barbeariaAlvo]
@@ -368,7 +368,7 @@ async function startServer() {
         return res.json(usuarios);
       }
 
-      const usuarios = await db.all("SELECT id, usuario, role, barbearia_id FROM usuarios");
+      const usuarios = await db.all("SELECT id, usuario, role, barbearia_id, ativo FROM usuarios");
       res.json(usuarios);
     } catch (err) {
       res.status(500).json({ error: "Erro ao carregar usuários" });
@@ -439,6 +439,31 @@ async function startServer() {
       res.json({ success: true, message: "Usuário atualizado com sucesso" });
     } catch (err) {
       res.status(500).json({ error: "Erro ao atualizar usuário" });
+    }
+  });
+
+  // Ativar / desativar barbeiro ou admin (nunca superadmin)
+  app.patch("/api/admin/usuarios/:id/toggle-ativo", verificarAdmin, async (req, res) => {
+    try {
+      const eu = req.session.usuario;
+      const { id } = req.params;
+
+      const alvo = await db.get("SELECT id, role, barbearia_id, ativo FROM usuarios WHERE id = $1", [id]);
+      if (!alvo) return res.status(404).json({ error: "Usuário não encontrado" });
+
+      if (alvo.role === 'superadmin')
+        return res.status(403).json({ error: "Não é possível desativar o superadmin" });
+
+      if (eu.role === 'admin' && alvo.barbearia_id !== eu.barbearia_id)
+        return res.status(403).json({ error: "Sem permissão" });
+
+      const novoStatus = alvo.ativo ? 0 : 1;
+      await db.run("UPDATE usuarios SET ativo = $1 WHERE id = $2", [novoStatus, id]);
+
+      res.json({ success: true, ativo: novoStatus });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Erro ao alterar status do usuário" });
     }
   });
 

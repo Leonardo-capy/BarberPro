@@ -40,7 +40,7 @@ export function barbeariasRoutes(db) {
       if (!barbearia) return res.status(404).json({ error: "Barbearia não encontrada" });
 
       const barbeiros = await db.all(
-        "SELECT id, usuario FROM usuarios WHERE barbearia_id = $1 AND plano = 'ativo' AND role != 'superadmin'",
+        "SELECT id, usuario FROM usuarios WHERE barbearia_id = $1 AND plano = 'ativo' AND role != 'superadmin' AND (ativo IS NULL OR ativo = 1)",
         [barbearia.id]
       );
       res.json(barbeiros);

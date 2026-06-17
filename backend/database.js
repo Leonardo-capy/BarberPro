@@ -49,11 +49,17 @@ export async function initDB() {
       plano TEXT DEFAULT 'ativo',
       role TEXT DEFAULT 'barbeiro',
       descricao TEXT,
+      ativo INTEGER DEFAULT 1,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (barbearia_id) REFERENCES barbearias(id),
       UNIQUE(barbearia_id, usuario)
     )
   `);
+
+  // Migração: adiciona coluna ativo em usuários caso já exista a tabela sem ela
+  try {
+    await db.exec(`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS ativo INTEGER DEFAULT 1`);
+  } catch (_) { /* coluna já existe */ }
 
   await db.exec(`
     CREATE TABLE IF NOT EXISTS agendamentos (

@@ -291,6 +291,18 @@ function AdminTotal() {
     }
   };
 
+  const toggleAtivoBarbeiro = async (u) => {
+    const acao = u.ativo === 0 ? 'ativar' : 'desativar';
+    if (!window.confirm(`Deseja ${acao} o usuário "${u.usuario}"?`)) return;
+    const barbeariaId = isSuperAdmin ? barbeariaAtiva?.id : user.barbearia_id;
+    try {
+      await api.patch(`/api/admin/usuarios/${u.id}/toggle-ativo`);
+      carregarUsuarios(barbeariaId);
+    } catch (err) {
+      alert(err.response?.data?.error || `Erro ao ${acao} usuário`);
+    }
+  };
+
   const selecionarBarbearia = (b) => {
     setBarbeariaAtiva(b);
     carregarUsuarios(b.id);
@@ -367,15 +379,25 @@ function AdminTotal() {
                       <th>ID</th>
                       <th>Usuário</th>
                       <th>Role</th>
+                      <th>Status</th>
                       <th>Ações</th>
                     </tr>
                   </thead>
                   <tbody>
                     {usuarios?.map(u => (
-                      <tr key={u.id}>
+                      <tr key={u.id} style={u.ativo === 0 ? { opacity: 0.55 } : {}}>
                         <td>{u.id}</td>
                         <td>{u.usuario}</td>
                         <td>{u.role}</td>
+                        <td>
+                          {u.role === 'superadmin' ? (
+                            <span style={{ color: '#00ffd5', fontSize: '13px' }}>Superadmin</span>
+                          ) : (
+                            <span style={{ color: u.ativo === 0 ? '#ff4d4d' : '#00ffd5', fontSize: '13px' }}>
+                              {u.ativo === 0 ? 'Inativo' : 'Ativo'}
+                            </span>
+                          )}
+                        </td>
                         <td style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                           <button
                             onClick={() => setUsuarioVerPerfil(u)}
@@ -385,6 +407,18 @@ function AdminTotal() {
                           </button>
                           {u.role !== 'superadmin' && (
                             <button onClick={() => { setUsuarioEditando(u); setModalAberto(true); }}>Editar</button>
+                          )}
+                          {u.role !== 'superadmin' && (
+                            <button
+                              onClick={() => toggleAtivoBarbeiro(u)}
+                              style={{
+                                background: u.ativo === 0 ? '#00ffd520' : '#ff4d4d20',
+                                color: u.ativo === 0 ? '#00ffd5' : '#ff4d4d',
+                                border: `1px solid ${u.ativo === 0 ? '#00ffd540' : '#ff4d4d40'}`
+                              }}
+                            >
+                              {u.ativo === 0 ? 'Ativar' : 'Desativar'}
+                            </button>
                           )}
                           {u.role !== 'superadmin' && (
                             <button onClick={() => excluirUsuario(u.id)}>Excluir</button>
