@@ -109,7 +109,7 @@ function Index() {
       <header className="navbar navbar-cliente">
         <div className="container">
           <div className="logo">
-            <a href="/login">✂ BarberPro</a>
+            <a href="/login">✂ Barber Max Pro</a>
           </div>
           <nav className="navp">
             <a href="#inicio">Início</a>
@@ -259,7 +259,7 @@ function Index() {
 
       <footer>
         <div className="container">
-          © 2026 BarberPro - Sistema Profissional de Agendamento
+          © 2026 Barber Max Pro - Sistema Profissional de Agendamento
         </div>
       </footer>
     </>

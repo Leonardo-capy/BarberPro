@@ -14,7 +14,7 @@ function NavbarAdmin() {
 
   return (
     <header className="navbar navbar-admin">
-      <div className="logo">✂ BarberPro Admin</div>
+      <div className="logo">✂ Barber Max Pro Admin</div>
       <nav className="admin-nav">
         <Link to="/agenda">Painel Cliente</Link>
         <Link to="/perfil" className={isActive('/perfil')}>Perfil</Link>
