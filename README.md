@@ -1,14 +1,14 @@
-# 💈 BarberPro — Plataforma de Agendamento para Barbearias
+# ✂️ Barber Max Pro — Plataforma de Agendamento para Barbearias
 
 [![Node.js](https://img.shields.io/badge/Node.js-v18+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![Express](https://img.shields.io/badge/Express-5.x-000000?logo=express&logoColor=white)](https://expressjs.com/)
-[![SQLite](https://img.shields.io/badge/SQLite-3-003B57?logo=sqlite&logoColor=white)](https://sqlite.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Render](https://img.shields.io/badge/Deploy-Render-46E3B7?logo=render&logoColor=white)](https://render.com/)
 
 > Plataforma **multi-barbearia** com agendamento online público, painel de gestão para barbeiros e admins, e painel superadmin para controle de toda a plataforma.
 
-🌐 **Demo:** [barberpro-mrg9.onrender.com](https://barberpro-mrg9.onrender.com)
+🌐 **Demo:** [barbermaxpro.vercel.app](https://barbermaxpro.vercel.app)
 
 ---
 
@@ -65,7 +65,7 @@ Cliente (React SPA)
        │
        │ HTTP (axios + sessions)
        ▼
-Backend (Express 5 + SQLite)
+Backend (Express 5 + PostgreSQL)
        │
        ├── /api/agendamentos   → agendamentos, bloqueios, horários, faturamento
        ├── /api/usuarios       → CRUD de usuários
@@ -82,8 +82,7 @@ Em **produção**, o backend serve o frontend buildado como arquivos estáticos 
 
 - [Node.js](https://nodejs.org/) v18+
 - npm v9+
-
-> SQLite é embutido — nenhum banco de dados externo é necessário.
+- Uma instância PostgreSQL (local ou hospedada, ex: [Render](https://render.com/), [Supabase](https://supabase.com/), [Neon](https://neon.tech/))
 
 ---
 
@@ -91,8 +90,8 @@ Em **produção**, o backend serve o frontend buildado como arquivos estáticos 
 
 ```bash
 # Clone o repositório
-git clone https://github.com/Leonardo-capy/BarberPro.git
-cd BarberPro
+git clone https://github.com/Leonardo-capy/BarberMaxPro.git
+cd BarberMaxPro
 
 # Instale as dependências do backend
 cd backend && npm install && cd ..
@@ -108,6 +107,9 @@ cd frontend && npm install && cd ..
 Crie um arquivo `.env` dentro da pasta `backend/`:
 
 ```ini
+# String de conexão com o banco PostgreSQL (obrigatório)
+DATABASE_URL=postgresql://usuario:senha@host:5432/nome_do_banco
+
 # Segredo da sessão (obrigatório em produção)
 SESSION_SECRET=uma_string_longa_e_aleatoria
 
@@ -118,7 +120,7 @@ NODE_ENV=development
 PORT=3000
 ```
 
-> ⚠️ Em produção, o servidor **não inicia** sem `SESSION_SECRET` definido.
+> ⚠️ Em produção, o servidor **não inicia** sem `SESSION_SECRET` e `DATABASE_URL` definidos.
 
 ### Seed inicial
 
@@ -126,7 +128,7 @@ Na primeira execução, o banco é populado automaticamente com dados de demonst
 
 | Campo | Valor |
 |---|---|
-| Barbearia | BarberPro Demo (Naviraí) |
+| Barbearia | BarberMaxPro Demo (Naviraí) |
 | Superadmin | `admin` / `123456` |
 | Barbeiro demo | `lucas` / `654321` |
 | Serviços demo | Corte (R$ 35), Barba (R$ 25), Corte + Barba (R$ 55) |
@@ -169,7 +171,7 @@ No **Windows**, também é possível usar o script PowerShell incluso:
 
 ## 🗄️ Banco de Dados
 
-O arquivo `database.sqlite` é criado automaticamente na pasta `backend/` na primeira execução.
+O projeto utiliza **PostgreSQL** como banco de dados. A conexão é configurada via variável de ambiente `DATABASE_URL`. As tabelas são criadas automaticamente na primeira execução via `initDB()`.
 
 ### Tabelas
 
@@ -180,6 +182,8 @@ O arquivo `database.sqlite` é criado automaticamente na pasta `backend/` na pri
 | `agendamentos` | Agendamentos com cliente, serviço, preço, data, horário e status finalizado |
 | `bloqueios` | Horários ou dias inteiros bloqueados por barbeiro |
 | `servicos` | Serviços cadastrados por cada barbeiro com nome e preço |
+
+> Todas as tabelas usam `SERIAL PRIMARY KEY` e `TIMESTAMP DEFAULT CURRENT_TIMESTAMP` compatíveis com PostgreSQL.
 
 ---
 
@@ -243,11 +247,10 @@ O arquivo `database.sqlite` é criado automaticamente na pasta `backend/` na pri
 ## 📂 Estrutura do Projeto
 
 ```
-barbearia agenda/
+BarberMaxPro/
 ├── backend/
 │   ├── server.js                  # Servidor Express, sessão, middlewares e inicialização
-│   ├── database.js                # Criação das tabelas SQLite e seed inicial
-│   ├── database.sqlite            # Banco de dados (gerado automaticamente)
+│   ├── database.js                # Conexão PostgreSQL (pg.Pool) e seed inicial
 │   ├── middleware/
 │   │   ├── auth.js                # Guards: verificarLogin, verificarAdmin, verificarSuperAdmin
 │   │   └── validate.js            # Validação de inputs de usuário
@@ -266,6 +269,7 @@ barbearia agenda/
 │   │   │   ├── ModalEditarUsuario.js
 │   │   │   └── Toast.js
 │   │   ├── pages/
+│   │   │   ├── Index.js           # Landing page pública
 │   │   │   ├── Agenda.js          # Lista pública de barbearias
 │   │   │   ├── AgendaBarbearia.js # Agendamento público por barbearia
 │   │   │   ├── Login.js
@@ -285,11 +289,12 @@ barbearia agenda/
 
 ## 🚢 Deploy
 
-O projeto está configurado para deploy no [Render](https://render.com/).
+O projeto está configurado para deploy no [Render](https://render.com/) (backend + banco PostgreSQL) e [Vercel](https://vercel.com/) (frontend).
 
 **Variáveis de ambiente necessárias:**
 
 ```ini
+DATABASE_URL=postgresql://usuario:senha@host:5432/nome_do_banco
 NODE_ENV=production
 SESSION_SECRET=sua_string_secreta_longa
 PORT=3000
